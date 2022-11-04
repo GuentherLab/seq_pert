@@ -1,0 +1,13 @@
+# Part 1 (Time warping): (state number), tBegin, rate1, dur1, durHold,
+rate2
+2
+0.94, 0.1, 0.1, 0.1, 1.5 # Time warping 1
+1.502, 0.1, 0.1, 0.1, 1.5 # Time warping 2
+# Part 2: stat pitchShift(st) gainShift(dB) fmtPertAmp fmtPertPhi(rad)
+6
+0, 0.0, 0, 0, 0
+1, 0.0, 0, 0, 0
+2, 0.0, 0, 0, 0
+3, 0.0, 0, 0, 0
+4, 0.0, 0, 0, 0
+5, 2.0, 0, 0, 0 # Two-semitone upward pitch perturbation during the last word
