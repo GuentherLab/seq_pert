@@ -1,4 +1,4 @@
-function runExp(subjectID, session)
+function runExp_seqpert(subjectID, session)
 % runExp(subjectID, session)
 %
 % Main script for running the auditory perturbation experiments in the soundbooth in the lab
