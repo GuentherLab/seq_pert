@@ -1,6 +1,15 @@
-function audapterDemo_online_modified(mode, varargin)
+function audapterDemo_online_modified_20230315(mode, varargin)
 %% Configurations
 % audioInterfaceName = 'MOTU MicroBook';
+
+FUNCTION_PATH = 'C:\seq_pert';
+
+OST_FILENAME = [FUNCTION_PATH filesep 'sample_seq_pert_ost.txt'];
+
+% PCF_FILENAME = [FUNCTION_PATH filesep 'pcf_30up.txt'];
+PCF_FILENAME = [FUNCTION_PATH filesep 'pcf_60up.txt'];
+
+close all
 
 setAudioDevice (0)
 
@@ -34,8 +43,8 @@ if isequal(mode, 'persistentFormantShift')
     %Audapter('ost', '', 0);
     %Audapter('pcf', '', 0);
     
-    Audapter ('ost', 'sample_seq_pert_ost.txt', 1);
-    Audapter ('pcf', 'pcf_30up.txt', 1);
+    Audapter ('ost', OST_FILENAME, 1);
+    Audapter ('pcf', PCF_FILENAME, 1);
     
     
     params = getAudapterDefaultParams(gender);
