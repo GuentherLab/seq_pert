@@ -1,0 +1,34 @@
+# Online status tracking (OST) configuration file
+rmsSlopeWin = 0.030000
+
+# Main section: Heuristic rules for tracking
+n = 26
+0 INTENSITY_RISE_HOLD 0.0060 0.100 {}   # Detect voicing onset for at least 20ms
+2 ELAPSED_TIME 0.244 NaN {}           # Wait for DELAY_T seconds after voice detection
+3 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+4 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+5 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+6 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+7 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+8 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+9 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+10 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+11 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+12 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+13 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+14 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+15 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+16 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+17 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+18 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+19 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+20 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+21 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+22 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+23 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+24 ELAPSED_TIME 0.0043 NaN {}            # Increase pitch shift over RAMP_T seconds in RAMP_N steps
+25 ELAPSED_TIME 3 NaN {}               # Hold max pitch shift on for 3 seconds (longer than trial)
+26 OST_END NaN NaN {}                  # Stop tracking
+
+# maxIOICfg
+n = 0

@@ -1,5 +1,6 @@
+%Version from AudDev, we are switching to version from SAP
 function runExp_seqpert(subjectID, session)
-% runExp(subjectID, session)
+%runExp(subjectID, session)
 %
 % Main script for running the auditory perturbation experiments in the soundbooth in the lab
 %
