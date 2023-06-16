@@ -1,36 +1,28 @@
 function stimList = stimListGenWIP(numTrials)
-    stimList = struct('F1Dir', [], 'F1Mag', []);
-    
-    numTrials = round(numTrials);  % Ensure numTrials is an integer
-    
     % Calculate the number of trials for each condition
-    numTrialsF1Up = round(numTrials * 0.25);
-    numTrialsF1Down = round(numTrials * 0.25);
-    numTrialsF1Null = numTrials - numTrialsF1Up - numTrialsF1Down;
+    numTrialsN1 = round(numTrials * 0.5);
+    numTrialsU1 = round(numTrials * 0.25);
+    numTrialsD1 = round(numTrials * 0.25);
     
-    % Generate F1 magnitudes within the specified range
-    F1MagRange = [15, 30];
-    F1MagUp = randi(F1MagRange, numTrialsF1Up, 1);
-    F1MagDown = randi(F1MagRange, numTrialsF1Down, 1);
-    F1MagNull = zeros(numTrialsF1Null, 1);
+    % Create an initial sequence with repeated conditions
+    sequence = repmat(["N1"; "U1"; "D1"], ceil(numTrials/3), 1);
     
-    % Generate F1 directions based on the specified order
-    F1Dir = ["N1"; "U1"; "N1"; "D1"];
-    numRepetitions = ceil(numTrials / numel(F1Dir));
-    F1Dir = repmat(F1Dir, numRepetitions, 1);
-    F1Dir = F1Dir(1:numTrials);
+    % Shuffle the sequence
+    sequence = sequence(randperm(numel(sequence)));
     
-    % Assign F1 magnitudes based on the F1 direction
-    F1Mag = zeros(numTrials, 1);
-    F1Mag(strcmp(F1Dir, 'U1')) = F1MagUp;
-    F1Mag(strcmp(F1Dir, 'D1')) = F1MagDown;
+    % Ensure no condition repeats more than 3 times
+    for i = 4:numel(sequence)
+        if all(sequence(i) == sequence(i-3:i-1))
+            % Find a different condition to swap
+            validConditions = setdiff(["N1"; "U1"; "D1"], sequence(i));
+            swapIndex = randi(numel(validConditions));
+            sequence(i) = validConditions(swapIndex);
+        end
+    end
     
-    % Concatenate the F1 directions and magnitudes
-    stimList.F1Dir = F1Dir;
-    stimList.F1Mag = F1Mag;
+    % Truncate the sequence to match the desired number of trials
+    sequence = sequence(1:numTrials);
     
-    % Randomize the order of the stimulus list
-    randomOrder = randperm(numTrials);
-    stimList.F1Dir = stimList.F1Dir(randomOrder);
-    stimList.F1Mag = stimList.F1Mag(randomOrder);
+    % Create the struct with the randomized sequence
+    stimList = struct('Condition', sequence);
 end
