@@ -1,48 +1,40 @@
-function stimStruct = generateStimStruct(numTrials)
-    % Calculate the number of trials for each condition
-    numTrialsN1 = round(numTrials * 0.5);
-    numTrialsU1 = round(numTrials * 0.25);
-    numTrialsD1 = round(numTrials * 0.25);
-    
-    % Create an initial sequence with repeated conditions
-    sequence = ["N1"; "N1"; "U1"; "D1"];
-    
-    % Extend the sequence to match the desired number of trials
-    numRepetitions = ceil(numTrials / numel(sequence));
-    sequence = repmat(sequence, numRepetitions, 1);
-    
-    % Shuffle the sequence
-    sequence = sequence(randperm(numel(sequence)));
-    
-    % Ensure the desired distribution of values
-    excessTrials = numel(sequence) - numTrials;
-    if excessTrials > 0
-        % Remove excess trials from N1 condition
-        n1Indices = find(sequence == "N1");
-        removeIndices = n1Indices(1:excessTrials);
-        sequence(removeIndices) = [];
-    elseif excessTrials < 0
-        % Add missing trials to N1 condition
-        missingTrials = -excessTrials;
-        n1Indices = find(sequence == "N1");
-        addIndices = n1Indices(1:missingTrials);
-        sequence = [sequence; repmat("N1", missingTrials, 1)];
-        sequence(addIndices) = sequence(randperm(numel(addIndices)));
+function outputStructure = stimListGenWIP(condition, numTrials, maxRepeat)
+
+    if strcmp(condition, 'PertCondition')
+        values = {'N1', 'U1', 'D1'};
+        percentages = [0.5, 0.25, 0.25];
+    elseif strcmp(condition, 'StimCondition')
+        values = {'native', 'nonnative novel', 'nonnative learned'};
+        percentages = [1/3, 1/3, 1/3];
+    else
+        error('Invalid condition specified. Please choose either "PertCondition" or "StimCondition".');
     end
-    
-    % Ensure no condition repeats more than 3 times
-    for i = 4:numel(sequence)
-        if all(sequence(i) == sequence(i-3:i-1))
-            % Find a different condition to swap
-            validConditions = setdiff(["N1"; "U1"; "D1"], sequence(i));
-            swapIndex = randi(numel(validConditions));
-            sequence(i) = validConditions(swapIndex);
+
+    numValues = numel(values);
+    maxRepeat = min(maxRepeat, numTrials); % Limit maxRepeat to numTrials
+
+    % Create randomized order of values
+    numRepeats = ceil(numTrials / numValues);
+    repeatedValues = repmat(values, 1, numRepeats);
+    randomizedValues = repeatedValues(randperm(numel(repeatedValues)));
+    randomizedValues = randomizedValues(1:numTrials);
+
+    % Check and limit the number of consecutive repeats
+    for i = 2:numTrials
+        if strcmp(randomizedValues{i}, randomizedValues{i-1})
+            count = 1;
+            while count < maxRepeat && (i + count <= numTrials) && strcmp(randomizedValues{i + count}, randomizedValues{i-1})
+                count = count + 1;
+            end
+            if count == maxRepeat
+                % Randomly select a different value
+                availableValues = setdiff(values, randomizedValues(i-1));
+                randomizedValues{i} = availableValues(randi(numel(availableValues)));
+            end
         end
     end
-    
-    % Truncate the sequence to match the desired number of trials
-    sequence = sequence(1:numTrials);
-    
-    % Create the struct with the randomized sequence
-    stimStruct = struct('Condition', sequence);
+
+    % Create the structure
+    outputStructure = struct(condition, randomizedValues);
+
 end
