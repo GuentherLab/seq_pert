@@ -1,32 +1,33 @@
-function outputStructure = stimListGenWIP(condition, numTrials, maxRepeat)
+% Parameters = condition, numTrials, maxRepeat
+function outputStructure = stimListGenWIP(ops)
 
-    if strcmp(condition, 'PertCondition')
+    if strcmp(ops.condition, 'Pertops.condition')
         values = {'N1', 'U1', 'D1'};
         percentages = [0.5, 0.25, 0.25];
-    elseif strcmp(condition, 'StimCondition')
-        values = {'native', 'nonnative novel', 'nonnative learned'};
+    elseif strcmp(ops.condition, 'Stimops.condition')
+        values = {'native', 'nonnative_novel', 'nonnative_learned'};
         percentages = [1/3, 1/3, 1/3];
     else
-        error('Invalid condition specified. Please choose either "PertCondition" or "StimCondition".');
+        error('Invalid ops.condition specified. Please choose either "Pertops.condition" or "Stimops.condition".');
     end
 
     numValues = numel(values);
-    maxRepeat = min(maxRepeat, numTrials); % Limit maxRepeat to numTrials
+    ops.maxRepeat = min(ops.maxRepeat, ops.numTrials); % Limit ops.maxRepeat to ops.numTrials
 
     % Create randomized order of values
-    numRepeats = ceil(numTrials / numValues);
+    numRepeats = ceil(ops.numTrials / numValues);
     repeatedValues = repmat(values, 1, numRepeats);
     randomizedValues = repeatedValues(randperm(numel(repeatedValues)));
-    randomizedValues = randomizedValues(1:numTrials);
+    randomizedValues = randomizedValues(1:ops.numTrials);
 
     % Check and limit the number of consecutive repeats
-    for i = 2:numTrials
+    for i = 2:ops.numTrials
         if strcmp(randomizedValues{i}, randomizedValues{i-1})
             count = 1;
-            while count < maxRepeat && (i + count <= numTrials) && strcmp(randomizedValues{i + count}, randomizedValues{i-1})
+            while count < ops.maxRepeat && (i + count <= ops.numTrials) && strcmp(randomizedValues{i + count}, randomizedValues{i-1})
                 count = count + 1;
             end
-            if count == maxRepeat
+            if count == ops.maxRepeat
                 % Randomly select a different value
                 availableValues = setdiff(values, randomizedValues(i-1));
                 randomizedValues{i} = availableValues(randi(numel(availableValues)));
@@ -35,6 +36,6 @@ function outputStructure = stimListGenWIP(condition, numTrials, maxRepeat)
     end
 
     % Create the structure
-    outputStructure = struct(condition, randomizedValues);
+    outputStructure = struct(ops.condition, randomizedValues);
 
 end
