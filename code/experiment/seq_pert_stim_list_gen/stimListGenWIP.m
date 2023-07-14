@@ -1,41 +1,42 @@
-% Parameters = condition, numTrials, maxRepeat
 function outputStructure = stimListGenWIP(ops)
 
-    if strcmp(ops.condition, 'Pertops.condition')
-        values = {'N1', 'U1', 'D1'};
-        percentages = [0.5, 0.25, 0.25];
-    elseif strcmp(ops.condition, 'Stimops.condition')
-        values = {'native', 'nonnative_novel', 'nonnative_learned'};
-        percentages = [1/3, 1/3, 1/3];
-    else
-        error('Invalid ops.condition specified. Please choose either "Pertops.condition" or "Stimops.condition".');
+    if numel(ops.values) ~= numel(ops.percentages)
+        error('The number of ops.values must be equal to the number of ops.percentages.');
     end
 
-    numValues = numel(values);
+    totalPercentage = sum(ops.percentages);
+    if abs(totalPercentage - 1.0) > 1e-6
+        error('The ops.percentages must sum to 1.0.');
+    end
+
+    numops.values = numel(ops.values);
     ops.maxRepeat = min(ops.maxRepeat, ops.numTrials); % Limit ops.maxRepeat to ops.numTrials
 
-    % Create randomized order of values
-    numRepeats = ceil(ops.numTrials / numValues);
-    repeatedValues = repmat(values, 1, numRepeats);
-    randomizedValues = repeatedValues(randperm(numel(repeatedValues)));
-    randomizedValues = randomizedValues(1:ops.numTrials);
+    % Create randomized order of ops.values
+    numRepeats = ceil(ops.numTrials / numops.values);
+    repeatedops.values = repmat(ops.values, 1, numRepeats);
+    randomizedops.values = repeatedops.values(randperm(numel(repeatedops.values)));
+    randomizedops.values = randomizedops.values(1:ops.numTrials);
 
     % Check and limit the number of consecutive repeats
     for i = 2:ops.numTrials
-        if strcmp(randomizedValues{i}, randomizedValues{i-1})
+        if strcmp(randomizedops.values{i}, randomizedops.values{i-1})
             count = 1;
-            while count < ops.maxRepeat && (i + count <= ops.numTrials) && strcmp(randomizedValues{i + count}, randomizedValues{i-1})
+            while count < ops.maxRepeat && (i + count <= ops.numTrials) && strcmp(randomizedops.values{i + count}, randomizedops.values{i-1})
                 count = count + 1;
             end
             if count == ops.maxRepeat
                 % Randomly select a different value
-                availableValues = setdiff(values, randomizedValues(i-1));
-                randomizedValues{i} = availableValues(randi(numel(availableValues)));
+                availableops.values = setdiff(ops.values, randomizedops.values(i-1));
+                randomizedops.values{i} = availableops.values(randi(numel(availableops.values)));
             end
         end
     end
 
+    % Remove single quotes from ops.values
+    randomizedops.values = cellfun(@(x) strrep(x, '''', ''), randomizedops.values, 'UniformOutput', false);
+
     % Create the structure
-    outputStructure = struct(ops.condition, randomizedValues);
+    outputStructure = struct('Condition', randomizedops.values);
 
 end
