@@ -1,5 +1,5 @@
 ops.maxRepeat = 2;
-ops.numTrials = 600;
+ops.numTrials = 500;
 ops.values = {'native', 'nonnative_learned', 'nonnative_novel'};
 ops.percentages = [0.5, 0.25, 0.25];
 
