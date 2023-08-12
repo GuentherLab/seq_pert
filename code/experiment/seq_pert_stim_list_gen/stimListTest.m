@@ -1,6 +1,7 @@
 ops.maxRepeat = 2;
 ops.numTrials = 300;
-ops.values = {'native', 'nonnative_learned', 'nonnative_novel'};
+% % % ops.values = {'native', 'nonnative_learned', 'nonnative_novel'};
+ops.values = {'Nonnative', 'Native main', 'Native familiarization'};
 ops.percentages = [0.5, 0.25, 0.25];
 
 structure = stimListGenWIP (ops);
@@ -8,7 +9,7 @@ structure = stimListGenWIP (ops);
 
 
 
-
+trialtable = struct2table(structure);
 
 
 

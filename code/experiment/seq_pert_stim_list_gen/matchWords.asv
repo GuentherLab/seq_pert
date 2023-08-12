@@ -1,10 +1,6 @@
 %%%% excel_file = list of stimulus words and their corresponding .wav files and condition names
 %%%% stimCondition = a table with variable 'Condition' specifying.....
-%%%%%% ..... which stimulus condition a word should be picked from excel_file
-%
-%%% output will be a table with variables matching excel_file, but with Conditions in the order specified by the stimCondition table
-%
-%%% this script should be called by the top level stimulus script in order to create the trial table
+% %%%%% ..... which stimulus condition a word should be picked from
 
 function [output] = matchWords(excel_file, stimCondition)
 
