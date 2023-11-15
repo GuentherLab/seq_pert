@@ -1,0 +1,80 @@
+
+function trials = seqpert_generate_trial_list(ops)
+
+%% params
+field_default('ops','subjgroup',1); 
+field_default('ops','pertconds',   {'n',  'u',  'd'};
+pertcon_proportions = [0.5,  0.25, 0.25]; 
+ops.pert_max_repeats = 3; 
+
+learnconds =          {'nat','nn_learned','nn_novel'};
+learcon_reps_per_name = [5,        20,        5]; 
+learn_max_repeats = 3; 
+
+stimlist_master_filename = 'stim_list_master.xlsx'; 
+
+
+%% create stimlist
+pertcon_reps_per_cycle = ops.pertcon_proportions * 1/min(ops.pertcon_proportions); 
+pertcon_cycle = [];
+for ipertcon = 1:length(ops.pertconds)
+    pertcon_cycle = [pertcon_cycle; repmat(pertconds(ipertcon), pertcon_reps_per_cycle(ipertcon), 1)];
+end
+
+stimlist_master = readtable(stimlist_master_filename); 
+nlearnconds = length(learnconds); 
+trials = table; 
+for ilearncon = 1:nlearnconds
+    thiscond = learnconds{ilearncon};
+    switch thiscond
+        case 'nat'
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==1);
+        case 'nn_learned'
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==0 & stimlist_master.set==subjgroup);
+        case 'nn_novel'
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==0 & stimlist_master.set~=subjgroup);
+    end
+    
+    repspername = learcon_reps_per_name(ilearncon); 
+    trialtemp = table; 
+    trialtemp.stim = sort(repmat(stimnames_this_cond,repspername,1));
+    ntrials_this_learncon = height(trialtemp); 
+    trialtemp.learncon = repmat({thiscond},ntrials_this_learncon,1);
+
+    pert_temp = repmat(pertcon_cycle, ntrials_this_learncon, 1); 
+    trialtemp.pertcon = pert_temp(1:ntrials_this_learncon,1);
+
+    trials = [trials; trialtemp];
+end
+ntrials = height(trials);
+
+%% randomize trial order and check for excessive repeats
+rerandomize = 1; % initialize
+while rerandomize
+    trials = trials(randperm(ntrials),:); 
+
+    pert_reps = 0; 
+    learn_reps = 0; 
+    rerandomize = 0; 
+    for itrial = 2:ntrials
+        if strcmp(trials.learncon{itrial}, trials.learncon{itrial-1})
+            learn_reps = learn_reps + 1; 
+            if learn_reps > learn_max_repeats % if this randomization exceeds max learncond repeats, discard it
+                rerandomize = 1; 
+                break
+            end
+        else
+            learn_reps = 0; 
+        end
+        if strcmp(trials.pertcon{itrial}, trials.pertcon{itrial-1})
+            pert_reps = pert_reps + 1; 
+            if pert_reps > pert_max_repeats % if this randomization exceeds max learncond repeats, discard it
+                rerandomize = 1; 
+                break
+            end
+        else
+            pert_reps = 0; 
+        end 
+    end
+end
+
