@@ -2,7 +2,7 @@
 % SEQPERT_GENERATE_TRIAL_LIST: create a table of trial conditions and
 % stimuli to use in the seq-pert experiment
 
-function trials = seqpert_generate_trial_list(name,ops)
+function trials = seqpert_generate_trial_list(ops)
 vardefault('ops',struct);
 
 %% params

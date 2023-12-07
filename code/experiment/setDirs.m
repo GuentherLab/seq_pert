@@ -12,8 +12,8 @@ function [dirs, host] = setDirs(project)
 %
 %% default to AudDev as project
 if nargin == 0
-    project = 'seq_pert';
-    pilot = 'seq_pert-PILOT';
+    project = 'AudDev';
+    pilot = 'AudDev-PILOT';
 else
     pilot = [project '-PILOT'];
 end
@@ -84,6 +84,9 @@ else
             addpath('C:\speechres\spm12\')
             addpath('C:\speechres\conn\')
             addpath('C:\speechres\FLvoice\')
+            
+            % add AudDev path for support functions
+            addpath(genpath('C:\AudDev'));
             
         case '677-gue-wl-0003' % SPLAB second laptop (JT)
             

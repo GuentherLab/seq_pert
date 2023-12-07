@@ -1,4 +1,4 @@
-function runExp(subjectID, session)
+function runExp_seq_pert(subjectID, session)
 %
 % ABOUT
 %       Main script forz running the auditory perturbation experiments in 
@@ -17,7 +17,7 @@ function runExp(subjectID, session)
 %           set up trial timer
 %           determine trial timing info
 %           save trial info
-%           adjust adaptable rms Thresh and pitch bounds
+%           adjust adaptable rms Thresh
 %       end trial
 %       end experiment
 %
@@ -41,8 +41,8 @@ function runExp(subjectID, session)
 % INPUTS                    subjectID (e.g., PPT001, pilot001)
 %                           session # (1, 2)
 %
-% OUTPUTS (saved to C\:DATA\AudDev\SubjectID\Session\beh)
-%                           AudDev data structure
+% OUTPUTS (saved to C\:DATA\seq_pert\SubjectID\Session\beh)
+%                           seq_pert data structure
 %
 % Also calls:               Audapter (audapter_matlab, audapter_mex, commonmcode)
 %                           checkAudapterParams.m
@@ -74,7 +74,7 @@ close all
 ET = tic;
 
 % set directories
-[dirs, host] = setDirs('AudDev');
+[dirs, host] = setDirs('seq_pert');
 
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];
@@ -170,8 +170,10 @@ gender = expParams.gender;
 % Practice or Experimental Run?
 runType = questdlg('What kind of run is this?','Run Type','Practice Run','Experimental Run','Practice Run');
 
+runName = ['run-' num2str(expParams.runNum)];
+
 % Set default stim list, and ask about perturbation onset
-expParams.formantType = questdlg('Please choose formant perturbation type.', 'Formant Perturbation', 'Voice-Onset', 'Mid-Voice', 'Jittered','Voice-Onset');
+expParams.formantType = 'Voice-Onset';
 expParams.pitchType = 'N/A';
 
 audioStim = 1;
@@ -208,7 +210,8 @@ if exist([fName '.mat'], 'file') == 2
 end
 
 %%% GENERATE STIM LIST %%%
-StimListSet = seqpert_generate_trial_list('subjgroup',group);
+randOps.subjgroup = group; 
+StimListSet = seqpert_generate_trial_list(randOps);
 
 stimName = StimListSet.stim;
 condition = StimListSet.pertcon;
@@ -221,7 +224,7 @@ formantDown = find(strcmp(condition, 'D1'));
 formantNoShift = find(strcmp(condition, 'N1'));
 
 % create random number stream so randperm doesn't call the same thing everytime when matlab is opened
-s = RandStream.create('mt19937ar','seed',sum(100*clock));
+s = RandStream.create('mt19937ar','seed',sum(100*clock)); % Not currently used
 RandStream.setGlobalStream(s);
 
 % set up visualization
@@ -240,14 +243,9 @@ expParams.recordLen = 2.0;
 % length the word is on screen (s)
 expParams.stimOn = expParams.recordLen - .5;
 
-% pitch perturbation onset jitter (relative to voice onset) - will be a random number between these two values
-% No jitter if adaptive
-expParams.pertJitterMin = 0.3;
-expParams.pertJitterMax = 0.6;
-
 % for non-speech trials, initiate the delay to "match" the expected delay associated with
 % time to voice onset
-% This is not used in AudDev experiments since it is entirely behavioral,
+% This is not used in AudDev/seq_pert experiments since it is entirely behavioral,
 % but I'm keeping it here - Acosta
 nonSpeechDelay = .75;
 
@@ -260,8 +258,6 @@ expParams.iti = 4.5 + 2.5;
 which Audapter; % makes sure audapter is mapped
 Audapter info; % lets you know which sound card is being used
 
-expParams.suddenPitchRamp = 0.01;     % sudden onset of 10 ms, needed for the pitch schedule
-expParams.gradualPitchRamp = 0.11;    % gradual onset of 110ms
 p = setAudapterParams(expParams.gender, 'formant');
 
 p.nLPC = nLPC; % Linear Predictive Coding coefficient for formant tracking
@@ -337,20 +333,20 @@ for ii = 1:expParams.numTrials
     %trialData(ii).ostFN = fullfile(dirs.audapter_config, 'SAP_formant_reflex_fullshift.ost');
 
     % setup
-    rampTime = expParams.suddenPitchRamp;
+    rampTime = .01; % Ramp is typically set to be at least 10 ms. 10 ms is considered a sudden perturbation
 
     % Create OST files for each trial
-    createSubjOstFiles(dirs, subjectID, session, runName, 'formant', ii, rampTime, p.rmsThresh, expParams.minThreshTime, trialData(ii).pertJitter-expParams.minThreshTime);
+    createSubjOstFiles(dirs, subjectID, session, runName, 'formant', ii, rampTime, p.rmsThresh, expParams.minThreshTime, 0);
     trialData(ii).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_formantreflex.ost', subjectID, session, runName, ii));
 
     % Specify your PCF files. Different PCF files for
     % perturbation type
     if ismember(ii, formantUp)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['AudDev_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq_pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
     elseif ismember(ii, formantDown)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['AudDev_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq_pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
     elseif ismember(ii, formantNoShift)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, 'AudDev_formant_reflex_6rules_noShift.pcf');
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, 'seq_pert_formant_reflex_6rules_noShift.pcf');
     end
 
     check_file(trialData(ii).pcfFN);
@@ -369,9 +365,7 @@ for ii = 1:expParams.numTrials
     
     %% TRIAL TIMER
     % at this point, the crosshair is already displayed
-    
-    % removing timer function because it's useless!!!!
-    
+  
     if isempty(CLOCK)
         CLOCK = ManageTime('start');  % resets clock to t=0 (first-trial start-time)
         TIME_TRIAL_START = 0;
@@ -428,8 +422,11 @@ for ii = 1:expParams.numTrials
 
     % Create values for timingTrial field of trialData structure
     TIME_VOICE_START = TIME_TRIAL_ACTUALLYSTART + timetovoice;
-    TIME_PERT_START = TIME_VOICE_START + trialData(ii).pertJitter;
-    trialData(ii).reference_time = trialData(ii).rmsVoiceOnset + trialData(ii).pertJitter;
+    
+    % For now, seq_pert perturbations are imposed at voice onset. This may
+    % need to change as the experiment is developed, for example setting
+    % perturbation onsets depending on stimulus or participant
+    TIME_PERT_START = TIME_VOICE_START;
     
     % This factor is for converting between the frame length of the
     % recorded signal and its length in seconds
@@ -457,12 +454,15 @@ for ii = 1:expParams.numTrials
     % plot trial data
     pTitle = sprintf('Run %d  Trial %d  Condition: %s', expParams.runNum, ii, trialData(ii).condLabel);
      set(sigplotTitle,'String',pTitle);
-    plotMicSignal(p, trialData, ii, h1, h2, h3, expParams.pitchMethod);
+     
+    % No pitch trials are being performed, time-domain is being input as a
+    % placeholder
+    plotMicSignal(p, trialData, ii, h1, h2, h3, 'time-domain');
     
     % trial timing
     trialData(ii).timingTrial = [TIME_TRIAL_START; TIME_TRIAL_ACTUALLYSTART; TIME_VOICE_START; TIME_PERT_START; TIME_PERT_ACTUALLYSTART; TIME_PERT_END; TIME_PERT_ACTUALLYEND; TIME_SCAN_START; TIME_SCAN_ACTUALLYSTART; TIME_SCAN_END]; % note: we also prefer to record absolute times for analyses of BOLD signal
     
-    TIME_TRIAL_START = TIME_TRIAL_START + expParams.iti; % when should next trial start THIS SHOULD BE DIFFERENT FOR AUDIO AND VISUAL STIMULUS PRESENTATION METHODS
+    TIME_TRIAL_START = TIME_TRIAL_START + expParams.iti; % when should next trial start
     
     %% save for each trial (in case of computer/matlab failure)
     trialData(ii).p = p;
