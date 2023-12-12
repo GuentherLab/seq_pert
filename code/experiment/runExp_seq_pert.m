@@ -215,6 +215,7 @@ StimListSet = seqpert_generate_trial_list(randOps);
 
 stimName = StimListSet.stim;
 condition = StimListSet.pertcon;
+learncon = StimListSet.learncon;
 
 expParams.numTrials = length(condition); % pull out the number of trials from the stimList
 
@@ -318,6 +319,7 @@ for ii = 1:expParams.numTrials
     annoStr.Stim.String = stimName{ii};
     trialData(ii).stimName = stimName{ii};
     trialData(ii).condLabel = condition{ii};
+    trialData(ii).learncon = learncon{ii};
 
     % find and read sound file for audio stimulus presentations
     soundFile = fullfile(soundFilePath, sprintf('%s.wav',lower(stimName{ii})));
