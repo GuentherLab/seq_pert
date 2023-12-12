@@ -7,7 +7,7 @@ vardefault('ops',struct);
 
 %% params
 field_default('ops','subjgroup',1); 
-field_default('ops','pertconds',            {'n',  'u',  'd'});
+field_default('ops','pertconds',            {'N1',  'U1',  'D1'});
 field_default('ops','pertcon_proportions', [0.5,  0.25, 0.25]); 
 field_default('ops','pert_max_repeats', 3); 
 
@@ -82,3 +82,4 @@ while rerandomize
     end
 end
 
+end
