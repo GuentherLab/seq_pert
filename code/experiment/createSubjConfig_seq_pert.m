@@ -1,4 +1,4 @@
-function createSubjConfig(subjectNum, prefix, group, gender, varargin)
+function createSubjConfig_seq_pert(subjectNum, prefix, group, gender, varargin)
 % createSubjConfig(subjectNum, prefix, group, gender, varargin)
 %
 % function to create subject-session configuration files
@@ -24,7 +24,7 @@ function createSubjConfig(subjectNum, prefix, group, gender, varargin)
 %% check inputs and set key variables
 
 % set directories
-dirs = setDirs('seq_pert');
+dirs = setDirs_seq_pert();
 
 % subject number
 if ~isnumeric(subjectNum)

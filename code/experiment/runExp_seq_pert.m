@@ -74,7 +74,7 @@ close all
 ET = tic;
 
 % set directories
-[dirs, host] = setDirs('seq_pert');
+[dirs, host] = setDirs_seq_pert();
 
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];

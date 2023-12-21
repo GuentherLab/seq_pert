@@ -1,4 +1,4 @@
-function [dirs, host] = setDirs(project)
+function [dirs, host] = setDirs_seq_pert()
 % function dirs = setDirs(project)
 %
 % setting up directory paths for a project
@@ -11,12 +11,8 @@ function [dirs, host] = setDirs(project)
 % Edited by Jordan Manes, Jan 2021 (jordanleighmanes@gmail.com)
 %
 %% default to AudDev as project
-if nargin == 0
-    project = 'AudDev';
-    pilot = 'AudDev-PILOT';
-else
-    pilot = [project '-PILOT'];
-end
+project = 'seq-pert';
+pilot = [project '-PILOT'];
 
 %% Determine hostname of system
 % This section looks for the 'local' hostname of the computer running the
