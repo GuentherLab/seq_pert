@@ -84,8 +84,8 @@ if contains(subjectID,'test','IgnoreCase',true) || contains(subjectID,'pilot','I
     dirs.ses = fullfile(dirs.pilot, bidsSubID, bidsSesID, 'beh');
     dirs.config = fullfile(dirs.pilot, 'config', 'ACOUSTIC');   % Directs test and pilot data to be saved into the project pilot directory
 else
-    dirs.sub = fullfile(dirs.projRepo, bidsSubID);
-    dirs.ses = fullfile(dirs.projRepo, bidsSubID, bidsSesID, 'beh');    % Directs study data to be saved into the project directory
+    dirs.sub = fullfile(dirs.data, bidsSubID);
+    dirs.ses = fullfile(dirs.data, bidsSubID, bidsSesID, 'beh');    % Directs study data to be saved into the project directory
 end
 
 % create structure to save experimental parameters
@@ -145,7 +145,7 @@ prompt1 = {sprintf('Check the following for \nSubject: %s\nSession: %d\n\n Gende
     subjectID, session), 'Run #', ...
     'gainAdapt? (formants)','Which PCF?', ...
     'PreEmphasis (formants)','nLPC','Which OST?','FB Value? (1=No noise)'};
-defaultInput = {gender, num2str(runNum), '0', '_nogain30', '.98', ...
+defaultInput = {gender, num2str(runNum), '0', '_noGain30', '.98', ...
     num2str(nLPC),'_pthresh02','1'};
 dlgtitgle = 'Config';
 runPrompt = inputdlg(prompt1, dlgtitgle, dimsLines, defaultInput);
@@ -336,19 +336,21 @@ for ii = 1:expParams.numTrials
 
     % setup
     rampTime = .01; % Ramp is typically set to be at least 10 ms. 10 ms is considered a sudden perturbation
+    pertJitter = 0; 
+    measurePert = 'formant'; 
 
     % Create OST files for each trial
-    createSubjOstFiles(dirs, subjectID, session, runName, 'formant', ii, rampTime, p.rmsThresh, expParams.minThreshTime, 0);
-    trialData(ii).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_formantreflex.ost', subjectID, session, runName, ii));
+    createSubjOstFiles(dirs, subjectID, session, runName, measurePert, ii, rampTime, p.rmsThresh, expParams.minThreshTime, pertJitter);
+    trialData(ii).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_%sreflex.ost', subjectID, session, runName, ii, measurePert));
 
     % Specify your PCF files. Different PCF files for
     % perturbation type
     if ismember(ii, formantUp)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq_pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
     elseif ismember(ii, formantDown)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq_pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
     elseif ismember(ii, formantNoShift)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, 'seq_pert_formant_reflex_6rules_noShift.pcf');
+        trialData(ii).pcfFN = fullfile(dirs.audapter_config, 'seq-pert_formant_reflex_6rules_noShift.pcf');
     end
 
     check_file(trialData(ii).pcfFN);

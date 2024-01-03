@@ -90,7 +90,7 @@ if contains(subjectID,'test','IgnoreCase',true) || contains(subjectID,'pilot','I
     subDir = [dirs.pilot filesep 'sub-' subjectID]; % Directs test and pilot data to be saved into the project pilot directory
     dirs.config = fullfile(dirs.pilot, 'config', 'ACOUSTIC');
 else
-    subDir = [dirs.projRepo filesep 'sub-' subjectID];  % Directs study data to be saved into the project directory
+    subDir = [dirs.data filesep 'sub-' subjectID];  % Directs study data to be saved into the project directory
 end
 
 if ~exist(subDir, 'dir')
