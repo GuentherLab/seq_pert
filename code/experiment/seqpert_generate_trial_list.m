@@ -6,6 +6,7 @@ function trials = seqpert_generate_trial_list(ops)
 vardefault('ops',struct);
 
 %% params
+% defaults are for testing phase, not training phase
 field_default('ops','subjgroup',1); 
 field_default('ops','pertconds',            {'N1',  'U1',  'D1'});
 field_default('ops','pertcon_proportions', [0.5,  0.25, 0.25]); 

@@ -1,4 +1,4 @@
-function runExp_seq_pert(subjectID, session)
+function runExp_seq_pert(subjectID, session, task)
 %
 % ABOUT
 %       Main script forz running the auditory perturbation experiments in 
@@ -76,9 +76,10 @@ ET = tic;
 % set directories
 [dirs, host] = setDirs_seq_pert();
 
+assert(exist('task') && any(strcmp(task,{'train','test'}), '3rd argument (task) must be either "train" or "test"')
+
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];
-
 if contains(subjectID,'test','IgnoreCase',true) || contains(subjectID,'pilot','IgnoreCase',true)
     dirs.sub = fullfile(dirs.pilot, bidsSubID);
     dirs.ses = fullfile(dirs.pilot, bidsSubID, bidsSesID, 'beh');
@@ -166,9 +167,6 @@ expParams.fb = str2num(runPrompt{8});
 gender = expParams.gender;
 
 %%% CONFIGURE TASK-SPECIFIC PARAMETERS %%%
-        
-% Practice or Experimental Run?
-runType = questdlg('What kind of run is this?','Run Type','Practice Run','Experimental Run','Practice Run');
 
 runName = ['run-' num2str(expParams.runNum)];
 
@@ -210,8 +208,26 @@ if exist([fName '.mat'], 'file') == 2
 end
 
 %%% GENERATE STIM LIST %%%
-randOps.subjgroup = group; 
-StimListSet = seqpert_generate_trial_list(randOps);
+stimGenOps.subjgroup = group; 
+switch task
+    case 'train'
+        stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
+        stimGenOps.learcon_reps_per_name = [ 120   ,   15     ]; % ~52mins.... 1:2 ratio of nonnative learned to native.... there are 4x as many natives
+        stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.pertconds =          {'N1'};  % no perturbation during training
+        stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
+        stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
+
+    case 'test'
+        stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
+        stimGenOps.learcon_reps_per_name = [15,        60,        15]; 
+        stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
+        stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]); 
+        stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
+        
+end
+StimListSet = seqpert_generate_trial_list(stimGenOps);
 
 stimName = StimListSet.stim;
 condition = StimListSet.pertcon;

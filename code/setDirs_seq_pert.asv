@@ -38,16 +38,13 @@ end
 %% Set appropriate directories for code, data input and output, based on system hostname.
 if strncmpi('scc-x02', host, 3) % Using SCC
     
-    dirs.projRepo = sprintf('/projectnb/busplab/Experiments\\%s\\', project);
-
+    % project (set per user on SCC; assumes that GitHub repo has been
+    % cloned to /projectnb/busplab/UserData/[USER])
+    
     curDir = pwd;
     
     % pilot
     dirs.pilot = fullfile('/projectnb/busplab/Experiments/', pilot);
-
-    dirs.conn = 
-
-    dirs.spm = 
 
 else
     switch host
@@ -56,6 +53,8 @@ else
             
             % project
             dirs.projRepo = sprintf('C:\\%s\\', project);
+            
+            dirs.scc = sprintf('C:\\%s\\', project);
             
             % pilot
             dirs.pilot = sprintf('C:\\%s\\', pilot);
@@ -69,8 +68,11 @@ else
             dirs.spm = 'C:\speechres\spm12\';
             dirs.conn = 'C:\speechres\conn\';
             dirs.FLvoice = 'C:\speechres\FLvoice\';
+            
+            % add AudDev path for support functions
+            addpath(genpath('C:\AudDev'));
 
-        case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
+        case {'677-GUE-WL-0010' % Andrew Meier laptop
             pkgdir = 'C:\docs\code';
             dirs.audapter_mex = [pkgdir filesep 'audapter' filesep 'audapter_mex'];
             dirs.audapter_matlab = [pkgdir filesep 'audapter' filesep 'audapter_matlab'];
@@ -109,9 +111,6 @@ dirs.stim = fullfile(dirs.code, 'experiment','stimLists');
 % config
 dirs.config = fullfile(dirs.projRepo, 'config', 'ACOUSTIC');
 dirs.audapter_config = fullfile(dirs.config, 'audapter');
-
-% not sure what dirs.scc is used for; delete if it's not important for flvoice or qcgui
-dirs.scc = dirs.projRepo; 
 
 %% add paths to folders and subfolders
 paths_to_add = {dirs.projRepo;...
