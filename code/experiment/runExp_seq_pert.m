@@ -40,6 +40,7 @@ function runExp_seq_pert(subjectID, session, task)
 %
 % INPUTS                    subjectID (e.g., PPT001, pilot001)
 %                           session # (1, 2)
+%                           task - either 'train' or 'test'
 %
 % OUTPUTS (saved to C\:DATA\seq_pert\SubjectID\Session\beh)
 %                           seq_pert data structure
@@ -76,7 +77,7 @@ ET = tic;
 % set directories
 [dirs, host] = setDirs_seq_pert();
 
-assert(exist('task') && any(strcmp(task,{'train','test'}), '3rd argument (task) must be either "train" or "test"')
+assert(exist('task') && any(strcmp(task,{'train','test'})), '3rd argument (task) must be either "train" or "test"')
 
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];
@@ -223,7 +224,7 @@ switch task
         stimGenOps.learcon_reps_per_name = [15,        60,        15]; 
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
-        stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]); 
+        stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
         
 end

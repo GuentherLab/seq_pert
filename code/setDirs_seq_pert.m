@@ -12,7 +12,7 @@ function [dirs, host] = setDirs_seq_pert()
 %
 %% default to AudDev as project
 project = 'seq-pert';
-pilot = [project filesep 'data' filesep 'pilot'];
+pilotstring = [project filesep 'data' filesep 'pilot'];
 
 %% Determine hostname of system
 % This section looks for the 'local' hostname of the computer running the
@@ -38,16 +38,18 @@ end
 %% Set appropriate directories for code, data input and output, based on system hostname.
 if strncmpi('scc-x02', host, 3) % Using SCC
     
-    dirs.projRepo = sprintf('/projectnb/busplab/Experiments\\%s\\', project);
+    % on SCC, keep code in 'project' and subbject data in 'projectnb'
+    dirs.projRepo = sprintf('/project/busplab/software\\%s\\', 'seq_pert');
+    dirs.data = sprintf('/projectnb/busplab/Experiments\\%s\\', project);
 
-    curDir = pwd;
-    
-    % pilot
-    dirs.pilot = fullfile('/projectnb/busplab/Experiments/', pilot);
+    dirs.pilot = fullfile('/projectnb/busplab/Experiments/', pilotstring);
+    dirs.conn = '/project/busplab/software/conn'; 
+    dirs.spm = '/project/busplab/software/spm12'; 
+    dris.FLvoice = '/project/busplab/software/FLvoice'; 
 
-    dirs.conn = 
-
-    dirs.spm = 
+    dirs.audapter_mex = '';
+    dirs.audapter_matlab = '';
+    dirs.commonmcode = '';
 
 else
     switch host
@@ -55,10 +57,10 @@ else
         case '677-GUE-WD-0013' % Sound booth computer
             
             % project
-            dirs.projRepo = sprintf('C:\\%s\\', project);
+            dirs.projRepo = sprintf('C:\\%s\\', 'seq_pert');
             
             % pilot
-            dirs.pilot = sprintf('C:\\%s\\', pilot);
+            dirs.pilot = sprintf('C:\\%s\\', pilotstring);
           
             % audapter & related repos
             dirs.audapter_mex = 'C:\speechres\audapter_mex';
@@ -72,9 +74,10 @@ else
 
         case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
             pkgdir = 'C:\docs\code';
+            dirs.projRepo = [pkgdir filesep 'seq_pert']; 
             dirs.audapter_mex = [pkgdir filesep 'audapter' filesep 'audapter_mex'];
             dirs.audapter_matlab = [pkgdir filesep 'audapter' filesep 'audapter_matlab'];
-            dirs.audapter_commoncode = [pkgdir filesep 'audapter' filesep 'commoncode'];
+            dirs.audapter_commonmcode = [pkgdir filesep 'audapter' filesep 'commonmcode'];
             dirs.spm = [pkgdir filesep 'spm12'];
             dirs.conn = [pkgdir filesep 'conn'];
             dirs.FLvoice  = [pkgdir filesep 'FLvoice'];
@@ -85,6 +88,10 @@ else
             
             return
     end
+
+   % subject data.... use gitignore to not upload these large data files to github
+    dirs.data = [dirs.projRepo filesep 'data'];  
+
 end
 
 
@@ -92,19 +99,10 @@ end
 %% paths common to all hosts
 % ...... these don't all need to be added to the path; save for later reference
 % code
-dirs.code = fullfile(dirs.projRepo, 'code');
+dirs.code = [dirs.projRepo filesep 'code'];
 
 % stimuli
-dirs.stim = fullfile(dirs.code, 'experiment','stimLists');
-
-% config
-dirs.config = fullfile(dirs.projRepo, 'config', 'ACOUSTIC');
-
-% subject data.... use gitignore to not upload these large data files to github
-dirs.data = [dirs.projRepo filesep 'data']; 
-
-% stimuli
-dirs.stim = fullfile(dirs.code, 'experiment','stimLists');
+dirs.stim = [dirs.code, filesep, 'experiment', filesep, 'stimLists'];
 
 % config
 dirs.config = fullfile(dirs.projRepo, 'config', 'ACOUSTIC');
@@ -115,7 +113,7 @@ dirs.scc = dirs.projRepo;
 
 %% add paths to folders and subfolders
 paths_to_add = {dirs.projRepo;...
-                dirs.projRepo filesep 'experiment';...
+                [dirs.projRepo filesep 'code' filesep 'experiment'];...
                 dirs.audapter_commonmcode;...
                 dirs.spm;...
                 dirs.conn;...
@@ -123,8 +121,11 @@ paths_to_add = {dirs.projRepo;...
                 };
 genpaths_to_add = {dirs.audapter_matlab;...
                     dirs.audapter_mex;...
-                    }
-addpath(paths_to_add(:))
-addpath(gepath(genpaths_to_add(:)))
+                    };
+
+genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false); 
+
+addpath(paths_to_add{:})
+addpath(genpaths_to_add{:})
 
 end
