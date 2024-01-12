@@ -292,7 +292,7 @@ p.fb = expParams.fb;
 if p.fb == 3, p.fb3Gain = .05;
 end
 
-expParams.minThreshTime = 0.04; % min time for rms to be above rmsThresh to be considered voice onset
+expParams.minThreshTime = 0.06; % min time for rms to be above rmsThresh to be considered voice onset
 % note: minThreshTime needs to be equal or lower than pertJitterMin
 
 checkAudapterParams(p);

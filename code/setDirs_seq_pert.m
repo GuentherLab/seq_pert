@@ -132,4 +132,4 @@ genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false);
 addpath(paths_to_add{:})
 addpath(genpaths_to_add{:})
 
-end
+flvoice('ROOT', dirs.data)
