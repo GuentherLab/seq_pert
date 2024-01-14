@@ -45,7 +45,8 @@ if strncmpi('scc-x02', host, 3) % Using SCC
     dirs.pilot = fullfile('/projectnb/busplab/Experiments/', pilotstring);
     dirs.conn = '/project/busplab/software/conn'; 
     dirs.spm = '/project/busplab/software/spm12'; 
-    dris.FLvoice = '/project/busplab/software/FLvoice'; 
+    dirs.FLvoice = '/project/busplab/software/FLvoice'; 
+    dirs.AudDev = '/projectnb/busplab/Experiments/AudDev'; 
 
     dirs.audapter_mex = '';
     dirs.audapter_matlab = '';
@@ -57,7 +58,7 @@ else
         case '677-GUE-WD-0013' % Sound booth computer
             
             % project
-            dirs.projRepo = sprintf('C:\\%s\\', 'seq_pert');
+            dirs.projRepo = sprintf('C:\\%s\\', 'seq-pert');
             
             % pilot
             dirs.pilot = sprintf('C:\\%s\\', pilotstring);
@@ -65,12 +66,13 @@ else
             % audapter & related repos
             dirs.audapter_mex = 'C:\speechres\audapter_mex';
             dirs.audapter_matlab = 'C:\speechres\audapter_matlab';
-            dirs.commonmcode = 'C:\speechres\commonmcode';
+            dirs.audapter_commonmcode = 'C:\speechres\commonmcode';
+            dirs.AudDev = 'C:\AudDev'; 
             
             % analysis software
-            dirs.spm = 'C:\speechres\spm12\';
-            dirs.conn = 'C:\speechres\conn\';
-            dirs.FLvoice = 'C:\speechres\FLvoice\';
+            dirs.spm = 'C:\speechres\spm12';
+            dirs.conn = 'C:\speechres\conn';
+            dirs.FLvoice = 'C:\speechres\FLvoice';
 
         case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
             pkgdir = 'C:\docs\code';
@@ -81,6 +83,7 @@ else
             dirs.spm = [pkgdir filesep 'spm12'];
             dirs.conn = [pkgdir filesep 'conn'];
             dirs.FLvoice  = [pkgdir filesep 'FLvoice'];
+            dirs.AudDev = [pkgdir filesep 'AudDev']; 
             
         otherwise
             
@@ -114,6 +117,7 @@ dirs.scc = dirs.projRepo;
 %% add paths to folders and subfolders
 paths_to_add = {dirs.projRepo;...
                 [dirs.projRepo filesep 'code' filesep 'experiment'];...
+                [dirs.AudDev filesep 'code' filesep 'experiment'];...
                 dirs.audapter_commonmcode;...
                 dirs.spm;...
                 dirs.conn;...
@@ -128,4 +132,4 @@ genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false);
 addpath(paths_to_add{:})
 addpath(genpaths_to_add{:})
 
-end
+flvoice('ROOT', dirs.data)

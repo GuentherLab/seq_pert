@@ -1,6 +1,8 @@
-
 % SEQPERT_GENERATE_TRIAL_LIST: create a table of trial conditions and
 % stimuli to use in the seq-pert experiment
+% 
+% algorithm for avoiding repeats is inefficient and may hang infinitely....
+% .... to avoid endless looping, reduce repetitions per condition and compensate by increasing ops.copy_trialtable_n_times
 
 function trials = seqpert_generate_trial_list(ops)
 vardefault('ops',struct);
@@ -16,6 +18,8 @@ field_default('ops','learnconds',          {'nat','nn_learned','nn_novel'});
 field_default('ops','learcon_reps_per_name',[5,        20,        5]); 
 field_default('ops','learn_max_repeats', 3); 
 
+field_default('ops','copy_trialtable_n_times', 3); % number of copies to make of trialtable
+
 field_default('ops','stimlist_master_filename','stim_list_master.xlsx'); 
 
 
@@ -24,6 +28,10 @@ pertcon_reps_per_cycle = ops.pertcon_proportions * 1/min(ops.pertcon_proportions
 pertcon_cycle = [];
 for ipertcon = 1:length(ops.pertconds)
     pertcon_cycle = [pertcon_cycle; repmat(ops.pertconds(ipertcon), pertcon_reps_per_cycle(ipertcon), 1)];
+end
+
+if ischar(ops.subjgroup)
+    ops.subjgroup = str2num(ops.subjgroup);
 end
 
 stimlist_master = readtable(ops.stimlist_master_filename); 
@@ -54,6 +62,7 @@ end
 ntrials = height(trials);
 
 %% randomize trial order and check for excessive repeats
+% note - this method is not efficient, and can hang infinitely if max_repeats parameters are too low
 rerandomize = 1; % initialize
 while rerandomize
     trials = trials(randperm(ntrials),:); 
@@ -82,5 +91,8 @@ while rerandomize
         end 
     end
 end
+
+%% stack copies of the trialtable
+trials = repmat(trials, ops.copy_trialtable_n_times, 1); 
 
 end

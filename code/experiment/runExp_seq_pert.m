@@ -62,14 +62,17 @@ function runExp_seq_pert(subjectID, session, task)
 %                               stimLists subdirectories)
 %
 %                           
-% Developed in Matlab 2019b by many Guenther Speech Lab Members 2020-2023:
-% Liz Heller Murray, Ricky Falsini, Elaine Kearney, Jordan Manes, Jason Tourville, Alfonso Nieto-Castanon, Alexander Acosta
+% AudDev developed in Matlab 2019b by many Guenther Speech Lab Members 2020-2023:
+% Liz Heller Murray, Ricky Falsini, Elaine Kearney, Jordan Manes, Jason Tourville, Alfonso Nieto-Castanon
+%%%%% seq-pert implementation by: Alexander Acosta, Andrew Meier, Anita Kelcher
 
 %% initiate
 %
 % This section locates the relevant files and directories and loads the
 % subject's voice calibration data
 %
+
+break_every_n_trials = 75; 
 
 close all
 ET = tic;
@@ -211,21 +214,23 @@ end
 %%% GENERATE STIM LIST %%%
 stimGenOps.subjgroup = group; 
 switch task
-    case 'train'
+    case 'train'  %%%% need to keep reps_per_name small (and increase copy_trialtable_n_times) to avoid infinite looping during randomization
         stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
-        stimGenOps.learcon_reps_per_name = [ 120   ,   15     ]; % ~52mins.... 1:2 ratio of nonnative learned to native.... there are 4x as many natives
+        stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
         stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
+        stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
 
     case 'test'
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
-        stimGenOps.learcon_reps_per_name = [15,        60,        15]; 
+        stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable
         
 end
 StimListSet = seqpert_generate_trial_list(stimGenOps);
@@ -246,7 +251,7 @@ s = RandStream.create('mt19937ar','seed',sum(100*clock)); % Not currently used
 RandStream.setGlobalStream(s);
 
 % set up visualization
-annoStr = setUpVisAnnot(); 
+annoStr = setUpVisAnnot_seq_pert(); 
 
 % set up audio device
 setAudioDevice(0);
@@ -287,7 +292,7 @@ p.fb = expParams.fb;
 if p.fb == 3, p.fb3Gain = .05;
 end
 
-expParams.minThreshTime = 0.04; % min time for rms to be above rmsThresh to be considered voice onset
+expParams.minThreshTime = 0.06; % min time for rms to be above rmsThresh to be considered voice onset
 % note: minThreshTime needs to be equal or lower than pertJitterMin
 
 checkAudapterParams(p);
@@ -324,22 +329,30 @@ end
 
 %% trial loop
 % determines audapter and stimulus data for trial
-for ii = 1:expParams.numTrials
+for itrial = 1:expParams.numTrials
     
     % print progress to window
-    fprintf('\nRun %d, trial %d/%d\n', expParams.runNum, ii, expParams.numTrials);
+    fprintf('\nRun %d, trial %d/%d\n', expParams.runNum, itrial, expParams.numTrials);
+    
+     % take break if we are at appropriate trial
+    if mod(itrial, break_every_n_trials) == 0 && itrial ~= expParams.numTrials
+        set(annoStr.Pause, 'Visible','on'); % show pause message
+        pause; % wait for keypress
+        set(annoStr.Pause, 'Visible','off');
+        pause(1)
+    end
     
     % turn on fixation 'Cross'
     set(annoStr.Plus, 'Visible','on');
     
     % pull out the correct stim/condition from the list & save to trialData
-    annoStr.Stim.String = stimName{ii};
-    trialData(ii).stimName = stimName{ii};
-    trialData(ii).condLabel = condition{ii};
-    trialData(ii).learncon = learncon{ii};
+    annoStr.Stim.String = stimName{itrial};
+    trialData(itrial).stimName = stimName{itrial};
+    trialData(itrial).condLabel = condition{itrial};
+    trialData(itrial).learncon = learncon{itrial};
 
     % find and read sound file for audio stimulus presentations
-    soundFile = fullfile(soundFilePath, sprintf('%s.wav',lower(stimName{ii})));
+    soundFile = fullfile(soundFilePath, sprintf('%s.wav',lower(stimName{itrial})));
     [soundY, Fs] = audioread(soundFile);
     if Fs ~= 44100; error('Please make sure audio files for stimulus is sampled correctly'); end
 
@@ -357,24 +370,24 @@ for ii = 1:expParams.numTrials
     measurePert = 'formant'; 
 
     % Create OST files for each trial
-    createSubjOstFiles(dirs, subjectID, session, runName, measurePert, ii, rampTime, p.rmsThresh, expParams.minThreshTime, pertJitter);
-    trialData(ii).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_%sreflex.ost', subjectID, session, runName, ii, measurePert));
+    createSubjOstFiles(dirs, subjectID, session, runName, measurePert, itrial, rampTime, p.rmsThresh, expParams.minThreshTime, pertJitter);
+    trialData(itrial).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_%sreflex.ost', subjectID, session, runName, itrial, measurePert));
 
     % Specify your PCF files. Different PCF files for
     % perturbation type
-    if ismember(ii, formantUp)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
-    elseif ismember(ii, formantDown)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
-    elseif ismember(ii, formantNoShift)
-        trialData(ii).pcfFN = fullfile(dirs.audapter_config, 'seq-pert_formant_reflex_6rules_noShift.pcf');
+    if ismember(itrial, formantUp)
+        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
+    elseif ismember(itrial, formantDown)
+        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
+    elseif ismember(itrial, formantNoShift)
+        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, 'seq-pert_formant_reflex_6rules_noShift.pcf');
     end
 
-    check_file(trialData(ii).pcfFN);
-    Audapter('pcf', trialData(ii).pcfFN, 0);
+    check_file(trialData(itrial).pcfFN);
+    Audapter('pcf', trialData(itrial).pcfFN, 0);
 
-    check_file(trialData(ii).ostFN);
-    Audapter('ost', trialData(ii).ostFN, 0);
+    check_file(trialData(itrial).ostFN);
+    Audapter('ost', trialData(itrial).ostFN, 0);
 
     %% Initialize Audapter
     checkAudapterParams(p);
@@ -417,13 +430,13 @@ for ii = 1:expParams.numTrials
     TIME_PERT_ACTUALLYEND=ManageTime('current', CLOCK);
     pause(0.01) % needed so doesn't lag
     
-    trialData(ii).audapData = AudapterIO('getData');
+    trialData(itrial).audapData = AudapterIO('getData');
     
     %% determine voice onset and perturbation onset times
     
     % Find rmsOnsetIdx - determine if voicing occurred
     minThreshTimeFrames = (expParams.minThreshTime*p.sr)/p.frameLen; % convert minThreshTime to # frames in audapData
-    rmsidx = find(diff([0; trialData(ii).audapData.rms(:,1) > p.rmsThresh; 0])); % finds voice onset and offset
+    rmsidx = find(diff([0; trialData(itrial).audapData.rms(:,1) > p.rmsThresh; 0])); % finds voice onset and offset
     % This should be checking when you go above a minimumm threshold
     rmsOnsetIdx = rmsidx(-1+2*find(rmsidx(2:2:end)-rmsidx(1:2:end-1) >= minThreshTimeFrames,1));
     % when it goes above the threshold, does it stay there for a long
@@ -432,14 +445,14 @@ for ii = 1:expParams.numTrials
     % Determine voice onset
     if isempty(rmsOnsetIdx) %if no index was found greater than the voicing threshold
         timetovoice = nonSpeechDelay;
-        trialData(ii).onsetDetected = 0;
+        trialData(itrial).onsetDetected = 0;
     else % if voicing was detected
         timetovoice = ((rmsOnsetIdx(1))*p.frameLen)/p.sr; %first time crosses rms threshold; note: this is accurate +- 1 frameLen; note: timetovoice marks the beginning of minThreshTime window
-        trialData(ii).onsetDetected = 1;
+        trialData(itrial).onsetDetected = 1;
         nonSpeechDelay = .5*nonSpeechDelay + .5*timetovoice;
     end
-    trialData(ii).nonSpeechDelay = NaN;
-    trialData(ii).rmsVoiceOnset = timetovoice;
+    trialData(itrial).nonSpeechDelay = NaN;
+    trialData(itrial).rmsVoiceOnset = timetovoice;
 
     % Create values for timingTrial field of trialData structure
     TIME_VOICE_START = TIME_TRIAL_ACTUALLYSTART + timetovoice;
@@ -451,7 +464,7 @@ for ii = 1:expParams.numTrials
     
     % This factor is for converting between the frame length of the
     % recorded signal and its length in seconds
-    sampleFactor = trialData(ii).audapData.params.frameLen/trialData(ii).audapData.params.sr;
+    sampleFactor = trialData(itrial).audapData.params.frameLen/trialData(itrial).audapData.params.sr;
 
     % Determine perturbation onset
     % If this is a formant trial OR it's a pitch trial that uses phase
@@ -462,36 +475,36 @@ for ii = 1:expParams.numTrials
     % begun. If using an OST file where rule 3 does not begin the ramp,
     % then this must be changed.
     TIME_PERT_ACTUALLYSTART = TIME_TRIAL_ACTUALLYSTART...
-        + (min([nan;find(trialData(ii).audapData.ost_stat(:,1) == 4,1)])...
+        + (min([nan;find(trialData(itrial).audapData.ost_stat(:,1) == 4,1)])...
         * sampleFactor);
-    trialData(ii).reference_time = TIME_PERT_ACTUALLYSTART - TIME_TRIAL_ACTUALLYSTART;
+    trialData(itrial).reference_time = TIME_PERT_ACTUALLYSTART - TIME_TRIAL_ACTUALLYSTART;
 
-    TIME_PERT_END = TIME_TRIAL_ACTUALLYSTART + numel(trialData(ii).audapData.signalIn)/p.sr;  % or TIME_TRIAL_ACTUALLYSTART + expParams.recordLen?
+    TIME_PERT_END = TIME_TRIAL_ACTUALLYSTART + numel(trialData(itrial).audapData.signalIn)/p.sr;  % or TIME_TRIAL_ACTUALLYSTART + expParams.recordLen?
     
     TIME_SCAN_START = NaN;
     TIME_SCAN_ACTUALLYSTART=NaN;
     TIME_SCAN_END = NaN;
     
     % plot trial data
-    pTitle = sprintf('Run %d  Trial %d  Condition: %s', expParams.runNum, ii, trialData(ii).condLabel);
+    pTitle = sprintf('Run %d  Trial %d  Condition: %s', expParams.runNum, itrial, trialData(itrial).condLabel);
      set(sigplotTitle,'String',pTitle);
      
     % No pitch trials are being performed, time-domain is being input as a
     % placeholder
-    plotMicSignal(p, trialData, ii, h1, h2, h3, 'time-domain');
+    plotMicSignal(p, trialData, itrial, h1, h2, h3, 'time-domain');
     
     % trial timing
-    trialData(ii).timingTrial = [TIME_TRIAL_START; TIME_TRIAL_ACTUALLYSTART; TIME_VOICE_START; TIME_PERT_START; TIME_PERT_ACTUALLYSTART; TIME_PERT_END; TIME_PERT_ACTUALLYEND; TIME_SCAN_START; TIME_SCAN_ACTUALLYSTART; TIME_SCAN_END]; % note: we also prefer to record absolute times for analyses of BOLD signal
+    trialData(itrial).timingTrial = [TIME_TRIAL_START; TIME_TRIAL_ACTUALLYSTART; TIME_VOICE_START; TIME_PERT_START; TIME_PERT_ACTUALLYSTART; TIME_PERT_END; TIME_PERT_ACTUALLYEND; TIME_SCAN_START; TIME_SCAN_ACTUALLYSTART; TIME_SCAN_END]; % note: we also prefer to record absolute times for analyses of BOLD signal
     
     TIME_TRIAL_START = TIME_TRIAL_START + expParams.iti; % when should next trial start
     
     %% save for each trial (in case of computer/matlab failure)
-    trialData(ii).p = p;
+    trialData(itrial).p = p;
     
     %JT save time updates 8/10/21: save only data from current trial
-    tData = trialData(ii); %.002s
+    tData = trialData(itrial); %.002s
     fName_trial = fullfile(dirs.run,sprintf('sub-%s_ses-%d_%s_task-%s_trial-%s', ...
-        expParams.subjectID, expParams.session, runName, 'aud-reflexive', num2str(ii)));
+        expParams.subjectID, expParams.session, runName, 'aud-reflexive', num2str(itrial)));
     save([fName_trial '.mat'], 'tData');
     
     %% adaptive voice thresholding - update voice threshold based on RMS of previous trials
@@ -505,11 +518,11 @@ for ii = 1:expParams.numTrials
     
     if isfield(expParams,'voiceCal')&&expParams.voiceCal.threshType == 1  %If using automatic/adaptive thresholding
         if ~isempty(rmsOnsetIdx)    % voice onset detected
-            minRms = prctile(trialData(ii).audapData.rms(:,1),10);
-            maxRms = prctile(trialData(ii).audapData.rms(rmsOnsetIdx:end,1),90);
+            minRms = prctile(trialData(itrial).audapData.rms(:,1),10);
+            maxRms = prctile(trialData(itrial).audapData.rms(rmsOnsetIdx:end,1),90);
         else
             minRms = 0;
-            maxRms = prctile(trialData(ii).audapData.rms(:,1),90);
+            maxRms = prctile(trialData(itrial).audapData.rms(:,1),90);
         end
         tmpRmsThresh = minRms + (maxRms-minRms)/10;
         p.rmsThresh = .9*p.rmsThresh + .1*tmpRmsThresh;
