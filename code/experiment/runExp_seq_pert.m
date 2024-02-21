@@ -293,6 +293,7 @@ if p.fb == 3, p.fb3Gain = .05;
 end
 
 expParams.minThreshTime = 0.06; % min time for rms to be above rmsThresh to be considered voice onset
+%expParams.minThreshTime = 1; % testing extremely long rms threshold time
 % note: minThreshTime needs to be equal or lower than pertJitterMin
 
 checkAudapterParams(p);
