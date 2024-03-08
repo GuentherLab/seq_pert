@@ -226,7 +226,9 @@ switch task
     case 'test'
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
         stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
+        %stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+        %stimGenOps.learn_max_repeats = 1; % changing number of trials for testing purposes - AM+AK
         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
@@ -284,7 +286,9 @@ Audapter info; % lets you know which sound card is being used
 p = setAudapterParams(expParams.gender, 'formant');
 
 p.nLPC = nLPC; % Linear Predictive Coding coefficient for formant tracking
-p.rmsThresh = voiceCal.rmsThresh;
+expParams.rms_multiplier = 1; % new parameter 3/8/24 to manipulate rmsThresh - AM+AK
+%p.rmsThresh = voiceCal.rmsThresh;
+p.rmsThresh = voiceCal.rmsThresh*expParams.rms_multiplier;
 
 % feedback noise
 p.fb = expParams.fb;
