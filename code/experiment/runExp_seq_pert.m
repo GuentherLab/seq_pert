@@ -225,14 +225,15 @@ switch task
 
     case 'test'
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
-        stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
-        %stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
+        %stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
+        stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
         %stimGenOps.learn_max_repeats = 1; % changing number of trials for testing purposes - AM+AK
         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
-        stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable
+        %stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable
+        stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
         
 end
 StimListSet = seqpert_generate_trial_list(stimGenOps);
@@ -286,7 +287,7 @@ Audapter info; % lets you know which sound card is being used
 p = setAudapterParams(expParams.gender, 'formant');
 
 p.nLPC = nLPC; % Linear Predictive Coding coefficient for formant tracking
-expParams.rms_multiplier = 1; % new parameter 3/8/24 to manipulate rmsThresh - AM+AK
+expParams.rms_multiplier = 20; % new parameter 3/8/24 to manipulate rmsThresh - AM+AK
 %p.rmsThresh = voiceCal.rmsThresh;
 p.rmsThresh = voiceCal.rmsThresh*expParams.rms_multiplier;
 
