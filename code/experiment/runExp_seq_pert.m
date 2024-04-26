@@ -287,7 +287,7 @@ Audapter info; % lets you know which sound card is being used
 p = setAudapterParams(expParams.gender, 'formant');
 
 p.nLPC = nLPC; % Linear Predictive Coding coefficient for formant tracking
-expParams.rms_multiplier = 20; % new parameter 3/8/24 to manipulate rmsThresh - AM+AK
+expParams.rms_multiplier = 0.5; % new parameter 3/8/24 to manipulate rmsThresh - AM+AK
 %p.rmsThresh = voiceCal.rmsThresh;
 p.rmsThresh = voiceCal.rmsThresh*expParams.rms_multiplier;
 
@@ -297,8 +297,8 @@ p.fb = expParams.fb;
 if p.fb == 3, p.fb3Gain = .05;
 end
 
-expParams.minThreshTime = 0.06; % min time for rms to be above rmsThresh to be considered voice onset
-%expParams.minThreshTime = 1; % testing extremely long rms threshold time
+%expParams.minThreshTime = 0.06; % min time for rms to be above rmsThresh to be considered voice onset
+expParams.minThreshTime = 0.03; % testing changing the rms threshold time - AK
 % note: minThreshTime needs to be equal or lower than pertJitterMin
 
 checkAudapterParams(p);
@@ -372,11 +372,11 @@ for itrial = 1:expParams.numTrials
 
     % setup
     rampTime = .01; % Ramp is typically set to be at least 10 ms. 10 ms is considered a sudden perturbation
-    pertJitter = 0; 
+    pertDelay = 0; % AM+AK using this to create delay 
     measurePert = 'formant'; 
 
     % Create OST files for each trial
-    createSubjOstFiles(dirs, subjectID, session, runName, measurePert, itrial, rampTime, p.rmsThresh, expParams.minThreshTime, pertJitter);
+    createSubjOstFiles(dirs, subjectID, session, runName, measurePert, itrial, rampTime, p.rmsThresh, expParams.minThreshTime, pertDelay);
     trialData(itrial).ostFN = fullfile(dirs.run, sprintf('sub-%s_ses-%d_%s_task-aud_trial-%d_%sreflex.ost', subjectID, session, runName, itrial, measurePert));
 
     % Specify your PCF files. Different PCF files for
