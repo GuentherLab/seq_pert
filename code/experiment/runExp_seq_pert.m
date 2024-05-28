@@ -336,13 +336,6 @@ end
 % # Initialize Taskcontrol for manual pause button
 taskState = struct('task_isRunning',true,'pause_requested',false,'pause_isActive',false);
 figTC=taskControlGUI_release(taskState);
-% # Initialize EvtTime
-% % % % % % % % % % if FLAG_SEND_EVENT_STIM_ONSET
-% % % % % % % % % %     evt = []; evtCode = [];
-% % % % % % % % % %     taskEvent_fname = fullfile(filepath,sprintf('sub-%s_ses-%d_run-%d_task-%s_taskEvents.mat',...
-% % % % % % % % % %         expParams.subject, expParams.session, expParams.run, expParams.task));
-% % % % % % % % % % end
-
 
 %% trial loop
 % determines audapter and stimulus data for trial
