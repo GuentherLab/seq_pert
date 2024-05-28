@@ -333,6 +333,17 @@ if audioStim
     [beep2, ~] = audioread(fullfile(soundFilePath, 'beep2.wav'));
 end
 
+% # Initialize Taskcontrol for manual pause button
+taskState = struct('task_isRunning',true,'pause_requested',false,'pause_isActive',false);
+figTC=taskControlGUI_release(taskState);
+% # Initialize EvtTime
+% % % % % % % % % % if FLAG_SEND_EVENT_STIM_ONSET
+% % % % % % % % % %     evt = []; evtCode = [];
+% % % % % % % % % %     taskEvent_fname = fullfile(filepath,sprintf('sub-%s_ses-%d_run-%d_task-%s_taskEvents.mat',...
+% % % % % % % % % %         expParams.subject, expParams.session, expParams.run, expParams.task));
+% % % % % % % % % % end
+
+
 %% trial loop
 % determines audapter and stimulus data for trial
 for itrial = 1:expParams.numTrials
@@ -340,6 +351,31 @@ for itrial = 1:expParams.numTrials
     % print progress to window
     fprintf('\nRun %d, trial %d/%d\n', expParams.runNum, itrial, expParams.numTrials);
     
+    %%%%% handle pause button
+    if ~exist('figTC','var') || ~ishandle(figTC)
+        figTC=taskControlGUI_release(taskState);
+    end
+    ud = get(figTC,'UserData'); taskState = ud.taskState;
+    if taskState.pause_requested
+        % Create a timer that fires every second
+        % pause requested => start pause
+        taskState.pause_isActive = 1;
+        ud.taskState = taskState; set(figTC,'UserData',ud);
+        ud.updateGUIBasedOnTaskState();
+        fprintf('Task Paused from TaskControl_Panel ...\n')
+        while taskState.pause_requested 
+            pause(0.2)
+            ud = get(figTC,'UserData'); taskState = ud.taskState;
+        end
+        % resuming
+        ud = get(figTC,'UserData'); taskState = ud.taskState;
+        %assert(~taskState.pause_requested,'pause_requested should be 0, as task is resuming')
+        taskState.pause_isActive = 0; % no longer in pause
+        ud.taskState = taskState; set(figTC,'UserData',ud); 
+        ud.updateGUIBasedOnTaskState();
+        fprintf('Task Resumed ...\n')
+    end
+
      % take break if we are at appropriate trial
     if mod(itrial, break_every_n_trials) == 0 && itrial ~= expParams.numTrials
         set(annoStr.Pause, 'Visible','on'); % show pause message
