@@ -1,4 +1,4 @@
-function figTC=taskControlGUI(taskState)
+function figTC=taskControlGUI_release(taskState)
     
     pause_requested = taskState.pause_requested;
     pause_isActive = taskState.pause_isActive;

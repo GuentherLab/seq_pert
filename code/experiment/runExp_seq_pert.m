@@ -413,7 +413,7 @@ for itrial = 1:expParams.numTrials
     if ismember(itrial, formantUp)
         trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
     elseif ismember(itrial, formantDown)
-        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
+        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['se   q-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
     elseif ismember(itrial, formantNoShift)
         trialData(itrial).pcfFN = fullfile(dirs.audapter_config, 'seq-pert_formant_reflex_6rules_noShift.pcf');
     end
