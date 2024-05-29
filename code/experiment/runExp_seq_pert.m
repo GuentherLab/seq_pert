@@ -215,14 +215,25 @@ end
 stimGenOps.subjgroup = group; 
 switch task
     case 'train'  %%%% need to keep reps_per_name small (and increase copy_trialtable_n_times) to avoid infinite looping during randomization
+%      %%%% use this version for full first training session - about 50mins
+%         stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
+%         stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
+%         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+%         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
+%         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
+%         stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
+%         stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
+
+        %%% use this version for refresher on second session, right before testing phase
         stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
         stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
         stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
-        stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
+        stimGenOps.copy_trialtable_n_times = 1; % number of copies to make of trialtable....  ~52mins
 
+        
     case 'test'
 %         %%%%% use this version for messing around with code.... 1 trial per unique stim, 18 trials total
 %         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
