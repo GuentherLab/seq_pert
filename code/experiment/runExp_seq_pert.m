@@ -224,17 +224,23 @@ switch task
         stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
 
     case 'test'
+%         %%%%% use this version for messing around with code.... 1 trial per unique stim, 18 trials total
+%         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
+%         stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
+%         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+%         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
+%         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
+%         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
+%         stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
+        
+        %%%%%% use this version for the real experiment
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
-        %stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
-        stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
+        stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
-        %stimGenOps.learn_max_repeats = 1; % changing number of trials for testing purposes - AM+AK
         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
-        %stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable
-        stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
-        
+        stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable        
 end
 StimListSet = seqpert_generate_trial_list(stimGenOps);
 
@@ -413,7 +419,7 @@ for itrial = 1:expParams.numTrials
     if ismember(itrial, formantUp)
         trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_UP' expParams.pcfSuffix '.pcf']);
     elseif ismember(itrial, formantDown)
-        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['se   q-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
+        trialData(itrial).pcfFN = fullfile(dirs.audapter_config, ['seq-pert_formant_reflex_6rules_DOWN' expParams.pcfSuffix '.pcf']);
     elseif ismember(itrial, formantNoShift)
         trialData(itrial).pcfFN = fullfile(dirs.audapter_config, 'seq-pert_formant_reflex_6rules_noShift.pcf');
     end
