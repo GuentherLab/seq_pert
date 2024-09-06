@@ -281,10 +281,11 @@ setAudioDevice(0);
 %%% This is a *hard-coded* experimental parameter, since adjusting the
 %%% recording length can mess with the OST files, since these files are
 %%% instructed to hold the perturbation for a set amount of time. 
-expParams.recordLen = 2.0;
+expParams.recordLen = 3.0; % previous value: 2.0
 
-% length the word is on screen (s)
-expParams.stimOn = expParams.recordLen - .5;
+% length the green cross is on screen (s)
+endTrial_bufferTime = 1.5;
+expParams.stimOn = expParams.recordLen - endTrial_bufferTime;
 
 % for non-speech trials, initiate the delay to "match" the expected delay associated with
 % time to voice onset
@@ -293,7 +294,7 @@ expParams.stimOn = expParams.recordLen - .5;
 nonSpeechDelay = .75;
 
 % inter-trial interval - time from start of one trial to start of the next
-expParams.iti = 4.5 + 2.5;
+expParams.iti = 6; %4.5 + 2.5
 
 %% Paradigm Configurations for audapter
 
