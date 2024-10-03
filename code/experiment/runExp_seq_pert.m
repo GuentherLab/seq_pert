@@ -221,7 +221,9 @@ switch task
 %         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
 %         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
 %         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
-%         stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
+%         stimGenOps.pert_max_repeats = inf; % only 1 
+
+pert condition, so all trials are repeats
 %         stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
 
         %%% use this version for refresher on second session, right before testing phase
@@ -231,7 +233,7 @@ switch task
         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
         stimGenOps.pert_max_repeats = inf; % only 1 pert condition, so all trials are repeats
-        stimGenOps.copy_trialtable_n_times = 1; % number of copies to make of trialtable....  ~52mins
+        stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
 
         
     case 'test'
