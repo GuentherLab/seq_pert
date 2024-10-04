@@ -41,13 +41,13 @@ for ilearncon = 1:nlearnconds
     thiscond = ops.learnconds{ilearncon};
     switch thiscond
         case 'nat'
-            stimnames_this_cond = stimlist_master.name(stimlist_master.famil==0 & stimlist_master.native==1);
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==1);
         case 'nn_learned'
-            stimnames_this_cond = stimlist_master.name(stimlist_master.famil==0 & stimlist_master.native==0 & stimlist_master.set==ops.subjgroup);
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==0 & stimlist_master.set==ops.subjgroup);
         case 'nn_novel'
-            stimnames_this_cond = stimlist_master.name(stimlist_master.famil==0 & stimlist_master.native==0 & stimlist_master.set~=ops.subjgroup);
+            stimnames_this_cond = stimlist_master.name(stimlist_master.native==0 & stimlist_master.set~=ops.subjgroup);
         case 'famil'
-            stimnames_this_cond = stimlist_master.name(stimlist_master.famil==1);
+            stimnames_this_cond = 
     end
     
     repspername = ops.learcon_reps_per_name(ilearncon); 
