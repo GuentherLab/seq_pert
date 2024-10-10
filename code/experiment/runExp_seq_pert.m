@@ -72,7 +72,12 @@ function runExp_seq_pert(subjectID, session, task)
 % subject's voice calibration data
 %
 
-break_every_n_trials = 75; 
+op.break_every_n_trials = 75; 
+op.ortho_duration = 1.5; % time that stimulus orthography is on screen (in seconds)
+op.beep_delay = 1; % delay between the stimulus offset and the go beep onset
+op.speech_window = 1.5; % period between green cross onset (also GO beep onset) and red cross onset (also STOP beep onset)
+op.recordLen = 3; % total window where subject speech is being recorded
+
 
 close all
 ET = tic;
@@ -80,7 +85,8 @@ ET = tic;
 % set directories
 [dirs, host] = setDirs_seq_pert();
 
-assert(exist('task') && any(strcmp(task,{'famil','train','test'})), '3rd argument (task) must be either "famil", "train", or "test"')
+assert(exist('task') && any(strcmp(task,{'famil','train','test','reinforce','test_short'})),...
+    '3rd argument (task) must be either "famil", "reinforce", "train", or "test"')
 
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];
@@ -216,17 +222,7 @@ stimGenOps.subjgroup = group;
 switch task
     case 'train'  %%%% need to keep reps_per_name small (and increase copy_trialtable_n_times) to avoid infinite looping during randomization
 %      %%%% use this version for full first training session - about 50mins
-%         stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
-%         stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
-%         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
-%         stimGenOps.pertconds =          {'N1'};  % no perturbation during training
-%         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
-%         stimGenOps.pert_max_repeats = inf; % only 1 
 
-%         pert condition, so all trials are repeats
-%         stimGenOps.copy_trialtable_n_times = 10; % number of copies to make of trialtable....  ~52mins
-
-        %%% use this version for refresher on second session, right before testing phase
         stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
         stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
@@ -237,15 +233,6 @@ switch task
 
         
     case 'test'
-%         %%%%% use this version for messing around with code.... 1 trial per unique stim, 18 trials total
-%         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
-%         stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
-%         stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
-%         stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
-%         stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
-%         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
-%         stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
-        
         %%%%%% use this version for the real experiment
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
         stimGenOps.learcon_reps_per_name = [5,        20,        5]; 
@@ -255,6 +242,7 @@ switch task
         stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
         stimGenOps.copy_trialtable_n_times = 3; % number of copies to make of trialtable
     case 'famil'
+        % stimuli to be run before the experiment starts on the training day with stim that won't be used in the experiment
         stimGenOps.learnconds =         {'famil'}; 
         stimGenOps.learcon_reps_per_name = [2]; 
         stimGenOps.learn_max_repeats = inf; % max times a learning condition can be repeated in a row
@@ -262,10 +250,28 @@ switch task
         stimGenOps.pertcon_proportions = [1]; 
         stimGenOps.pert_max_repeats = inf; % max times a learning condition can be repeated in a row
         stimGenOps.copy_trialtable_n_times = 1; % number of copies to make of trialtable
+    case 'reinforce'
+        % 2 blocks of training phase to be run on the day of testing, before testing, as a refresher
+        stimGenOps.learnconds =            {'nat','nn_learned'}; % all stim presented during training will be 'learned'
+        stimGenOps.learcon_reps_per_name = [ 2   ,   16     ]; % 1:2 ratio of nonnative learned to native.... there are 4x as many natives
+        stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.pertconds =          {'N1'};  % no perturbation during training
+        stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
+        stimGenOps.pert_max_repeats = inf; % only 1 
+        stimGenOps.copy_trialtable_n_times = 2; % number of copies to make of trialtable
+    case 'test_short'
+        %%%%% use this version for messing around with code.... 1 trial per unique stim, 18 trials total
+        stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
+        stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
+        stimGenOps.learn_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.pertconds =          {'N1',  'U1',  'D1'};
+        stimGenOps.pertcon_proportions = [0.5,  0.25, 0.25]; 
+        stimGenOps.pert_max_repeats = 3; % max times a learning condition can be repeated in a row
+        stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
 end
 StimListSet = seqpert_generate_trial_list(stimGenOps);
 
-stimName = StimListSet.stim;    ``
+stimName = StimListSet.stim;    
 condition = StimListSet.pertcon;
 learncon = StimListSet.learncon;
 
@@ -291,10 +297,10 @@ setAudioDevice(0);
 %%% This is a *hard-coded* experimental parameter, since adjusting the
 %%% recording length can mess with the OST files, since these files are
 %%% instructed to hold the perturbation for a set amount of time. 
-expParams.recordLen = 3.0; % previous value: 2.0
+expParams.recordLen = op.recordLen; % previous value: 2.0
 
 % length the green cross is on screen (s)
-endTrial_bufferTime = 1.5;
+endTrial_bufferTime = expParams.recordLen - op.speech_window;
 expParams.stimOn = expParams.recordLen - endTrial_bufferTime;
 
 % for non-speech trials, initiate the delay to "match" the expected delay associated with
@@ -303,8 +309,9 @@ expParams.stimOn = expParams.recordLen - endTrial_bufferTime;
 % but I'm keeping it here - Acosta
 nonSpeechDelay = .75;
 
-% inter-trial interval - time from start of one trial to start of the next
-expParams.iti = 6; %4.5 + 2.5
+% trial period - time from start of one trial to start of the next
+expParams.trialPeriod = 6;
+% inter-trial interval = expParms.trialPeriod - op.ortho_duration - op.beep_delay - op.speech_window
 
 %% Paradigm Configurations for audapter
 
@@ -398,7 +405,7 @@ for itrial = 1:expParams.numTrials
     end
 
      % take break if we are at appropriate trial
-    if mod(itrial, break_every_n_trials) == 0 && itrial ~= expParams.numTrials
+    if mod(itrial, op.break_every_n_trials) == 0 && itrial ~= expParams.numTrials
         set(annoStr.Pause, 'Visible','on'); % show pause message
         pause; % wait for keypress
         set(annoStr.Pause, 'Visible','off');
@@ -472,20 +479,20 @@ for itrial = 1:expParams.numTrials
     end
         
     % Present stimulus audio and visual
-    set(annoStr.Stim,'Visible','On');
-    sound(soundY,Fs,16);
-    pause(1.5)
-    set(annoStr.Stim,'Visible','Off');
-    pause(1)
+    set(annoStr.Stim,'Visible','On'); % orthography stimulus on
+    sound(soundY,Fs,16); % play stim audio
+    pause(op.ortho_duration)
+    set(annoStr.Stim,'Visible','Off'); %orthography stimulus off
+    pause(op.beep_delay)
 
     % Give go signal and begin audapter, remove go signal and end
     % audapter
     TIME_TRIAL_ACTUALLYSTART=ManageTime('current', CLOCK); % audio signal t=0
-    sound(beep1,Fs1,16);
+    sound(beep1,Fs1,16); % play go beep
     Audapter('start');
-    set(annoStr.Go, 'Visible', 'On');
-    pause(expParams.stimOn)
-    set(annoStr.Go, 'Visible', 'Off'); sound(beep2,Fs1,16); set(annoStr.Stop,'Visible', 'On');
+    set(annoStr.Go, 'Visible', 'On'); % green cross on
+    pause(expParams.stimOn) % period when green cross is visible... time between green cross onset and red cross onset
+    set(annoStr.Go, 'Visible', 'Off'); sound(beep2,Fs1,16); set(annoStr.Stop,'Visible', 'On'); % green cross offset, stop beep, red cross onset
     pause(expParams.recordLen - expParams.stimOn);
     Audapter('stop');
     set(annoStr.Stop,'Visible','Off');
@@ -559,7 +566,7 @@ for itrial = 1:expParams.numTrials
     % trial timing
     trialData(itrial).timingTrial = [TIME_TRIAL_START; TIME_TRIAL_ACTUALLYSTART; TIME_VOICE_START; TIME_PERT_START; TIME_PERT_ACTUALLYSTART; TIME_PERT_END; TIME_PERT_ACTUALLYEND; TIME_SCAN_START; TIME_SCAN_ACTUALLYSTART; TIME_SCAN_END]; % note: we also prefer to record absolute times for analyses of BOLD signal
     
-    TIME_TRIAL_START = TIME_TRIAL_START + expParams.iti; % when should next trial start
+    TIME_TRIAL_START = TIME_TRIAL_START + expParams.trialPeriod; % when should next trial start
     
     %% save for each trial (in case of computer/matlab failure)
     trialData(itrial).p = p;
