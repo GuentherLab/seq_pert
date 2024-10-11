@@ -96,5 +96,7 @@ end
 
 %% stack copies of the trialtable
 trials = repmat(trials, ops.copy_trialtable_n_times, 1); 
+trials.trial = [1:height(trials)]';
+trials = movevars(trials,'trial','Before',1);
 
 end

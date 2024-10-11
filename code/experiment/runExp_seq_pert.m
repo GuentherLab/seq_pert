@@ -85,8 +85,8 @@ ET = tic;
 % set directories
 [dirs, host] = setDirs_seq_pert();
 
-assert(exist('task') && any(strcmp(task,{'famil','train','test','reinforce','test_short'})),...
-    '3rd argument (task) must be either "famil", "reinforce", "train", or "test"')
+assert(exist('task') && any(strcmp(task,{'famil','train','test','reinforce','test-short'})),...
+    '3rd argument (task) must be either "famil", "reinforce", "train", "test", or "test-short"')
 
 bidsSubID = ['sub-' subjectID];
 bidsSesID = ['ses-' num2str(session)];
@@ -259,7 +259,7 @@ switch task
         stimGenOps.pertcon_proportions = [1]; % only 1 pert condition
         stimGenOps.pert_max_repeats = inf; % only 1 
         stimGenOps.copy_trialtable_n_times = 2; % number of copies to make of trialtable
-    case 'test_short'
+    case 'test-short'
         %%%%% use this version for messing around with code.... 1 trial per unique stim, 18 trials total
         stimGenOps.learnconds =         {'nat','nn_learned','nn_novel'}; 
         stimGenOps.learcon_reps_per_name = [1,        1,        1]; % changing number of trials for testing purposes - AM+AK
@@ -270,6 +270,10 @@ switch task
         stimGenOps.copy_trialtable_n_times = 1; % changing number of trials for testing purposes - AM+AK
 end
 StimListSet = seqpert_generate_trial_list(stimGenOps);
+
+run_stim_list_filename = [dirs.ses, filesep, 'sub-', subjectID, '_ses-',num2str(session), '_',runName,...
+    '_task-',task, '_run-stim-list']; 
+save(run_stim_list_filename,'StimListSet') % save table of this run's stimnames, learn conditions, and pert conditions for each trial
 
 stimName = StimListSet.stim;    
 condition = StimListSet.pertcon;
