@@ -46,7 +46,8 @@ if strncmpi('scc-x02', host, 3) % Using SCC
     dirs.conn = '/project/busplab/software/conn'; 
     dirs.spm = '/project/busplab/software/spm12'; 
     dirs.FLvoice = '/project/busplab/software/FLvoice'; 
-    dirs.AudDev = '/projectnb/busplab/Experiments/AudDev'; 
+    dirs.AudDev = '/projectnb/busplab/Experiments/seq-pert/AudDev';
+    dirs.AudDevOld = {'/projectnb/busplab/Experiments/AudDev'; '/projectnb/busplab/Experiments/AudDev-PILOT'};
 
     dirs.audapter_mex = '';
     dirs.audapter_matlab = '';
@@ -67,7 +68,8 @@ else
             dirs.audapter_mex = 'C:\speechres\audapter_mex';
             dirs.audapter_matlab = 'C:\speechres\audapter_matlab';
             dirs.audapter_commonmcode = 'C:\speechres\commonmcode';
-            dirs.AudDev = 'C:\AudDev'; 
+            dirs.AudDev = 'C:\seq-pert\AudDev'; 
+            dirs.AudDevOld = {'C:\AudDev'; 'C:\AudDev-PILOT'};
             
             % analysis software
             dirs.spm = 'C:\speechres\spm12';
@@ -83,7 +85,7 @@ else
             dirs.spm = [pkgdir filesep 'spm12'];
             dirs.conn = [pkgdir filesep 'conn'];
             dirs.FLvoice  = [pkgdir filesep 'FLvoice'];
-            dirs.AudDev = [pkgdir filesep 'AudDev']; 
+            dirs.AudDev = [pkgdir filesep 'seq-pert' filesep 'AudDev']; 
             
         otherwise
             
@@ -128,9 +130,13 @@ genpaths_to_add = {dirs.audapter_matlab;...
                     dirs.audapter_mex;...
                     };
 
+genpaths_to_remove = {dirs.AudDevOld{:}};
+
 genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false); 
+genpaths_to_remove = cellfun(@genpath,genpaths_to_remove,'UniformOutput',false);
 
 addpath(paths_to_add{:})
 addpath(genpaths_to_add{:})
+rmpath(genpaths_to_remove{:})
 
 flvoice('ROOT', dirs.data)
