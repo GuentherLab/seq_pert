@@ -39,8 +39,8 @@ end
 if strncmpi('scc-x02', host, 3) % Using SCC
     
     % on SCC, keep code in 'project' and subbject data in 'projectnb'
-    dirs.projRepo = sprintf('/project/busplab/software\\%s\\', 'seq_pert');
-    dirs.data = sprintf('/projectnb/busplab/Experiments\\%s\\', project);
+    dirs.projRepo = '/project/busplab/software/seq_pert';
+    dirs.data = ['/projectnb/busplab/Experiments/', project];
 
     dirs.pilot = fullfile('/projectnb/busplab/Experiments/', pilotstring);
     dirs.conn = '/project/busplab/software/conn'; 
@@ -52,6 +52,8 @@ if strncmpi('scc-x02', host, 3) % Using SCC
     dirs.audapter_mex = '';
     dirs.audapter_matlab = '';
     dirs.audapter_commonmcode = '';
+
+    dirs.der_acoustic = [dirs.data filesep 'derivatives' filesep 'acoustic'];
 
 else
     switch host
