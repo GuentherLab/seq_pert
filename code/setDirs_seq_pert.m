@@ -51,7 +51,7 @@ if strncmpi('scc-x02', host, 3) % Using SCC
 
     dirs.audapter_mex = '';
     dirs.audapter_matlab = '';
-    dirs.commonmcode = '';
+    dirs.audapter_commonmcode = '';
 
 else
     switch host
