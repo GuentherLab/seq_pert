@@ -1,16 +1,12 @@
 function [dirs, host] = setDirs_seq_pert()
-% function dirs = setDirs(project)
+% [dirs,host] = setDirs(project)
 %
 % setting up directory paths for a project
 %
-% INPUTS    project = name of the project (string)
+
+beep off
+
 %
-% OUTPUTS   dirs = structure with directory info
-%
-% Developed by Elaine Kearney, Oct 2020 (elaine-kearney.com)
-% Edited by Jordan Manes, Jan 2021 (jordanleighmanes@gmail.com)
-%
-%% default to AudDev as project
 project = 'seq-pert';
 pilotstring = [project filesep 'data' filesep 'pilot'];
 
@@ -129,7 +125,7 @@ paths_to_add = {dirs.projRepo;...
                 dirs.spm;...
                 dirs.conn;...
                 dirs.FLvoice;...
-                [dirs.projRepo filesep 'code' filesep 'analysis'];...
+                [dirs.projRepo filesep 'analysis'];...
                 };
 genpaths_to_add = {dirs.audapter_matlab;...
                     dirs.audapter_mex;...
