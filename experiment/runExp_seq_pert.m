@@ -381,7 +381,8 @@ figTC=taskControlGUI_release(taskState);
 for itrial = 1:expParams.numTrials
     
     % print progress to window
-    fprintf('\nRun %d, trial %d/%d\n', expParams.runNum, itrial, expParams.numTrials);
+    fprintf(['\nRun ', num2str(expParams.runNum), ', trial ', num2str(itrial), '/', num2str(expParams.numTrials),...
+        '... ', StimListSet.stim{itrial}, '... ', StimListSet.pertcon{itrial},'\n']); % could also include StimListSet.learncon{itrial}
     
     %%%%% handle pause button
     if ~exist('figTC','var') || ~ishandle(figTC)
