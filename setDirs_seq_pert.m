@@ -87,7 +87,22 @@ else
             dirs.conn = [pkgdir filesep 'conn'];
             dirs.FLvoice  = [pkgdir filesep 'FLvoice'];
             dirs.AudDev = [pkgdir filesep 'seq-pert' filesep 'AudDev']; 
+
+        case 'Anitas-MacBook-Pro'
+            disp('case anita');
+            pkgdir = '/Users/anita/School/Guenther_Lab/Repositories';
+            dirs.projRepo = [pkgdir filesep 'seq_pert'];
+
+            dirs.audapter_mex = '';
+            dirs.audapter_matlab = '';
+            dirs.audapter_commonmcode = '';
+            dirs.spm = [pkgdir filesep 'spm12'];
+            dirs.conn = [pkgdir filesep 'conn'];
+            dirs.AudDevOld = '';
             
+            dirs.AudDev = [dirs.projRepo 'AudDev']; 
+            dirs.FLvoice = [pkgdir filesep 'FLvoice'];
+
         otherwise
             
             disp('Directory listings are not set up for this computer. Please check that your hostname is correct.');
@@ -95,8 +110,8 @@ else
             return
     end
 
-   % subject data.... use gitignore to not upload these large data files to github
-    dirs.data = [dirs.projRepo filesep 'data'];  
+    % subject data.... use gitignore to not upload these large data files to github
+    dirs.data = [dirs.projRepo filesep 'data'];
 
 end
 
@@ -131,13 +146,13 @@ genpaths_to_add = {dirs.audapter_matlab;...
                     dirs.audapter_mex;...
                     };
 
-genpaths_to_remove = {dirs.AudDevOld{:}};
+%genpaths_to_remove = {dirs.AudDevOld{:}};
 
 genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false); 
-genpaths_to_remove = cellfun(@genpath,genpaths_to_remove,'UniformOutput',false);
+%genpaths_to_remove = cellfun(@genpath,genpaths_to_remove,'UniformOutput',false);
 
 addpath(paths_to_add{:})
 addpath(genpaths_to_add{:})
-rmpath(genpaths_to_remove{:})
+%rmpath(genpaths_to_remove{:})
 
 flvoice('ROOT', dirs.data)
