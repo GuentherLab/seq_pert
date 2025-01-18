@@ -1,6 +1,7 @@
 
 
 % updated version: seq_pert_import
+%%%%% updated version doesn't use json files - directly edits trialData.condLabel
 
 load('C:\seq-pert\data\sub-sp001\ses-2\beh\sub-sp001_ses-2_run-2_task-aud-reflexive.mat')
 %trialData_with_detailedCondLabel = struct2table(trialData);

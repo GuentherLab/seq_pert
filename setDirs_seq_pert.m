@@ -49,13 +49,13 @@ if strncmpi('scc-x02', host, 3) % Using SCC
     dirs.audapter_matlab = '';
     dirs.audapter_commonmcode = '';
 
-    dirs.der_acoustic = [dirs.data filesep 'derivatives' filesep 'acoustic'];
-
 else
     switch host
             
         case '677-GUE-WD-0013' % Sound booth computer
             
+            dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
+
             % project
             dirs.projRepo = sprintf('C:\\%s\\', 'seq-pert');
             
@@ -75,6 +75,11 @@ else
             dirs.FLvoice = 'C:\speechres\FLvoice';
 
         case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
+            if host == 'MSI'
+                dirs.data = 'D:\seq-pert'; 
+            else 
+                dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
+            end
             pkgdir = 'C:\docs\code';
             dirs.projRepo = [pkgdir filesep 'seq_pert']; 
             dirs.audapter_mex = [pkgdir filesep 'audapter' filesep 'audapter_mex'];
@@ -90,6 +95,9 @@ else
 
         case 'Anitas-MacBook-Pro'
             disp('case anita');
+
+            dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
+
             pkgdir = '/Users/anita/School/Guenther_Lab/Repositories';
             dirs.projRepo = [pkgdir filesep 'seq_pert'];
 
@@ -104,14 +112,9 @@ else
             dirs.FLvoice = [pkgdir filesep 'FLvoice'];
 
         otherwise
-            
             disp('Directory listings are not set up for this computer. Please check that your hostname is correct.');
-            
             return
     end
-
-    % subject data.... use gitignore to not upload these large data files to github
-    dirs.data = [dirs.projRepo filesep 'data'];
 
 end
 
@@ -119,11 +122,10 @@ end
 
 %% paths common to all hosts
 % ...... these don't all need to be added to the path; save for later reference
-% code
-dirs.code = [dirs.projRepo filesep 'code'];
 
-% stimuli
-dirs.stim = [dirs.code, filesep, 'experiment', filesep, 'stimLists'];
+dirs.der_acoustic = [dirs.data filesep 'derivatives' filesep 'acoustic']; % output dir for flvoice_import
+
+dirs.stim = [dirs.projRepo, filesep, 'experiment', filesep, 'stimLists']; % stimuli
 
 % config
 dirs.config = fullfile(dirs.projRepo, 'config', 'ACOUSTIC');

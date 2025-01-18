@@ -17,14 +17,19 @@
 ........... with sign corresponding to up vs down, such that expected value is positive
 %%%% pert-resp for null trials will be nan
 %%%% pert-resp should be in the exact same format at F1-mic 
+% 4. add detailed condition labels
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
 [dirs, host] = setDirs_seq_pert();
 
-op.sub = 'sp002';
+op.sub = 'sp001';
 op.ses = 2;
-op.run = 3; 
+op.run = 2; 
+% 
+% op.sub = 'sp002';
+% op.ses = 2;
+% op.run = 3; 
 
 % op.sub = 'sp003';
 % op.ses = 2;
@@ -35,6 +40,7 @@ op.task = 'aud-reflexive';
 op.plot_mean_f1comp = 0; 
 op.run_flvoice_import = 0; % must be true the first time this scipt is run for a given run
     op.N_LPC = 17; %%% parameter for flvoice_import; standard value is 17
+    op.flvoice_import_show_figures = 0; 
 
 dirs.beh_ses = [dirs.data, filesep, 'sub-',op.sub, filesep, 'ses-',num2str(op.ses), filesep, 'beh'];
 beh_mat_file = [dirs.beh_ses, filesep, 'sub-',op.sub, '_ses-',num2str(op.ses), '_run-',num2str(op.run), ...
@@ -46,10 +52,10 @@ f1_formant_file = [dirs.f1_ses, filesep, 'sub-',op.sub, '_ses-',num2str(op.ses),
 
 %% 1. run flvoice_import 
 if op.run_flvoice_import
-    flvoice_import(op.sub,op.ses,op.run,'aud-reflexive','N_LPC',op.N_LPC)
+    flvoice_import(op.sub,op.ses,op.run,'aud-reflexive','N_LPC',op.N_LPC,'SHOW_FIGURES',op.flvoice_import_show_figures)
 end
 
-%% 2. load the output of flvoice import to find f1; join to trial condition labels
+%% 2. load the output of flvoice import to find f1; join ftcomp to trial condition labels
 load(f1_formant_file); trials_flv_import = struct2table(trialData); 
 f1_col_ind = find(string(trials_flv_import.dataLabel(1,:)) == 'F1-mic'); % which column is F1 from the flvoice_import output
 ntrials = numel(trialData); 
@@ -98,9 +104,13 @@ for itrial = 1:ntrials
     trialData(itrial).t{newvar_ind} =  trialData(itrial).t{f1_col_ind}; % same as variable f1 was derived from
 end
 
- trials_struct = table2struct(trials);
+%% 4. add detailed condition labels
+for itrial = 1:numel(trialData)
+    trials{itrial,'condLabel'} = {[trials{itrial,'stimName'}{:},'.', trials{itrial,'condLabel'}{:}, '.' trials{itrial,'learncon'}{:}]}; 
+end
 
-% save trialData with new variable added
+%% save trialData with new variables added
+trials_struct = table2struct(trials);
 save(f1_formant_file,'trialData',"-append")
 
 
