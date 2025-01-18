@@ -39,7 +39,7 @@ op.task = 'aud-reflexive';
 
 op.plot_mean_f1comp = 0; 
 op.run_flvoice_import = 0; % must be true the first time this scipt is run for a given run
-    op.N_LPC = 17; %%% parameter for flvoice_import; standard value is 17
+    op.N_LPC = 19; %%% parameter for flvoice_import; standard value is 17 or 19
     op.flvoice_import_show_figures = 0; 
 
 dirs.beh_ses = [dirs.data, filesep, 'sub-',op.sub, filesep, 'ses-',num2str(op.ses), filesep, 'beh'];
@@ -77,6 +77,7 @@ trials.f1comp = cell(ntrials,1);
 
 %% % 3. update .mat files in 'acoustic' folder to contain a new variable 'pert-compensation' with one value per timepoint
 %    to-do: mask out null trials which have been marked as bad in QC GUI
+%    to-do: only compare U1 and D1 trials to N1 values with the exact same syllable name
 null_trial_inds = string(trials.condLabel) == 'N1'; % which trials were not F1-perturbed
 null_trial_f1_mat = cell2mat(trials.f1); 
 null_f1_mean_timecourse = mean(null_trial_f1_mat,1); % mean f1 of null trials at each timepoint
@@ -110,8 +111,9 @@ for itrial = 1:numel(trialData)
 end
 
 %% save trialData with new variables added
-trials_struct = table2struct(trials);
-save(f1_formant_file,'trialData',"-append")
+[trialData.('condLabel')] = deal(trials.condLabel{:});% copy over the detailed condLabel field
+save(f1_formant_file,'trialData',"-append") % INFO should have been loaded w/ original version of f1_formant file
+
 
 
 
