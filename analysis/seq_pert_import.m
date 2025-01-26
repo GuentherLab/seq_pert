@@ -23,13 +23,13 @@
 clear
 [dirs, host] = setDirs_seq_pert();
 
-% op.sub = 'sp001';
-% op.ses = 2;
-% op.run = 2; 
-
-op.sub = 'sp002';
+op.sub = 'sp001';
 op.ses = 2;
-op.run = 3; 
+op.run = 2; 
+
+% op.sub = 'sp002';
+% op.ses = 2;
+% op.run = 3; 
 
 % op.sub = 'sp003';
 % op.ses = 2;
@@ -38,7 +38,7 @@ op.run = 3;
 op.task = 'aud-reflexive';
 
 op.plot_mean_f1comp = 0; 
-op.run_flvoice_import = 1; % must be true the first time this scipt is run for a given run
+op.run_flvoice_import = 0; % must be true the first time this scipt is run for a given run
     op.N_LPC = 19; %%% parameter for flvoice_import; standard value is 17 or 19
     op.flvoice_import_show_figures = 1; 
 
