@@ -96,10 +96,10 @@ else
         case 'Anitas-MacBook-Pro'
             disp('case anita');
 
-            dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
-
             pkgdir = '/Users/anita/School/Guenther_Lab/Repositories';
             dirs.projRepo = [pkgdir filesep 'seq_pert'];
+
+            dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
 
             dirs.audapter_mex = '';
             dirs.audapter_matlab = '';
