@@ -75,13 +75,13 @@ else
             dirs.FLvoice = 'C:\speechres\FLvoice';
 
         case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
-            if host == 'MSI'
+            pkgdir = 'C:\docs\code';
+            dirs.projRepo = [pkgdir filesep 'seq_pert']; 
+            if string(host) == 'MSI'
                 dirs.data = 'D:\seq-pert'; 
             else 
                 dirs.data = [dirs.projRepo filesep 'data']; % subject data.... use gitignore to not upload these large data files to github
             end
-            pkgdir = 'C:\docs\code';
-            dirs.projRepo = [pkgdir filesep 'seq_pert']; 
             dirs.audapter_mex = [pkgdir filesep 'audapter' filesep 'audapter_mex'];
             dirs.audapter_matlab = [pkgdir filesep 'audapter' filesep 'audapter_matlab'];
             dirs.audapter_commonmcode = [pkgdir filesep 'audapter' filesep 'commonmcode'];

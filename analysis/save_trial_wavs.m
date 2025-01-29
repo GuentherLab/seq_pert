@@ -7,7 +7,7 @@
  op.sub = 'sp001';
  op.ses = 2; 
  op.run = 2;
- op.trial = 52; 
+ op.trial = 17; 
  
  op.task = 'aud-reflexive'; 
  
