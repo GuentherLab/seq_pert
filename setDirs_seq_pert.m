@@ -1,8 +1,9 @@
-function [dirs, host] = setDirs_seq_pert()
+function [dirs, host] = setDirs_seq_pert(op)
 % [dirs,host] = setDirs(project)
 %
 % setting up directory paths for a project
 %
+% to only output 'dir' without adding/removing paths, set op.skip_path_changes==1
 
 beep off
 
@@ -17,9 +18,6 @@ pilotstring = [project filesep 'data' filesep 'pilot'];
 if ispc % If running on a Windows
     [~,host] = system('hostname');
     host     = deblank(host);
-    
-    % set priority for matlab to high for running experiments
-    system(sprintf('wmic process where processid=%d call setpriority "high priority"',feature('getpid')));
     
 elseif ismac % If running on a Mac
     [~,host] = system('scutil --get LocalHostName');
@@ -73,6 +71,9 @@ else
             dirs.spm = 'C:\speechres\spm12';
             dirs.conn = 'C:\speechres\conn';
             dirs.FLvoice = 'C:\speechres\FLvoice';
+
+            % set priority for matlab to high for running experiments
+            system(sprintf('wmic process where processid=%d call setpriority "high priority"',feature('getpid')));
 
         case {'MSI','677-GUE-WL-0010'} % Andrew Meier laptop
             pkgdir = 'C:\docs\code';
@@ -152,8 +153,10 @@ genpaths_to_add = {dirs.audapter_matlab;...
 genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false); 
 %genpaths_to_remove = cellfun(@genpath,genpaths_to_remove,'UniformOutput',false);
 
-addpath(paths_to_add{:})
-addpath(genpaths_to_add{:})
-%rmpath(genpaths_to_remove{:})
-
-flvoice('ROOT', dirs.data)
+if ~op.skip_path_changes
+    addpath(paths_to_add{:})
+    addpath(genpaths_to_add{:})
+    %rmpath(genpaths_to_remove{:})
+    
+    flvoice('ROOT', dirs.data)
+end
