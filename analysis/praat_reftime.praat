@@ -1,38 +1,24 @@
-##  This script allows for manual demarcation of the buzzer epoch during STOP trials.
-##  The script will create and open a TextGrid accompanying each sound file in a directory. 
-##
-##  Tier 1: BuzzerEpoch - indicate buzzer onset and offset
-##	... select the onset or offset individually and press Enter
-##	... or highlight the buzzer epoch and press Enter to demarcate both timepoints
-##
-##  Running this script again after having previously scored trials in this directly will allow you to revise prior scorings.
-##  To skip to a specific file in this directory, change the 'Starting_file_index' value when starting the script. 
-##
-## For reference, the original buzzer stim file is contained in the github repository in:
-## ..... https://github.com/Brain-Modulation-Lab/Task_SpeechMotorSequenceLearning/tree/main/stim/mixkit-game-show-buzz-in-3090.wav
-##
-## by Andrew Meier
+##  This script allows for manual demarcation of the Reference Time for trials from perturbation experiments
+# for seq-pert, first run batch_save_trial_wavs.m to create the wavs that will be loaded by this script
 
 clearinfo
 
 form Select subject, file type, and tiers
-        sentence SubName 1024
 	sentence Starting_file_index 1
-	sentence File_name_or_initial_substring trial
-        sentence File_extension wav
-	sentence Tier(s) BuzzerEpoch
+        sentence suffix mic.wav
+	sentence Tier(s) ReferenceTime
 endform
 
-wd$ =     "C:\Users\amsme\Downloads\1005_ses-intraop_stop-trials-ambientmic\"
-#wd$ =     "Y:\DBS\derivatives\" + "sub-DM" + subName$ + "\analysis\task-smsl_trial-audio\ses-intraop_stop-trials\"
+wd$ =     "C:\docs\code\seq_pert\data\derivatives\acoustic\sub-sp001\ses-2\trial_audio\run-2\"
 
 
 outDir$ = wd$
 file_extension$ = "wav"
-tg_append$ = "_buzzer-epoch"
+tg_append$ = "_reftime_manual"
 
 ##  Make a list of all the sound files in the directory we're using/number of files (numFiles):
-strings = Create Strings as file list: "wavList", wd$ + "'file_name_or_initial_substring$'*'file_extension$'"
+# strings = Create Strings as file list: "wavList", wd$ + "'file_name_or_initial_substring$'*'file_extension$'"
+strings = Create Strings as file list: "wavList", wd$ + "/*" + suffix$
 numFiles = Get number of strings
 
 # Analyze files including and following starting_file_index file
