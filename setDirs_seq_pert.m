@@ -95,7 +95,7 @@ else
             dirs.AudDev = [pkgdir filesep 'seq-pert' filesep 'AudDev']; 
 
         case 'Anitas-MacBook-Pro'
-            disp('case anita');
+            %disp('case anita');
 
             pkgdir = '/Users/anita/School/Guenther_Lab/Repositories';
             dirs.projRepo = [pkgdir filesep 'seq_pert'];

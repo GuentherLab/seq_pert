@@ -1,8 +1,8 @@
 
 %%% save wav files for audio from a list of subjects and sessions
  
-sublist = {'sp001';...
-           % 'sp002';...
+sublist = {% 'sp001';...
+            'sp002';...
            % 'sp003';...
            % 'sp004';...
            % 'sp005';...
@@ -21,11 +21,13 @@ op.num_trial_digits = 3;
 op.task = 'aud-reflexive'; 
 
 %%
+setDirs_op.skip_path_changes = 1;
+dirs = setDirs_seq_pert(setDirs_op);
 
 nsubs = length(sublist);
 for isub = 1:nsubs
     op.sub = sublist{isub};
-    fprintf(['\n Saving trial wavs for sub ',op.sub]) 
+    fprintf(['\n Saving trial wavs for sub',op.sub]) 
     dd = struct2table(dir([dirs.data, filesep, 'sub-',op.sub])); dd = dd.name; 
     seslist = dd(contains(dd,'ses-')); 
     nses = length(seslist);
@@ -37,7 +39,7 @@ for isub = 1:nsubs
         runlist = dd(contains(dd,'run-') & cellfun(@(x)isdir([sesdir, filesep, x]),dd));
         nruns = length(runlist);
         for irun = 1:nruns
-            op.run = str2num(runlist{ises}(5:end));
+            op.run = str2num(runlist{irun}(5:end));
             rundir = [sesdir, filesep, 'run-',num2str(op.run)]; 
             dd = struct2table(dir(rundir)); dd = dd.name; 
             trialfile_strs = regexp(dd, '^sub\-.*_trial-(\d+)\.mat$', 'tokens'); trialfile_strs = trialfile_strs(cellfun(@(x)~isempty(x),trialfile_strs)); 
