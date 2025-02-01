@@ -153,7 +153,7 @@ genpaths_to_add = {dirs.audapter_matlab;...
 genpaths_to_add = cellfun(@genpath,genpaths_to_add,'UniformOutput',false); 
 %genpaths_to_remove = cellfun(@genpath,genpaths_to_remove,'UniformOutput',false);
 
-if ~op.skip_path_changes
+if ~exist('op','var') || ~isfield('op','skip_path_changes') || ~op.skip_path_changes
     addpath(paths_to_add{:})
     addpath(genpaths_to_add{:})
     %rmpath(genpaths_to_remove{:})
