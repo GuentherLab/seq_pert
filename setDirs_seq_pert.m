@@ -112,6 +112,23 @@ else
             dirs.AudDev = [dirs.projRepo 'AudDev']; 
             dirs.FLvoice = [pkgdir filesep 'FLvoice'];
 
+        case 'henrique'
+            pkgdir = 'C:\docs\code';
+            dirs.projRepo = [pkgdir filesep 'seq_pert']; 
+
+                dirs.data = 'C:\Users\henri\Desktop\CODE LAB\SUBJECTS'; 
+        
+            dirs.audapter_mex = [pkgdir filesep 'audapter' filesep 'audapter_mex'];
+            dirs.audapter_matlab = [pkgdir filesep 'audapter' filesep 'audapter_matlab'];
+            dirs.audapter_commonmcode = [pkgdir filesep 'audapter' filesep 'commonmcode'];
+            dirs.AudDev = [dirs.projRepo, filesep, 'AudDev']; 
+            dirs.AudDevOld = {[dirs.projRepo, filesep, 'AudDev']; [dirs.projRepo, filesep, 'AudDev-PILOT']};
+
+            dirs.spm = [pkgdir filesep 'spm12'];
+            dirs.conn = [pkgdir filesep 'conn'];
+            dirs.FLvoice  = [pkgdir filesep 'FLvoice'];
+            dirs.AudDev = [pkgdir filesep 'seq-pert' filesep 'AudDev']; 
+
         otherwise
             disp('Directory listings are not set up for this computer. Please check that your hostname is correct.');
             return
