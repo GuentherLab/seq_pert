@@ -22,6 +22,7 @@
 op.sub = 'sp008';
 op.ses = 2;
 op.run = 2;
+op.praat_trials_to_import = 1:120; 
 
 %%%%%%%%%%%%%%%%%%%%%% pick analysis parameters
 
@@ -57,6 +58,9 @@ load(f1_formant_file); trials_flv_import = struct2table(trialData);
 f1_col_ind = find(string(trials_flv_import.dataLabel(1,:)) == 'F1-mic'); % which column is F1 from the flvoice_import output
 ntrials = numel(trialData); 
 
+% if not specified, import the praat textgrids for the files which will be included in analysis
+field_default('op','praat_trials_to_import', [op.trialrange(1) : op.trialrange(2)]; 
+
 %%%%% delete vars already present named 'f1comp'... so we don't create it multiple times
 ind_to_delete = string(trialData(1).dataLabel) == 'f1comp';
 fields_to_edit = {'s','dataLabel','dataUnits','t'};
@@ -64,20 +68,6 @@ for itrial = 1:ntrials
     for ifield = 1:numel(fields_to_edit)
        trialData(itrial).(fields_to_edit{ifield})  = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
     end
-
-    % import data from Praat labeling
-    textgrid_folder = [dirs.data, filesep, 'derivatives', filesep, 'acoustic', filesep, 'sub-',op.sub, filesep, 'ses-',num2str(op.ses), filesep, 'trial_audio', filesep, 'run-',num2str(op.run)];
-
-    op.num_trial_digits = 3;
-    trialnumstr = num2str(itrial, ['%0', num2str(op.num_trial_digits), 'd']); % zero padding
-    textgrid_filename = [textgrid_folder filesep 'sub-',op.sub, '_ses-',num2str(op.ses), '_run-',num2str(op.run), '_task-',op.task, '_trial-',trialnumstr,'_audio-mic_reftime_manual.TextGrid']; 
-
-    tg = tgRead(textgrid_filename);
-    onset = tg.tier{1}.T1(2);
-    offset = tg.tier{1}.T1(3);
-
-    trialData(itrial).options.time.reference = onset;
-    trialData(itrial).options.time.reference_offset = offset;
 end
 
 newvar_ind = length(trialData(1).s) + 1; % index of the new variable we are going to add to trialData
@@ -114,6 +104,25 @@ for itrial = 1:ntrials
     trialData(itrial).dataLabel{newvar_ind} = 'f1comp'; 
     trialData(itrial).dataUnits{newvar_ind} = trialData(itrial).dataUnits{f1_col_ind}; % same as variable f1 was derived from
     trialData(itrial).t{newvar_ind} =  trialData(itrial).t{f1_col_ind}; % same as variable f1 was derived from
+end
+
+% import reference time data from praat annotations, add to files to be read by flvoice
+for itrial = op.praat_trials_to_import
+
+    textgrid_folder = [dirs.data, filesep, 'derivatives', filesep, 'acoustic', filesep, 'sub-',op.sub, filesep, 'ses-',num2str(op.ses), filesep, 'trial_audio', filesep, 'run-',num2str(op.run)];
+
+    op.num_trial_digits = 3;
+    trialnumstr = num2str(itrial, ['%0', num2str(op.num_trial_digits), 'd']); % zero padding
+    textgrid_filename = [textgrid_folder filesep 'sub-',op.sub, '_ses-',num2str(op.ses), '_run-',num2str(op.run), '_task-',op.task, '_trial-',trialnumstr,'_audio-mic_reftime_manual.TextGrid']; 
+
+    tg = tgRead(textgrid_filename); % import data from Praat labeling
+    onset = tg.tier{1}.T1(2);
+    offset = tg.tier{1}.T1(3);
+
+    % add to ouput struct
+    % the ..time.reference field contains the manual reference time from qcqui - will ovewrite work from qcgui without warning!
+    trialData(itrial).options.time.reference = onset; 
+    trialData(itrial).options.time.reference_offset = offset;
 end
 
 %% 4. add detailed condition labels and save data
