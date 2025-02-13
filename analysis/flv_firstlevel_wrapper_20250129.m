@@ -11,13 +11,17 @@
 % op.ses = 2;
 % op.run = 2;
 
-op.sub = 'sp002';
-op.ses = 2;
-op.run = 3;
+% op.sub = 'sp002';
+% op.ses = 2;
+% op.run = 3;
 
 % op.sub = 'sp003';
 % op.ses = 2;
 % op.run = 2;
+
+op.sub = 'sp008';
+op.ses = 2;
+op.run = 2;
 
 %%%%%%%%%%%%%%%%%%%%%% pick analysis parameters
 
@@ -60,6 +64,20 @@ for itrial = 1:ntrials
     for ifield = 1:numel(fields_to_edit)
        trialData(itrial).(fields_to_edit{ifield})  = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
     end
+
+    % import data from Praat labeling
+    textgrid_folder = [dirs.data, filesep, 'derivatives', filesep, 'acoustic', filesep, 'sub-',op.sub, filesep, 'ses-',num2str(op.ses), filesep, 'trial_audio', filesep, 'run-',num2str(op.run)];
+
+    op.num_trial_digits = 3;
+    trialnumstr = num2str(itrial, ['%0', num2str(op.num_trial_digits), 'd']); % zero padding
+    textgrid_filename = [textgrid_folder filesep 'sub-',op.sub, '_ses-',num2str(op.ses), '_run-',num2str(op.run), '_task-',op.task, '_trial-',trialnumstr,'_audio-mic_reftime_manual.TextGrid']; 
+
+    tg = tgRead(textgrid_filename);
+    onset = tg.tier{1}.T1(2);
+    offset = tg.tier{1}.T1(3);
+
+    trialData(itrial).options.time.reference = onset;
+    trialData(itrial).options.time.reference_offset = offset;
 end
 
 newvar_ind = length(trialData(1).s) + 1; % index of the new variable we are going to add to trialData
