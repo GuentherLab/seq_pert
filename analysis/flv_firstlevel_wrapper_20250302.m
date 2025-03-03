@@ -53,6 +53,7 @@ op.trialrange = [1 120];
 % op.trialrange = [1 480];
 
 % plotting params
+show_alignment_fig = 1; 
 xline_width = 2; 
 xline_color = [0.2 0.2 0.2];
 xline_style = '--';
@@ -148,7 +149,7 @@ end
 cfg = []; 
 cfg.time_adjust_method = 'max';
 cfg.align_times = align_times; 
-cfg.show_figure = 1; 
+cfg.show_figure = show_alignment_fig; 
 tc_align = align_trial_timecourses(cfg,D_unaligned)
 
 
