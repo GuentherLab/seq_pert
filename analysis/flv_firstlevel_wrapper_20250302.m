@@ -52,6 +52,11 @@ op.design = {'nn_learned','nn_novel'}; op.contrast = [1,-1];
 op.trialrange = [1 120];
 % op.trialrange = [1 480];
 
+% plotting params
+xline_width = 2; 
+xline_color = [0.2 0.2 0.2];
+xline_style = '--';
+plot_all_ref_offsets = 0; %% plot all ref offsets in addition to the mean.... looks messy
 
 %% load the output of flvoice import to find f1; join f1comp to trial condition labels
 op.task = 'aud-reflexive'; % task for all of seq-pert
@@ -70,10 +75,12 @@ ntrials = numel(trialData);
 % if not specified, import the praat textgrids for the files which will be included in analysis
 field_default('op','praat_trials_to_import', [op.trialrange(1) : op.trialrange(2)]); 
 
+trial_inds_to_analyze = op.trialrange(1):op.trialrange(2); 
+
 %%%%% delete vars already present named 'f1comp'... so we don't create it multiple times
 ind_to_delete = string(trialData(1).dataLabel) == 'f1comp';
 fields_to_edit = {'s','dataLabel','dataUnits','t'};
-for itrial = 1:ntrials
+for itrial = trial_inds_to_analyze
     for ifield = 1:numel(fields_to_edit)
        trialData(itrial).(fields_to_edit{ifield})  = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
     end
@@ -83,7 +90,6 @@ f1comp_var_ind = length(trialData(1).s) + 1; % index of the new variable we are 
 align_var_ind = f1comp_var_ind + 1; % index of the new variable we are going to add to trialData for new aligned variable
 
 trials = load(beh_mat_file); trials = struct2table(trials.trialData); % load learning condition labels
-trial_inds_to_analyze = op.trialrange(1):op.trialrange(2); 
 trials.analyze = false(ntrials,1); 
 trials.analyze(trial_inds_to_analyze) = true;
 
@@ -245,3 +251,16 @@ titlestr = ['sub-',op.sub,', Design = [', strjoin(op.design,', '), '].... Contra
 % titlestr = {['Design = [', strjoin(op.design,', '), '].... Contrast = [', constrast_str(1:end-1), '].... Trials ', num2str(op.trialrange(1)), '-', num2str(op.trialrange(2))],...
 %             ['sub-',op.sub]};
 flvoice_firstlevel(op.sub, op.ses, op.run, 'aud-reflexive', titlestr, op.measure, design_for_flvoice, op.contrast);
+
+hold on
+box off
+hline_ref_on = xline(1000*tc_align.align_time, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+ref_offs = arrayfun(@(x) x.options.time.reference_offset, trialData(trials.analyze))';
+hline_ref_off_mean = xline(1000*mean(ref_offs), 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+
+%%% plot all ref offsets.... looks messy
+if plot_all_ref_offsets
+    hline_ref_off_mean = xline(1000*ref_offs, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
+end
+
+
