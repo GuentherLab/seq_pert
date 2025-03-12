@@ -149,13 +149,13 @@ for icol = 1:n_design_cols
     designval = op.design{icol}; 
     switch designval
         case {'D1','N1','U1'} % if perturbation condition is specified.................................... not tested yet
-            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.', desval, '[a-z_]+''))'];
+            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.', designval, '[a-z_]+''))'];
         case {'nat','nn_learned','nn_novel'} %%% if learning condition is specified
             cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.[DNU]1\.', designval, '''))'];
             %f = @(x,varargin)[~isempty(regexp(x,'[A-Z]\.mat')) ~isempty(regexp(x,'asdflearned'))]
 
         otherwise % assume that stimulus name is specified..................................................... not tested yet
-            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''',desval, '\.[DNU]1\.[a-z_]+''))'];            
+            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''',designval, '\.[DNU]1\.[a-z_]+''))'];            
     end
     func_list{icol} = str2func([cond_str_for_func, trial_str_for_func]); % combine condLabel specificiation and trial specification into a function
 end
