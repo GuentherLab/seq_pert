@@ -9,7 +9,8 @@ form Select subject, file type, and tiers
 	sentence Tier(s) ReferenceTime
 endform
 
-wd$ =     "C:\docs\code\seq_pert\data\derivatives\acoustic\sub-sp001\ses-2\trial_audio\run-2\"
+#wd$ =     "C:\docs\code\seq_pert\data\derivatives\acoustic\sub-sp001\ses-2\trial_audio\run-2\"
+wd$ =     "C:\Users\amsme\Downloads\Trials data from HG\"
 
 
 outDir$ = wd$
