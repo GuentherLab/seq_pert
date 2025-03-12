@@ -5,6 +5,9 @@
 
 %%%% modify desc-formants file to add f1comp measure and add more info to the condLabel field
 %%%% ... then create design matrix and run flvoice_firstlevel
+
+clear op
+
 %
 % 
 % op.sub = 'sp001';
