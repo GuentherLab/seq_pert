@@ -85,11 +85,15 @@ tc_align.n_nonnan_trials = sum(~isnan(tc_align.tc)); % number of usable trials f
 tc_align.sem = tc_align.std ./ sqrt(tc_align.n_nonnan_trials);
 tc_align.sem_lims = [tc_align.mean + tc_align.sem; tc_align.mean - tc_align.sem]; 
 
+    xtime = 0.5 + [linspace(-n_tpoints_pre_fixed, -1, n_tpoints_pre_fixed), linspace(0, n_tpoints_post_fixed-1, n_tpoints_post_fixed)];
+    xtime = 1/D_unaligned.fsample * xtime; 
+
+    tc_align.plot_xtime = xtime; 
+
 if isfield(cfg,'show_figure') && cfg.show_figure
     hfig = figure('Color',[1 1 1]); 
     
-    xtime = 0.5 + [linspace(-n_tpoints_pre_fixed, -1, n_tpoints_pre_fixed), linspace(0, n_tpoints_post_fixed-1, n_tpoints_post_fixed)];
-    xtime = 1/D_unaligned.fsample * xtime; 
+
 
     plotinds = 1:length(xtime); % in current implementation, plot all timepoints; this variable can be used in future versions to only plot specific windows
 
