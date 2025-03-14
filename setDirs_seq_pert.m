@@ -104,7 +104,7 @@ else
 
             dirs.audapter_mex = '';
             dirs.audapter_matlab = '';
-            % dirs.audapter_commonmcode = '';
+            dirs.audapter_commonmcode = '';
             dirs.spm = [pkgdir filesep 'spm12'];
             dirs.conn = [pkgdir filesep 'conn'];
             dirs.AudDevOld = '';
