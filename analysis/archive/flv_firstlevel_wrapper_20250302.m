@@ -5,8 +5,8 @@
 
 %%%% this script desc-formants file to add f1comp measure and add more info to the condLabel field
 %%%% ... then create design matrix and run flvoice_firstlevel
-%
-% 
+
+
 % op.sub = 'sp001';
 % op.ses = 2;
 % op.run = 2;
@@ -19,20 +19,31 @@
 % op.ses = 2;
 % op.run = 2;
 
-op.sub = 'sp006';
+% op.sub = 'sp004';
+% op.ses = 2;
+% op.run = 2;
+
+% op.sub = 'sp005';
+% op.ses = 2;
+% op.run = 6;
+
+% op.sub = 'sp006';
+% op.ses = 2;
+% op.run = 2; 
+
+op.sub = 'sp007';
 op.ses = 2;
-op.run = 2;
-op.praat_trials_to_import = 1:120; 
+op.run = 2; 
 
 % op.sub = 'sp008';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp009';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
+
+op.praat_trials_to_import = 1:120;
 
 %%%%%%%%%%%%%%%%%%%%%% pick analysis parameters
 
