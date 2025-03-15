@@ -285,5 +285,15 @@ if plot_all_ref_offsets
     hline_ref_off_mean = xline(1000*ref_offs, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
 end
 
+% saving the alignmnent time
+% if op.design == {'nat','nn_novel'}
+%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' op.sub '_aligntime_nat_nn-novel'];
+% elseif op.design == {'nat','nn_learned'}
+%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
+% elseif op.design == {'nn_learned','nn_novel'}
+%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
+% end
+% save(filename,'tc_align');
+
 end
 
