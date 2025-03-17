@@ -1,4 +1,7 @@
 %% running the wrapper
+%%%% have tc_align be created each time this function is run, and each one 
+%%%% is saved into a table to be called when needed
+
 % % nat vs nn_novel
 % flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
@@ -37,6 +40,7 @@
 % window is from 150ms after the onset to 200ms later
 % make timepoint customizations easy to edit
 
+dirs = setDirs_seq_pert();
 subjs = {'sp001','sp002','sp003','sp004','sp005','sp006','sp007','sp008','sp009'};
 ses_run = [2,2;...
            2,3;...
@@ -49,6 +53,7 @@ ses_run = [2,2;...
            2,2;];
 window = zeros([9,2,3]);
     % z axis is the designs
+    % stores the index of the window in tc_align
 
 for ides = 1:3 % number of designs
     % 1 = {'nat','nn_novel'}
@@ -68,11 +73,113 @@ for ides = 1:3 % number of designs
 
         load(filepath);
 
-        window(isub,1,ides) = tc_align.align_time + 0.150;
-        window(isub,2,ides) = window(isub,1,ides) + 0.200;
+        index_1 = 1;
+        while tc_align.plot_xtime(index_1) < 0
+            index_1 = index_1 + 1;
+        end
+        index_2 = 1;
+        while tc_align.plot_xtime(index_2) < 0.200
+            index_2 = index_2 + 1;
+        end
+
+        window(isub,1,ides) = index_1;
+        window(isub,2,ides) = index_2;
+        % window(isub,1,ides) = tc_align.align_time + 0.150;
+        % window(isub,2,ides) = window(isub,1,ides) + 0.200;
     end
 end
 
+% calculate the size of the matrix needed to store the data
+largest_gap = window(1,2,1) - window(1,1,1);
+for ides = 1:3
+    for isub = 1:9
+        cur_gap = window(isub,2,ides) - window(isub,1,ides);
+        if cur_gap > largest_gap
+            largest_gap = cur_gap;
+        end
+    end
+end
+
+learncon = zeros([120,3,9]);
+    % x: 120 trials
+    % y: column 1 for nn_novel, column 2 for nn_learned, column 3 for nat
+    % z: per subject
+
+% determine which trials are which learning condition
+for isub = 1:9
+    PATH_MAT = [dirs.data filesep 'sub-' subjs{isub} filesep 'ses-' num2str(ses_run(isub,1)) filesep 'beh'];
+    filename = ['sub-' subjs{isub} '_ses-' num2str(ses_run(isub,1)) '_run-' num2str(ses_run(isub,2)) '_task-aud-reflexive.mat'];
+
+    load([PATH_MAT filesep filename]);
+
+    for i = 1:120 % from trials 1-120
+        % determine the trial indexes of nn_novel and nn_learned
+        % conditions?
+
+        array_learncon = {trialData.learncon};
+
+        if strcmp(array_learncon{i},'nn_novel')
+            learncon(i,1,isub) = 1;
+        elseif strcmp(array_learncon{i},'nn_learned')
+            learncon(i,2,isub) = 1;
+        else
+            learncon(i,3,isub) = 1;
+        end
+    end
+end
+
+% store data inside the data matrix
+for ides = 1:3
+    for isub = 1:9
+        before_mean = zeros(120,201,2);
+        count1 = 1;
+        count2 = 1;
+        for i = 1:120
+            if ides == 1
+                % first z is nat trials, second z is nn_novel
+                if learncon(i,3,isub) == 1 % nat
+                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count1 = count1 + 1;
+                elseif learncon(i,1,isub) == 1 % nn_novel
+                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count2 = count2 + 1;
+                end
+            elseif ides == 2 
+                % first z is nat trials, second z is nn_learned
+                if learncon(i,3,isub) == 1 % nat
+                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count1 = count1 + 1;
+                elseif learncon(i,2,isub) == 1 % nn_learned
+                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count2 = count2 + 1;
+                end
+            else
+                % first z is nn_learned, second is nn_novel
+                if learncon(i,2,isub) == 1 % nn_learned
+                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count1 = count1 + 1;
+                elseif learncon(i,1,isub) == 1 % nn_novel
+                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    count2 = count2 + 1;
+                end
+            end
+        end
+
+        % this average is just the current subject with each trial averaged
+        temp_mean1(1,:) = mean(before_mean(:,:,1),2);
+        temp_mean1(2,:) = mean(before_mean(:,:,2),2);
+
+        % this average is each subject averaged
+        for_ttest(isub,1,ides) = mean(temp_mean1(1,:));
+        for_ttest(isub,2,ides) = mean(temp_mean1(2,:));
+    end
+end
+
+% run the t-test
+ttest_final = zeros(3,1);
+for ides = 1:3
+    [ttest_final(ides), p_value(ides)] = ttest(for_ttest(:,1,ides),for_ttest(:,2,ides));
+end
 %% calculate the times for the window of analysis - old
 % try 1: window for analysis is 150ms after onset and 150ms before offset
 % dirs = setDirs_seq_pert();

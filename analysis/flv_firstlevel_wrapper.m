@@ -286,14 +286,15 @@ if plot_all_ref_offsets
 end
 
 % saving the alignmnent time
-% if op.design == {'nat','nn_novel'}
-%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' op.sub '_aligntime_nat_nn-novel'];
-% elseif op.design == {'nat','nn_learned'}
-%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
-% elseif op.design == {'nn_learned','nn_novel'}
-%     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
-% end
-% save(filename,'tc_align');
+%if op.design == {'nat','nn_novel'}
+if cellfun(@isequal, op.design, {'nat','nn_novel'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' op.sub '_aligntime_nat_nn-novel'];
+elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
+elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
+end
+save(filename,'tc_align');
 
 end
 
