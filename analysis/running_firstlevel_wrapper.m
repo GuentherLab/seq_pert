@@ -100,30 +100,31 @@ for ides = 1:3
     end
 end
 
-learncon = zeros([120,3,9]);
+learncon_list = zeros([120,3,9]);
     % x: 120 trials
     % y: column 1 for nn_novel, column 2 for nn_learned, column 3 for nat
     % z: per subject
 
 % determine which trials are which learning condition
 for isub = 1:9
-    PATH_MAT = [dirs.data filesep 'sub-' subjs{isub} filesep 'ses-' num2str(ses_run(isub,1)) filesep 'beh'];
-    filename = ['sub-' subjs{isub} '_ses-' num2str(ses_run(isub,1)) '_run-' num2str(ses_run(isub,2)) '_task-aud-reflexive.mat'];
-
-    load([PATH_MAT filesep filename]);
+    % PATH_MAT = [dirs.data filesep 'sub-' subjs{isub} filesep 'ses-' num2str(ses_run(isub,1)) filesep 'beh'];
+    % filename = ['sub-' subjs{isub} '_ses-' num2str(ses_run(isub,1)) '_run-' num2str(ses_run(isub,2)) '_task-aud-reflexive.mat'];
+    % 
+    % load([PATH_MAT filesep filename]);
 
     for i = 1:120 % from trials 1-120
         % determine the trial indexes of nn_novel and nn_learned
         % conditions?
 
-        array_learncon = {trialData.learncon};
+        % array_learncon = {trialData.learncon};
+        array_learncon = trials.learncon;
 
-        if strcmp(array_learncon{i},'nn_novel')
-            learncon(i,1,isub) = 1;
+        if strcmp(array_learncon(i),'nn_novel')
+            learncon_list(i,1,isub) = 1;
         elseif strcmp(array_learncon{i},'nn_learned')
-            learncon(i,2,isub) = 1;
+            learncon_list(i,2,isub) = 1;
         else
-            learncon(i,3,isub) = 1;
+            learncon_list(i,3,isub) = 1;
         end
     end
 end
@@ -131,55 +132,80 @@ end
 % store data inside the data matrix
 for ides = 1:3
     for isub = 1:9
-        before_mean = zeros(120,201,2);
+        %raw_data = zeros(120,201,2);
         count1 = 1;
         count2 = 1;
         for i = 1:120
             if ides == 1
                 % first z is nat trials, second z is nn_novel
-                if learncon(i,3,isub) == 1 % nat
-                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                if learncon_list(i,3,isub) == 1 % nat
+                    %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count1,:,1) = temp(window(isub,1,ides):window(isub,2,ides));
+                        % rows is the trials
+                        % columns is time (the data values)
+                        % z is the conditions
                     count1 = count1 + 1;
-                elseif learncon(i,1,isub) == 1 % nn_novel
-                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                elseif learncon_list(i,1,isub) == 1 % nn_novel
+                    %raw_data(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count2,:,2) = temp(window(isub,1,ides):window(isub,2,ides));
                     count2 = count2 + 1;
                 end
             elseif ides == 2 
                 % first z is nat trials, second z is nn_learned
-                if learncon(i,3,isub) == 1 % nat
-                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                if learncon_list(i,3,isub) == 1 % nat
+                    %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count1,:,1) = temp(window(isub,1,ides):window(isub,2,ides));
                     count1 = count1 + 1;
-                elseif learncon(i,2,isub) == 1 % nn_learned
-                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                elseif learncon_list(i,2,isub) == 1 % nn_learned
+                    %raw_data(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count2,:,2) = temp(window(isub,1,ides):window(isub,2,ides));
                     count2 = count2 + 1;
                 end
             else
                 % first z is nn_learned, second is nn_novel
-                if learncon(i,2,isub) == 1 % nn_learned
-                    before_mean(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                if learncon_list(i,2,isub) == 1 % nn_learned
+                    %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count1,:,1) = temp(window(isub,1,ides):window(isub,2,ides));
                     count1 = count1 + 1;
-                elseif learncon(i,1,isub) == 1 % nn_novel
-                    before_mean(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                elseif learncon_list(i,1,isub) == 1 % nn_novel
+                    %raw_data(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
+                    temp = trials.f1comp{i,1};
+                    raw_data(count2,:,2) = temp(window(isub,1,ides):window(isub,2,ides));
                     count2 = count2 + 1;
                 end
             end
         end
 
         % this average is just the current subject with each trial averaged
-        temp_mean1(1,:) = mean(before_mean(:,:,1),2);
-        temp_mean1(2,:) = mean(before_mean(:,:,2),2);
+        trials_averaged(1,:) = mean(raw_data(:,:,1),2, 'omitnan'); % average of the first learncon
+        trials_averaged(2,:) = mean(raw_data(:,:,2),2, 'omitnan'); % average of the second learncon
 
         % this average is each subject averaged
-        for_ttest(isub,1,ides) = mean(temp_mean1(1,:));
-        for_ttest(isub,2,ides) = mean(temp_mean1(2,:));
+        subjs_averaged(isub,1,ides) = mean(trials_averaged(1,:), 'omitnan');
+        subjs_averaged(isub,2,ides) = mean(trials_averaged(2,:), 'omitnan');
     end
 end
 
 % run the t-test
-ttest_final = zeros(3,1);
+h_value = zeros(3,1);
 for ides = 1:3
-    [ttest_final(ides), p_value(ides)] = ttest(for_ttest(:,1,ides),for_ttest(:,2,ides));
+    [h_value(ides), p_value(ides)] = ttest(subjs_averaged(:,1,ides),subjs_averaged(:,2,ides));
 end
+
+% plot the means
+bar([mean(subjs_averaged(:,1,1)),mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2))]);
+hold on
+scatter(1,subjs_averaged(:,1,1), "filled");
+scatter(2,subjs_averaged(:,2,1), "filled");
+scatter(3,subjs_averaged(:,2,2), "filled");
+cur_ax = gca;
+cur_ax.XTickLabel = {'nat','nn-novel','nn-learned'};
+
 %% calculate the times for the window of analysis - old
 % try 1: window for analysis is 150ms after onset and 150ms before offset
 % dirs = setDirs_seq_pert();

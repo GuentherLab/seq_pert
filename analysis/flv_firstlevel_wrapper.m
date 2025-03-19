@@ -99,8 +99,24 @@ field_default('op','praat_trials_to_import', [op.trialrange(1) : op.trialrange(2
 
 trial_inds_to_analyze = op.trialrange(1):op.trialrange(2); 
 
+% if we're using f1comp measure, then align raw-F1-mic signal, because this measure will be used to compute f1comp
+if string(op.measure) == 'f1comp';
+    align_measure = 'raw-F1-mic'; % the timing for this field corresponds to the audio files we use for manual annotation of reference time
+else
+    align_measure = op.measure;
+end
+
 %%%%% delete vars already present named 'f1comp'... so we don't create it multiple times
 ind_to_delete = string(trialData(1).dataLabel) == 'f1comp';
+fields_to_edit = {'s','dataLabel','dataUnits','t'};
+for itrial = trial_inds_to_analyze
+    for ifield = 1:numel(fields_to_edit)
+       trialData(itrial).(fields_to_edit{ifield})  = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
+    end
+end
+
+%%%%% delete vars already present with the same name as the alignment variable... so we don't create it multiple times
+ind_to_delete = string(trialData(1).dataLabel) == [align_measure, '_aligned'];
 fields_to_edit = {'s','dataLabel','dataUnits','t'};
 for itrial = trial_inds_to_analyze
     for ifield = 1:numel(fields_to_edit)
@@ -149,13 +165,6 @@ if numel(unique(fs_vals)) == 1;
     D_unaligned.fsample = fs_vals(1); 
 else
     error('found different sampling rates across trials')
-end
-
-% if we're using f1comp measure, then align raw-F1-mic signal, because this measure will be used to compute f1comp
-if string(op.measure) == 'f1comp';
-    align_measure = 'raw-F1-mic'; % the timing for this field corresponds to the audio files we use for manual annotation of reference time
-else
-    align_measure = op.measure;
 end
 
 for itrial = 1:ntrials
@@ -294,7 +303,7 @@ elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
 elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
     filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
 end
-save(filename,'tc_align');
+save(filename,'tc_align','trials');
 
 end
 
