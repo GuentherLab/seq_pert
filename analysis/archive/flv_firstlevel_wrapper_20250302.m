@@ -16,7 +16,6 @@ op.ses = 2;
 op.run = 3;
 op.praat_trials_to_import = 1:120; 
 
-
 % op.sub = 'sp003';
 % op.ses = 2;
 % op.run = 2;
@@ -25,15 +24,11 @@ op.praat_trials_to_import = 1:120;
 % op.sub = 'sp004';
 % op.ses = 2;
 % op.run = 2;
-<<<<<<< HEAD:analysis/flv_firstlevel_wrapper_20250302.m
 % op.praat_trials_to_import = 1:120; 
-=======
->>>>>>> e18f2498748530a137097185a28deb83c465d553:analysis/archive/flv_firstlevel_wrapper_20250302.m
 
 % op.sub = 'sp005';
 % op.ses = 2;
 % op.run = 6;
-<<<<<<< HEAD:analysis/flv_firstlevel_wrapper_20250302.m
 % op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp006';
@@ -45,16 +40,14 @@ op.praat_trials_to_import = 1:120;
 % op.ses = 2;
 % op.run = 2;
 % op.praat_trials_to_import = 1:120; 
-=======
 
 % op.sub = 'sp006';
 % op.ses = 2;
 % op.run = 2; 
 
-op.sub = 'sp007';
-op.ses = 2;
-op.run = 2; 
->>>>>>> e18f2498748530a137097185a28deb83c465d553:analysis/archive/flv_firstlevel_wrapper_20250302.m
+% op.sub = 'sp007';
+% op.ses = 2;
+% op.run = 2; 
 
 % op.sub = 'sp008';
 % op.ses = 2;
