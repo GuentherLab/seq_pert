@@ -5,73 +5,76 @@
 
 %%%% this script desc-formants file to add f1comp measure and add more info to the condLabel field
 %%%% ... then create design matrix and run flvoice_firstlevel
-%
-% 
+
+function flv_firstlevel_wrapper(sub, ses, run, praat_trials_to_import, measure, design, contrast, trialrange, show_alignment_fig)
+
+op.sub = sub;
+op.ses = ses;
+op.run = run;
+
 % op.sub = 'sp001';
 % op.ses = 2;
 % op.run = 2;
 
-op.sub = 'sp002';
-op.ses = 2;
-op.run = 3;
-op.praat_trials_to_import = 1:120; 
-
+% op.sub = 'sp002';
+% op.ses = 2;
+% op.run = 3;
 
 % op.sub = 'sp003';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp004';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp005';
 % op.ses = 2;
 % op.run = 6;
-% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp006';
 % op.ses = 2;
-% op.run = 2;
-% op.praat_trials_to_import = 1:120; 
+% op.run = 2; 
 
 % op.sub = 'sp007';
 % op.ses = 2;
-% op.run = 2;
-% op.praat_trials_to_import = 1:120; 
+% op.run = 2; 
 
 % op.sub = 'sp008';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp009';
 % op.ses = 2;
 % op.run = 2;
-% op.praat_trials_to_import = 1:120; 
+
+op.praat_trials_to_import = praat_trials_to_import;
+% op.praat_trials_to_import = 1:120;
 
 %%%%%%%%%%%%%%%%%%%%%% pick analysis parameters
 
+op.measure = measure;
 % op.measure = 'F1-mic';
-op.measure = 'f1comp'; % measure of F1 compensation - difference between perturbed and null trials
+% op.measure = 'f1comp'; % measure of F1 compensation - difference between perturbed and null trials
+
+op.design = design; op.contrast = contrast;
 
 % op.design = {'D1','U1'}; op.contrast = [1,-1]; 
 % op.design = {'U1','N1'}; op.contrast = [1,-1]; 
 % op.design = {'D1','N1'}; op.contrast = [1,-1]; 
 
-op.design = {'nat','nn_novel'}; op.contrast = [1,-1]; 
+% op.design = {'nat','nn_novel'}; op.contrast = [1,-1]; 
 % op.design = {'nat','nn_learned'}; op.contrast = [1,-1]; 
 % op.design = {'nn_learned','nn_novel'}; op.contrast = [1,-1]; 
 
 % % % haven't yet bothered to implement this using arbitrary trial lists insted of trial min/max....
 % % % ....... tricky to get these values into anonymous function
-op.trialrange = [1 120];
+op.trialrange = trialrange;
+% op.trialrange = [1 120];
 % op.trialrange = [1 480];
 
 % plotting params
-show_alignment_fig = 1; 
+% show_alignment_fig = 1; 
 xline_width = 2; 
 xline_color = [0.2 0.2 0.2];
 xline_style = '--';
@@ -282,4 +285,16 @@ if plot_all_ref_offsets
     hline_ref_off_mean = xline(1000*ref_offs, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
 end
 
+% saving the alignmnent time
+%if op.design == {'nat','nn_novel'}
+if cellfun(@isequal, op.design, {'nat','nn_novel'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' op.sub '_aligntime_nat_nn-novel'];
+elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
+elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
+    filename = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
+end
+save(filename,'tc_align');
+
+end
 
