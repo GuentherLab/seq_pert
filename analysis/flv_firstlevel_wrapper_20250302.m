@@ -11,18 +11,36 @@
 % op.ses = 2;
 % op.run = 2;
 
-% op.sub = 'sp002';
-% op.ses = 2;
-% op.run = 3;
+op.sub = 'sp002';
+op.ses = 2;
+op.run = 3;
+op.praat_trials_to_import = 1:120; 
+
 
 % op.sub = 'sp003';
 % op.ses = 2;
 % op.run = 2;
+% op.praat_trials_to_import = 1:120; 
 
-op.sub = 'sp006';
-op.ses = 2;
-op.run = 2;
-op.praat_trials_to_import = 1:120; 
+% op.sub = 'sp004';
+% op.ses = 2;
+% op.run = 2;
+% op.praat_trials_to_import = 1:120; 
+
+% op.sub = 'sp005';
+% op.ses = 2;
+% op.run = 6;
+% op.praat_trials_to_import = 1:120; 
+
+% op.sub = 'sp006';
+% op.ses = 2;
+% op.run = 2;
+% op.praat_trials_to_import = 1:120; 
+
+% op.sub = 'sp007';
+% op.ses = 2;
+% op.run = 2;
+% op.praat_trials_to_import = 1:120; 
 
 % op.sub = 'sp008';
 % op.ses = 2;
@@ -43,9 +61,9 @@ op.measure = 'f1comp'; % measure of F1 compensation - difference between perturb
 % op.design = {'U1','N1'}; op.contrast = [1,-1]; 
 % op.design = {'D1','N1'}; op.contrast = [1,-1]; 
 
-% op.design = {'nat','nn_novel'}; op.contrast = [1,-1]; 
+op.design = {'nat','nn_novel'}; op.contrast = [1,-1]; 
 % op.design = {'nat','nn_learned'}; op.contrast = [1,-1]; 
-op.design = {'nn_learned','nn_novel'}; op.contrast = [1,-1]; 
+% op.design = {'nn_learned','nn_novel'}; op.contrast = [1,-1]; 
 
 % % % haven't yet bothered to implement this using arbitrary trial lists insted of trial min/max....
 % % % ....... tricky to get these values into anonymous function
