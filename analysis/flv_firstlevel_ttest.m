@@ -12,7 +12,7 @@
 % flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% 
+
 % % nat vs nn_learned
 % flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
@@ -23,7 +23,7 @@
 % flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% 
+
 % % nn_learned vs nn_novel
 % flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
@@ -64,21 +64,21 @@ for ides = 1:3 % number of designs
         cur_sub = subjs{isub};
 
         if ides == 1
-            filepath = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' cur_sub '_aligntime_nat_nn-novel'];
+            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' cur_sub '_aligntime_nat_nn-novel'];
         elseif ides == 2
-            filepath = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' cur_sub '_aligntime_nat_nn-learn'];
+            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' cur_sub '_aligntime_nat_nn-learn'];
         elseif ides == 3
-            filepath = ['/Users/anita/School/College/Honors Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
+            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
         end
 
         load(filepath);
 
         index_1 = 1;
-        while tc_align.plot_xtime(index_1) < 0
+        while tc_align.plot_xtime(index_1) < 0.150
             index_1 = index_1 + 1;
         end
         index_2 = 1;
-        while tc_align.plot_xtime(index_2) < 0.200
+        while tc_align.plot_xtime(index_2) < 0.350
             index_2 = index_2 + 1;
         end
 
@@ -197,7 +197,7 @@ for ides = 1:3
     [h_value(ides), p_value(ides)] = ttest(subjs_averaged(:,1,ides),subjs_averaged(:,2,ides));
 end
 
-% plot the means
+%% plot the means
 bar([mean(subjs_averaged(:,1,1)),mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2))]);
 hold on
 scatter(1,subjs_averaged(:,1,1), "filled");
@@ -205,6 +205,7 @@ scatter(2,subjs_averaged(:,2,1), "filled");
 scatter(3,subjs_averaged(:,2,2), "filled");
 cur_ax = gca;
 cur_ax.XTickLabel = {'nat','nn-novel','nn-learned'};
+cur_ax.YLabel.String = 'f1comp (Hz)';
 
 %% calculate the times for the window of analysis - old
 % try 1: window for analysis is 150ms after onset and 150ms before offset

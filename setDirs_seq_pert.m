@@ -112,6 +112,8 @@ else
             dirs.AudDev = [dirs.projRepo 'AudDev']; 
             dirs.FLvoice = [pkgdir filesep 'FLvoice'];
 
+            dirs.personal = ['/Users/anita/School/College/Honors_Thesis'];
+
         case 'henrique'
             pkgdir = 'C:\docs\code';
             dirs.projRepo = [pkgdir filesep 'seq_pert']; 
