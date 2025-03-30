@@ -2,9 +2,9 @@ dirs = setDirs_seq_pert();
 close all
 
 %% native vs nn-novel
-filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-novel'];
+%filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-novel'];
 %filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-learn'];
-%filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nn-learn_nn-novel'];
+filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nn-learn_nn-novel'];
 tiled1 = tiledlayout(3,3);
 
 % nexttile
@@ -15,9 +15,9 @@ for isub = 1:9
     % clear filename indiv_fig
     %disp(['subject ' num2str(isub)]);
 
-    filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-novel'];
+    %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-novel'];
     %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-learn'];
-    %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nn-learn_nn-novel'];
+    filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nn-learn_nn-novel'];
     openfig(filename,'invisible');
 
     indiv_fig = gca;
@@ -27,8 +27,8 @@ for isub = 1:9
     ylim(indiv_fig, [-200,200]);
 
     x_0 = indiv_fig.Children(2).Value;
-    xline(indiv_fig, [x_0+150], 'red');
-    xline(indiv_fig, [x_0+350], 'red');
+    xline(indiv_fig, [x_0+150], 'red', 'LineWidth',1);
+    xline(indiv_fig, [x_0+350], 'red', 'LineWidth',1);
     % zoom(indiv_fig,3);
     % left = indiv_fig.Children(2).Value;
     % bottom = -200;
