@@ -106,6 +106,15 @@ else
     align_measure = op.measure;
 end
 
+%%%%% delete vars already present named that are empty '[]'
+ind_to_delete = cellfun(@isempty, trialData(1).dataLabel) == 1;
+fields_to_edit = {'s','dataLabel','dataUnits','t'};
+for itrial = trial_inds_to_analyze
+    for ifield = 1:numel(fields_to_edit)
+       trialData(itrial).(fields_to_edit{ifield})  = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
+    end
+end
+
 %%%%% delete vars already present named 'f1comp'... so we don't create it multiple times
 ind_to_delete = string(trialData(1).dataLabel) == 'f1comp';
 fields_to_edit = {'s','dataLabel','dataUnits','t'};
