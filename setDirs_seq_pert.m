@@ -142,9 +142,9 @@ end
 
 %% paths common to all hosts
 % ...... these don't all need to be added to the path; save for later reference
-dirs.derivatives = [dirs.data, filsep, 'derivatives'];
+dirs.derivatives = [dirs.data, filesep, 'derivatives'];
 dirs.der_acoustic = [dirs.data filesep 'derivatives' filesep 'acoustic']; % output dir for flvoice_import
-dirs.der_analyses = [dirs.derivatives, filesep, analyses]; % where to stored saved results of stats and other analyses
+dirs.der_analyses = [dirs.derivatives, filesep, 'analyses']; % where to stored saved results of stats and other analyses
 
 dirs.stim = [dirs.projRepo, filesep, 'experiment', filesep, 'stimLists']; % stimuli
 
