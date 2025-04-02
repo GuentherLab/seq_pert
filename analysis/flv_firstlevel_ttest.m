@@ -75,10 +75,12 @@ for ides = 1:3 % number of designs
 
         index_1 = 1;
         while tc_align.plot_xtime(index_1) < 0.150
+        %while tc_align.plot_xtime(index_1) < -0.200
             index_1 = index_1 + 1;
         end
         index_2 = 1;
         while tc_align.plot_xtime(index_2) < 0.350
+        %while tc_align.plot_xtime(index_2) < 0.000
             index_2 = index_2 + 1;
         end
 
