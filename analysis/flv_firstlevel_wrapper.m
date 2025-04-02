@@ -116,7 +116,7 @@ for itrial = trial_inds_to_analyze
 end
 
 %%%%% delete vars already present named 'f1comp'... so we don't create it multiple times
-if op.measure == 'f1comp'
+if string(op.measure) == 'f1comp'
     ind_to_delete = string(trialData(1).dataLabel) == 'f1comp';
     fields_to_edit = {'s','dataLabel','dataUnits','t'};
     for itrial = trial_inds_to_analyze
@@ -178,6 +178,7 @@ else
     error('found different sampling rates across trials')
 end
 
+% construct fieldtrip-formatted struct to do trial alignment on
 for itrial = 1:ntrials
     unaligned_var_ind = string(trialData(itrial).dataLabel)  == align_measure; 
     D_unaligned.trial{1,itrial} =  trialData(itrial).s{unaligned_var_ind}; % response for this trial
@@ -271,7 +272,7 @@ for icol = 1:n_design_cols
     designval = op.design{icol}; 
     switch designval
         case {'D1','N1','U1'} % if perturbation condition is specified.................................... not tested yet
-            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.', designval, '[a-z_]+''))'];
+            cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.', designval, '\.[a-z_]+''))'];
         case {'nat','nn_learned','nn_novel'} %%% if learning condition is specified
             cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.[DNU]1\.', designval, '''))'];
             %f = @(x,varargin)[~isempty(regexp(x,'[A-Z]\.mat')) ~isempty(regexp(x,'asdflearned'))]
@@ -307,13 +308,7 @@ end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
-% % % % % % % % % % % % % % % % % % % % % if cellfun(@isequal, op.design, {'nat','nn_novel'})
-    filename = [dirs.analyses, filesep,'ttest',filesep, op.sub '_aligntime_',  op.design{1},'_',op.design{2}];
-% % % % % % % % % % % % % % % elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
-% % % % % % % % % % % % % % %     filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
-% % % % % % % % % % % % % % % elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
-% % % % % % % % % % % % % % %     filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
-% % % % % % % % % % % % % % % end
+filename = [dirs.analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, strjoin(op.design) '_', num2str(op.contrast];
 save(filename,'tc_align','trials');
 
 end
