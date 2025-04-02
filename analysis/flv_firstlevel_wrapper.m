@@ -307,13 +307,13 @@ end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
-if cellfun(@isequal, op.design, {'nat','nn_novel'})
-    filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' op.sub '_aligntime_nat_nn-novel'];
-elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
-    filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
-elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
-    filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
-end
+% % % % % % % % % % % % % % % % % % % % % if cellfun(@isequal, op.design, {'nat','nn_novel'})
+    filename = [dirs.analyses, filesep,'ttest',filesep, op.sub '_aligntime_',  op.design{1},'_',op.design{2}];
+% % % % % % % % % % % % % % % elseif cellfun(@isequal, op.design, {'nat','nn_learned'})
+% % % % % % % % % % % % % % %     filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' op.sub '_aligntime_nat_nn-learn'];
+% % % % % % % % % % % % % % % elseif cellfun(@isequal, op.design, {'nn_learned','nn_novel'})
+% % % % % % % % % % % % % % %     filename = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' op.sub '_aligntime_nn-learn_nn-novel'];
+% % % % % % % % % % % % % % % end
 save(filename,'tc_align','trials');
 
 end
