@@ -63,13 +63,15 @@ for ides = 1:3 % number of designs
     for isub = 1:length(subjs)
         cur_sub = subjs{isub};
 
-        if ides == 1
-            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' cur_sub '_aligntime_nat_nn-novel'];
-        elseif ides == 2
-            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' cur_sub '_aligntime_nat_nn-learn'];
-        elseif ides == 3
-            filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
-        end
+        filepath = dirs.der_analyses;
+
+        % if ides == 1
+        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' cur_sub '_aligntime_nat_nn-novel'];
+        % elseif ides == 2
+        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' cur_sub '_aligntime_nat_nn-learn'];
+        % elseif ides == 3
+        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
+        % end
 
         load(filepath);
 
