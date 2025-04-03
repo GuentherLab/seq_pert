@@ -12,41 +12,6 @@ op.sub = sub;
 op.ses = ses;
 op.run = run;
 
-% op.sub = 'sp001';
-% op.ses = 2;
-% op.run = 2;
-
-% op.sub = 'sp002';
-% op.ses = 2;
-% op.run = 3;
-
-% op.sub = 'sp003';
-% op.ses = 2;
-% op.run = 2;
-
-% op.sub = 'sp004';
-% op.ses = 2;
-% op.run = 2;
-
-% op.sub = 'sp005';
-% op.ses = 2;
-% op.run = 6;
-
-% op.sub = 'sp006';
-% op.ses = 2;
-% op.run = 2; 
-
-% op.sub = 'sp007';
-% op.ses = 2;
-% op.run = 2; 
-
-% op.sub = 'sp008';
-% op.ses = 2;
-% op.run = 2;
-
-% op.sub = 'sp009';
-% op.ses = 2;
-% op.run = 2;
 
 op.praat_trials_to_import = praat_trials_to_import;
 % op.praat_trials_to_import = 1:120;
@@ -271,7 +236,7 @@ trial_str_for_func = ['& ~[trialNumber<', num2str(op.trialrange(1)), '] & ~[tria
 for icol = 1:n_design_cols
     designval = op.design{icol}; 
     switch designval
-        case {'D1','N1','U1'} % if perturbation condition is specified.................................... not tested yet
+        case {'D1','N1','U1'} % if perturbation condition is specified
             cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.', designval, '\.[a-z_]+''))'];
         case {'nat','nn_learned','nn_novel'} %%% if learning condition is specified
             cond_str_for_func = ['@(condLabel,trialNumber)~isempty(regexp(condLabel,''[A-Z]{5,7}\.[DNU]1\.', designval, '''))'];
@@ -308,7 +273,7 @@ end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
-filename = [dirs.der_analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, strjoin(op.design) '_', num2str(op.contrast)];
+filename = [dirs.analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, strjoin(op.design) '_', num2str(op.contrast];
 save(filename,'tc_align','trials');
 
 end
