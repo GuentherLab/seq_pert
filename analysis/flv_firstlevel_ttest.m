@@ -54,8 +54,11 @@ ses_run = [2,2;...
 window = zeros([9,2,3]);
     % z axis is the designs
     % stores the index of the window in tc_align
+measure = 'f1comp';
+design = {'nat nn_novel','nat nn_learned','nn_learned nn_novel'};
+contrast = {'1 -1','1 -1','1 -1'};
 
-for ides = 1:3 % number of designs
+for ides = 1:length(design) % number of designs
     % 1 = {'nat','nn_novel'}
     % 2 = {'nat','nn_learned'}
     % 3 = {'nn_learned','nn_novel'}
@@ -73,7 +76,9 @@ for ides = 1:3 % number of designs
         %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
         % end
 
-        load(filepath);
+        filename = [filepath filesep 'ttest' filesep subjs(isub) '_aligntime_' measure '_' design(ides) '_' contrast(ides)];
+
+        load(filename);
 
         index_1 = 1;
         while tc_align.plot_xtime(index_1) < 0.150

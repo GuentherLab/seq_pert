@@ -273,7 +273,9 @@ end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
-filename = [dirs.analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, strjoin(op.design) '_', num2str(op.contrast];
+filename = [dirs.der_analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, '_', strjoin(op.design) '_', num2str(op.contrast)];
+figname = [dirs.der_analyses filesep 'ttest' filesep op.sub '_firstlevel-fig_' op.measure '_' strjoin(op.design) '_' num2str(op.contrast)];
+savefig(gcf, figname);
 save(filename,'tc_align','trials');
 
 end

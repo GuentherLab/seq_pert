@@ -1,10 +1,15 @@
 dirs = setDirs_seq_pert();
 close all
 
-%% native vs nn-novel
-%filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-novel'];
-%filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-learn'];
-filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nn-learn_nn-novel'];
+measure = 'f1comp';
+design = 'nat nn_novel';
+%design = 'nat nn_learned';
+%design = 'nn_learned nn_novel';
+contrast = '1, -1';
+
+%filepath = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-novel'];
+%filepath = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-learn'];
+%filepath = [dirs.personal filesep 'Indv_firstlevel/figures/nn-learn_nn-novel'];
 tiled1 = tiledlayout(3,3);
 
 % nexttile
@@ -17,7 +22,7 @@ for isub = 1:9
 
     %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-novel'];
     %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-learn'];
-    filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nn-learn_nn-novel'];
+    filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_firstlevel-fig_' measure '_' design '_' contrast];
     openfig(filename,'invisible');
 
     indiv_fig = gca;
