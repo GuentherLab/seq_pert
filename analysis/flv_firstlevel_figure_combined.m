@@ -59,8 +59,8 @@ for isub = 1:9
     % xline(indiv_fig, [x_0+350], 'red', 'LineWidth',1);
     % xline(indiv_fig, [x_0+300], 'red', 'LineWidth',1);
     % xline(indiv_fig, [x_0+500], 'red', 'LineWidth',1);
-    xline(indiv_fig, [x_0 + manual_window(isub)], 'red', 'LineWidth',1);
-    xline(indiv_fig, [x_0 + manual_window(isub)+200], 'red', 'LineWidth',1);
+    % xline(indiv_fig, [x_0 + manual_window(isub)], 'red', 'LineWidth',1);
+    % xline(indiv_fig, [x_0 + manual_window(isub)+200], 'red', 'LineWidth',1);
 
     % zoom(indiv_fig,3);
     % left = indiv_fig.Children(2).Value;

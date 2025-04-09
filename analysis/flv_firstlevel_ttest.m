@@ -2,39 +2,6 @@
 %%%% have tc_align be created each time this function is run, and each one 
 %%%% is saved into a table to be called when needed
 
-% % nat vs nn_novel
-% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-% 
-% % nat vs nn_learned
-% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-% 
-% % nn_learned vs nn_novel
-% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-
 %% get the values from each subject's f1comp between the window
 % use the tc_align value calculated in the wrapper
 % window is from 150ms after the onset to 200ms later

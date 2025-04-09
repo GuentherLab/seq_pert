@@ -219,11 +219,11 @@ if string(op.measure) == 'f1comp';
         trialData(itrial).t{f1comp_var_ind} =  trialData(itrial).t{f1_col_ind}; % same as variable f1 was derived from
     end
 
-    figure
-    f1comp_plot = gca;
-    plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
-    f1comp_plot.Title.String = 'after f1comp calculation';
-    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
+    % figure
+    % f1comp_plot = gca;
+    % plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
+    % f1comp_plot.Title.String = 'after f1comp calculation';
+    % xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
 end
 
 
@@ -279,11 +279,11 @@ box off
 %%% version of the alignment measure and subtracts that .t value
 %%% temporary hack, we should not expect that this value is always 200 ms
 %%% if audapter was run with different timing parameters
-hline_ref_on = xline(1000*tc_align.align_time - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+hline_ref_on = xline(1000*tc_align.align_time, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 %hline_ref_on = xline(1000*tc_align.align_time + trialData(1).t{align_var_ind}, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 %hline_ref_on = xline(1000*tc_align.align_time - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 ref_offs = arrayfun(@(x) x.options.time.reference_offset, trialData(trials.analyze))';
-hline_ref_off_mean = xline(1000*mean(ref_offs) - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+hline_ref_off_mean = xline(1000*mean(ref_offs), 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 %hline_ref_off_mean = xline(1000*mean(ref_offs) + trialData(1).t{align_var_ind}, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 %hline_ref_off_mean = xline(1000*mean(ref_offs) - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 
@@ -292,19 +292,21 @@ if plot_all_ref_offsets
     hline_ref_off_mean = xline(1000*ref_offs - 200, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
 end
 
-if string(op.measure) == 'f1comp'
-    figure
-    f1comp_plot = gca;
-    plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
-    f1comp_plot.Title.String = 'after flvoice_firstlevel';
-    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
-else
-    figure
-    f1comp_plot = gca;
-    plot(f1comp_plot, trialData(1).s{align_var_ind});
-    f1comp_plot.Title.String = 'after flvoice_firstlevel';
-    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
-end
+% if string(op.measure) == 'f1comp'
+%     figure
+%     f1comp_plot = gca;
+%     plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
+%     f1comp_plot.Title.String = 'after flvoice_firstlevel';
+%     xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
+% else
+%     figure
+%     f1comp_plot = gca;
+%     plot(f1comp_plot, trialData(1).s{align_var_ind});
+%     f1comp_plot.Title.String = 'after flvoice_firstlevel';
+%     xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
+% end
+
+
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
