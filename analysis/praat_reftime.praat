@@ -10,7 +10,8 @@ form Select subject, file type, and tiers
 endform
 
 #wd$ =     "C:\docs\code\seq_pert\data\derivatives\acoustic\sub-sp001\ses-2\trial_audio\run-2\"
-wd$ =     "C:\Users\amsme\Downloads\Trials data from HG\"
+wd$ =     "C:\Users\amsmeier\Downloads\run-2\run-2\"
+
 
 
 outDir$ = wd$
