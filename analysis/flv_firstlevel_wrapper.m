@@ -159,6 +159,10 @@ cfg.align_times = align_times;
 cfg.show_figure = show_alignment_fig; 
 tc_align = align_trial_timecourses(cfg,D_unaligned)
 
+% tc_align_plot = figure;
+% plot(tc_align_plot, tc_align.mean);
+% tc_align_plot.Name = 'after tc_align';
+
 
 %% add variable to trialData to contain our newly aligned timecourses
 for itrial = 1:ntrials
@@ -176,6 +180,7 @@ for itrial = 1:ntrials
     trialData(itrial).options.time.reference_offset = tc_align.align_time + [trialData(itrial).options.time.reference_offset - trialData(itrial).options.time.reference]; 
     trialData(itrial).options.time.reference  = tc_align.align_time; 
 end
+
 
 %% update .mat files in 'acoustic' folder to contain a new variable 'pert-compensation' with one value per timepoint
 %    to-do: mask out null trials which have been marked as bad in QC GUI
@@ -213,6 +218,12 @@ if string(op.measure) == 'f1comp';
         trialData(itrial).dataUnits{f1comp_var_ind} = trialData(itrial).dataUnits{f1_col_ind}; % same as variable f1 was derived from
         trialData(itrial).t{f1comp_var_ind} =  trialData(itrial).t{f1_col_ind}; % same as variable f1 was derived from
     end
+
+    figure
+    f1comp_plot = gca;
+    plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
+    f1comp_plot.Title.String = 'after f1comp calculation';
+    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
 end
 
 
@@ -262,20 +273,46 @@ flvoice_firstlevel(op.sub, op.ses, op.run, 'aud-reflexive', titlestr, op.measure
 
 hold on
 box off
-hline_ref_on = xline(1000*tc_align.align_time, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+%%% subtracting 200ms from the alignment window lines to have it align with
+%%% the output of flvoice_first level
+%%% need to change so that instead of -200, it takes from the not-raw
+%%% version of the alignment measure and subtracts that .t value
+%%% temporary hack, we should not expect that this value is always 200 ms
+%%% if audapter was run with different timing parameters
+hline_ref_on = xline(1000*tc_align.align_time - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+%hline_ref_on = xline(1000*tc_align.align_time + trialData(1).t{align_var_ind}, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+%hline_ref_on = xline(1000*tc_align.align_time - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 ref_offs = arrayfun(@(x) x.options.time.reference_offset, trialData(trials.analyze))';
-hline_ref_off_mean = xline(1000*mean(ref_offs), 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+hline_ref_off_mean = xline(1000*mean(ref_offs) - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+%hline_ref_off_mean = xline(1000*mean(ref_offs) + trialData(1).t{align_var_ind}, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
+%hline_ref_off_mean = xline(1000*mean(ref_offs) - 200, 'LineWidth',xline_width, 'Color',xline_color, 'LineStyle',xline_style);
 
 %%% plot all ref offsets.... looks messy
 if plot_all_ref_offsets
-    hline_ref_off_mean = xline(1000*ref_offs, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
+    hline_ref_off_mean = xline(1000*ref_offs - 200, 'LineWidth',xline_width/4, 'Color',xline_color, 'LineStyle',xline_style);
+end
+
+if string(op.measure) == 'f1comp'
+    figure
+    f1comp_plot = gca;
+    plot(f1comp_plot, trialData(1).s{f1comp_var_ind});
+    f1comp_plot.Title.String = 'after flvoice_firstlevel';
+    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
+else
+    figure
+    f1comp_plot = gca;
+    plot(f1comp_plot, trialData(1).s{align_var_ind});
+    f1comp_plot.Title.String = 'after flvoice_firstlevel';
+    xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
 end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
 filename = [dirs.der_analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, '_', strjoin(op.design) '_', num2str(op.contrast)];
-figname = [dirs.der_analyses filesep 'ttest' filesep op.sub '_firstlevel-fig_' op.measure '_' strjoin(op.design) '_' num2str(op.contrast)];
+figname = [dirs.der_analyses filesep 'ttest' filesep op.sub '_firstlevel-fig_' op.measure '_' strjoin(op.design) '_' num2str(op.contrast) '.fig'];
 savefig(gcf, figname);
+% temp = convertCharsToStrings(figname)
+% savefig(gcf,temp);
 save(filename,'tc_align','trials');
 
 end

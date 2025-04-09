@@ -2,38 +2,38 @@
 %%%% have tc_align be created each time this function is run, and each one 
 %%%% is saved into a table to be called when needed
 
-% nat vs nn_novel
-flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
-
-% nat vs nn_learned
-flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
-
-% nn_learned vs nn_novel
-flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
-flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% % nat vs nn_novel
+% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_novel'},[1,-1], [1 120], 1);
+% 
+% % nat vs nn_learned
+% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nat','nn_learned'},[1,-1], [1 120], 1);
+% 
+% % nn_learned vs nn_novel
+% flv_firstlevel_wrapper('sp001',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp002',2,3, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp003',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp004',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp005',2,6, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp006',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+% flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
 
 %% get the values from each subject's f1comp between the window
 % use the tc_align value calculated in the wrapper
@@ -58,6 +58,11 @@ measure = 'f1comp';
 design = {'nat nn_novel','nat nn_learned','nn_learned nn_novel'};
 contrast = {'1 -1','1 -1','1 -1'};
 
+% each number in the list is the starting location of the 200 ms window for
+% that subject based on adjusted tc_align (-200ms), so need to factor that 
+% into the calculation
+manual_window = [0.200, 0.300, 0.300, -0.100, 0, 0.050, -0.400, 0, 0.100];
+
 for ides = 1:length(design) % number of designs
     % 1 = {'nat','nn_novel'}
     % 2 = {'nat','nn_learned'}
@@ -76,18 +81,21 @@ for ides = 1:length(design) % number of designs
         %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
         % end
 
-        filename = [filepath filesep 'ttest' filesep subjs(isub) '_aligntime_' measure '_' design(ides) '_' contrast(ides)];
-
+        filename = [filepath filesep 'ttest' filesep subjs{isub} '_aligntime_' measure '_' design{ides} '_' contrast{ides}];
         load(filename);
 
+        % find the indeces for the window
+        x_0 = tc_align.align_time - 0.200;
         index_1 = 1;
         while tc_align.plot_xtime(index_1) < 0.150
-        %while tc_align.plot_xtime(index_1) < -0.200
+        %while tc_align.plot_xtime(index_1) < 0.350
+        %while tc_align.plot_xtime(index_1) < [x_0 + manual_window(isub)]
             index_1 = index_1 + 1;
         end
         index_2 = 1;
         while tc_align.plot_xtime(index_2) < 0.350  
-        %while tc_align.plot_xtime(index_2) < 0.000
+        %while tc_align.plot_xtime(index_2) < 0.550
+        %while tc_align.plot_xtime(index_2) < [x_0 + manual_window(isub) + 0.200]
             index_2 = index_2 + 1;
         end
 
@@ -114,12 +122,16 @@ learncon_list = zeros([120,3,9]);
     % y: column 1 for nn_novel, column 2 for nn_learned, column 3 for nat
     % z: per subject
 
+ides = 1;
 % determine which trials are which learning condition
 for isub = 1:9
     % PATH_MAT = [dirs.data filesep 'sub-' subjs{isub} filesep 'ses-' num2str(ses_run(isub,1)) filesep 'beh'];
     % filename = ['sub-' subjs{isub} '_ses-' num2str(ses_run(isub,1)) '_run-' num2str(ses_run(isub,2)) '_task-aud-reflexive.mat'];
     % 
     % load([PATH_MAT filesep filename]);
+
+    filename = [filepath filesep 'ttest' filesep subjs{isub} '_aligntime_' measure '_' design{ides} '_' contrast{ides}];
+    load(filename);
 
     for i = 1:120 % from trials 1-120
         % determine the trial indexes of nn_novel and nn_learned
@@ -144,9 +156,17 @@ for ides = 1:3
         %raw_data = zeros(120,201,2);
         count1 = 1;
         count2 = 1;
+
+        % load the correct subject's trials variable in (can be optimized
+        % by storing when it's loaded earlier so it doesn't have to be
+        % loaded again
+        filename = [filepath filesep 'ttest' filesep subjs{isub} '_aligntime_' measure '_' design{ides} '_' contrast{ides}];
+        load(filename);
+
+        % raw_data temporarily stores the raw data depending on the design
         for i = 1:120
             if ides == 1
-                % first z is nat trials, second z is nn_novel
+                % first z in raw_data is nat trials, second z is nn_novel
                 if learncon_list(i,3,isub) == 1 % nat
                     %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
                     temp = trials.f1comp{i,1};
@@ -162,11 +182,11 @@ for ides = 1:3
                     count2 = count2 + 1;
                 end
             elseif ides == 2 
-                % first z is nat trials, second z is nn_learned
+                % first z in raw_data is nat trials, second z is nn_learned
                 if learncon_list(i,3,isub) == 1 % nat
                     %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
                     temp = trials.f1comp{i,1};
-                    raw_data(count1,:,1) = temp(window(isub,1,ides):window(isub,2,ides));
+                    raw_data(count1,:,2) = temp(window(isub,1,ides):window(isub,2,ides));
                     count1 = count1 + 1;
                 elseif learncon_list(i,2,isub) == 1 % nn_learned
                     %raw_data(count2,:,2) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
@@ -175,7 +195,7 @@ for ides = 1:3
                     count2 = count2 + 1;
                 end
             else
-                % first z is nn_learned, second is nn_novel
+                % first z in raw_data is nn_learned, second is nn_novel
                 if learncon_list(i,2,isub) == 1 % nn_learned
                     %raw_data(count1,:,1) = tc_align.tc(i,window(isub,1,ides):window(isub,2,ides));
                     temp = trials.f1comp{i,1};
@@ -191,12 +211,22 @@ for ides = 1:3
         end
 
         % this average is just the current subject with each trial averaged
-        trials_averaged(1,:) = mean(raw_data(:,:,1),2, 'omitnan'); % average of the first learncon
-        trials_averaged(2,:) = mean(raw_data(:,:,2),2, 'omitnan'); % average of the second learncon
+        % trials_averaged(1,:) = mean(raw_data(:,:,1),2, 'omitnan'); % average of the first learncon
+        % trials_averaged(2,:) = mean(raw_data(:,:,2),2, 'omitnan'); % average of the second learncon
+
+        concat1 = [];
+        concat2 = [];
+        for i=1:40
+            concat1 = horzcat(concat1,raw_data(i,:,1));
+            concat2 = horzcat(concat2,raw_data(i,:,2));
+        end
 
         % this average is each subject averaged
-        subjs_averaged(isub,1,ides) = mean(trials_averaged(1,:), 'omitnan');
-        subjs_averaged(isub,2,ides) = mean(trials_averaged(2,:), 'omitnan');
+        % subjs_averaged(isub,1,ides) = mean(trials_averaged(1,:), 'omitnan');
+        % subjs_averaged(isub,2,ides) = mean(trials_averaged(2,:),
+        % 'omitnan');
+        subjs_averaged(isub,1,ides) = mean(concat1, 'omitnan');
+        subjs_averaged(isub,2,ides) = mean(concat2, 'omitnan');
     end
 end
 
@@ -207,11 +237,32 @@ for ides = 1:3
 end
 
 %% plot the means
+% simple loop to determine means based on learncon and subject
+% for i=1:9 % loop through subject
+%     for j=1:3 % loop through learning condition
+%         temp = trials.f1comp{i,1};
+% 
+%         sub_plot_avg(i,j)
+%     end
+% end
+
 bar([mean(subjs_averaged(:,1,1)),mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2))]);
 hold on
-scatter(1,subjs_averaged(:,1,1), "filled");
-scatter(2,subjs_averaged(:,2,1), "filled");
-scatter(3,subjs_averaged(:,2,2), "filled");
+for isub = 1:9
+    % make the dots
+    scatter(1,subjs_averaged(isub,1,1), "filled","black");
+    text(0.6,subjs_averaged(isub,1,1), ['sp00' num2str(isub)]);
+    scatter(2,subjs_averaged(isub,2,1), "filled","black");
+    scatter(3,subjs_averaged(isub,2,2), "filled","black");
+
+    % make the line that goes through them
+    plot([1 2], [subjs_averaged(isub,1,1) subjs_averaged(isub,2,1)], 'LineWidth',1, 'Color','black');
+    plot([2 3], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
+
+end
+% scatter(1,subjs_averaged(:,1,1), "filled");
+% scatter(2,subjs_averaged(:,2,1), "filled");
+% scatter(3,subjs_averaged(:,2,2), "filled");
 cur_ax = gca;
 cur_ax.XTickLabel = {'nat','nn-novel','nn-learned'};
 cur_ax.YLabel.String = 'f1comp (Hz)';
