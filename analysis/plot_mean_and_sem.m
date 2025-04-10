@@ -1,7 +1,7 @@
 function hfill = plot_mean_and_sem(cell_mat,x_time)
     mat = cell2mat(cell_mat);
-    tc_mean = mean(mat);
-    tc_sem = std(mat) ./ sqrt(size(mat,1));
+    tc_mean = nanmean(mat);
+    tc_sem = nanstd(mat) ./ sqrt(size(mat,1));
     facealpha  = 0.3;
     linestyle = '-';
 
