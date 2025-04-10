@@ -35,7 +35,12 @@ y_lim = 100;
 % nexttile
 % openfig([filepath_nat_novel filesep 'sp001_nat_nn-novel']);
 
-manual_window = [200, 300, 300, -100, 0, 50, -400, 0, 100];
+subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv']; 
+
+subs = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
+subs = subs(logical(subs.analyze),:);
+
+% manual_window = [200, 300, 300, -100, 0, 50, -400, 0, 100];
 
 for isub = 1:9
     % nexttile
@@ -44,17 +49,19 @@ for isub = 1:9
 
     %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-novel'];
     %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-learn'];
-    filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_firstlevel-fig_' measure '_' design '_' contrast '.fig'];
+    %filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_firstlevel-fig_' measure '_' design '_' contrast '.fig'];
+    filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_mean-sem-fig_' measure '.fig'];
     openfig(filename,'invisible');
 
     indiv_fig = gca;
     indiv_fig.Title.String = ['sub-sp00' num2str(isub)];
+    xlim(indiv_fig, [subs.analysis_window_start(isub), subs.analysis_window_end(isub)]);
     %xlim(indiv_fig, [indiv_fig.Children(2).Value, indiv_fig.Children(2).Value+350]);
     % xlim(indiv_fig, [indiv_fig.Children(2).Value, indiv_fig.Children(1).Value]);
     % ylim(indiv_fig, [-y_lim,y_lim]);
 
     % window for f1comp ttest analysis
-    x_0 = indiv_fig.Children(2).Value;
+    % x_0 = indiv_fig.Children(2).Value;
     % xline(indiv_fig, [x_0+150], 'red', 'LineWidth',1);
     % xline(indiv_fig, [x_0+350], 'red', 'LineWidth',1);
     % xline(indiv_fig, [x_0+300], 'red', 'LineWidth',1);

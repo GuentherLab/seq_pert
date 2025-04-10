@@ -185,11 +185,15 @@ end
 %% update .mat files in 'acoustic' folder to contain a new variable 'pert-compensation' with one value per timepoint
 %    to-do: mask out null trials which have been marked as bad in QC GUI
 %    to-do: only compare U1 and D1 trials to N1 values with the exact same syllable name
+
+f1_col_ind = strcmp(trialData(1).dataLabel, 'raw-F1-mic_aligned');  % this assumes all trials have the same variable index in trialData
+trials.f1(trials.analyze) = arrayfun(@(x) x.s{f1_col_ind}, trialData(trials.analyze),'UniformOutput',0)';; % add f1 mic timecourse to trialtable for the trial range we are analyzing
+
 if string(op.measure) == 'f1comp';
     % use the aligned f1 timecourses
-    f1_col_ind = strcmp(trialData(1).dataLabel, 'raw-F1-mic_aligned');  % this assumes all trials have the same variable index in trialData
+    %f1_col_ind = strcmp(trialData(1).dataLabel, 'raw-F1-mic_aligned');  % this assumes all trials have the same variable index in trialData
 
-    trials.f1(trials.analyze) = arrayfun(@(x) x.s{f1_col_ind}, trialData(trials.analyze),'UniformOutput',0)';; % add f1 mic timecourse to trialtable for the trial range we are analyzing
+    % trials.f1(trials.analyze) = arrayfun(@(x) x.s{f1_col_ind}, trialData(trials.analyze),'UniformOutput',0)';; % add f1 mic timecourse to trialtable for the trial range we are analyzing
     trials.f1comp = cell(height(trials),1); 
 
     null_trial_inds = string(trials.condLabel) == 'N1'   &   trials.analyze; % which trials were not F1-perturbed and are in analysis range
@@ -306,7 +310,11 @@ end
 %     xline(f1comp_plot, [trialData(1).options.time.reference*1000]);
 % end
 
-
+if strcmp(op.measure,'f1comp')
+    plot_mean_and_sem(trials.f1comp,tc_align.plot_xtime,false,true, op.sub,op.measure);
+elseif strcmp(op.measure,'raw-F1-mic')
+    plot_mean_and_sem(trials.f1,tc_align.plot_xtime,false,true, op.sub,op.measure);
+end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
