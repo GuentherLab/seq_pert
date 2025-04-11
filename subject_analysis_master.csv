@@ -1,7 +1,7 @@
-﻿subject,analyze,test_ses,test_run,analysis_window_start,analysis_window_end
-sp001,1,2,2,0.036,0.525
-sp002,1,2,3,0.105,0.697
-sp003,1,2,2,0.068,0.601
+subject,analyze,test_ses,test_run,analysis_window_start,analysis_window_end
+sp001,1,2,2,0.073,0.292
+sp002,1,2,3,0.105,0.547
+sp003,1,2,2,0.068,0.405
 sp004,1,2,2,0.144,0.379
 sp005,1,2,6,0.067,0.31
 sp006,1,2,2,0.061,0.443
