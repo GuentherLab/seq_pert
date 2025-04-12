@@ -318,7 +318,7 @@ end
 
 % saving the alignmnent time
 %if op.design == {'nat','nn_novel'}
-filename = [dirs.der_analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, '_', strjoin(op.design) '_', num2str(op.contrast)];
+filename = [dirs.der_analyses, filesep,'ttest',filesep, op.sub '_aligntime_', op.measure, '_', strjoin(op.design) '_', num2str(op.contrast) '.mat'];
 figname = [dirs.der_analyses filesep 'ttest' filesep op.sub '_firstlevel-fig_' op.measure '_' strjoin(op.design) '_' num2str(op.contrast) '.fig'];
 savefig(gcf, figname);
 % temp = convertCharsToStrings(figname)

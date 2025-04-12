@@ -151,3 +151,26 @@ flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nn_learned'},[1], [1 120],
 % flv_firstlevel_wrapper('sp007',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp008',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
 % flv_firstlevel_wrapper('sp009',2,2, 1:120, 'f1comp',{'nn_learned','nn_novel'},[1,-1], [1 120], 1);
+
+%% generate split conditions figures
+% f1comp
+split_conds_plot(1,'f1comp');
+split_conds_plot(2,'f1comp');
+split_conds_plot(3,'f1comp');
+split_conds_plot(4,'f1comp');
+split_conds_plot(5,'f1comp');
+split_conds_plot(6,'f1comp');
+split_conds_plot(7,'f1comp');
+split_conds_plot(8,'f1comp');
+split_conds_plot(9,'f1comp');
+
+% raw-F1-mic
+split_conds_plot(1,'raw-F1-mic');
+split_conds_plot(2,'raw-F1-mic');
+split_conds_plot(3,'raw-F1-mic');
+split_conds_plot(4,'raw-F1-mic');
+split_conds_plot(5,'raw-F1-mic');
+split_conds_plot(6,'raw-F1-mic');
+split_conds_plot(7,'raw-F1-mic');
+split_conds_plot(8,'raw-F1-mic');
+split_conds_plot(9,'raw-F1-mic');

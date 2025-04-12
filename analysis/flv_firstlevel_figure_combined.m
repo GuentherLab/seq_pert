@@ -6,12 +6,12 @@ close all
 % design = 'D1 U1';
 % contrast = '1 -1';
 
-measure = 'raw-F1-mic';
-design = 'D1 U1 N1';
-contrast = '0.33333     0.33333     0.33333';
+% measure = 'raw-F1-mic';
+% design = 'D1 U1 N1';
+% contrast = '0.33333     0.33333     0.33333';
 
 % f1comp with learning condition design
-% measure = 'f1comp';
+measure = 'f1comp';
 % design = 'nat nn_novel';
 % design = 'nat nn_learned';
 % design = 'nn_learned nn_novel';
@@ -47,15 +47,17 @@ for isub = 1:9
     % clear filename indiv_fig
     %disp(['subject ' num2str(isub)]);
 
-    %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-novel'];
-    %filename = [filepath_nat_novel filesep 'sp00' num2str(isub) '_nat_nn-learn'];
-    %filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_firstlevel-fig_' measure '_' design '_' contrast '.fig'];
-    filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_mean-sem-fig_' measure '.fig'];
+    
+    %filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_mean-sem-fig_' measure '.fig'];
+    filename = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(isub) '_split-conds-fig_' measure '.fig'];
     openfig(filename,'invisible');
+    % lgd = findobj('type', 'legend');
+    % set(lgd, 'visible', 'off')
 
     indiv_fig = gca;
     indiv_fig.Title.String = ['sub-sp00' num2str(isub)];
-    xlim(indiv_fig, [subs.analysis_window_start(isub), subs.analysis_window_end(isub)]);
+    %xlim(indiv_fig, [subs.analysis_window_start(isub), subs.analysis_window_end(isub)]);
+
     %xlim(indiv_fig, [indiv_fig.Children(2).Value, indiv_fig.Children(2).Value+350]);
     % xlim(indiv_fig, [indiv_fig.Children(2).Value, indiv_fig.Children(1).Value]);
     % ylim(indiv_fig, [-y_lim,y_lim]);
@@ -86,6 +88,16 @@ for isub = 1:9
     % nexttile(isub)
     % openfig(filename);
 end
+
+
+if strcmp(measure,'f1comp')
+    leg = legend('nn-novel', 'nn-learned', 'native', 'Orientation', 'Horizontal');
+    %leg.Layout.Tile = 'north';
+elseif strcmp(measure,'raw-F1-mic')
+    leg = legend('U1', 'D1', 'N1', 'Orientation', 'Horizontal');
+    %leg.Layout.Tile = 'north';
+end
+
 
 % filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-learn'];
 % tiled2 = tiledlayout(3,3);

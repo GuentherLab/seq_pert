@@ -25,10 +25,10 @@ measure = 'f1comp';
 design = {'nat nn_novel','nat nn_learned','nn_learned nn_novel'};
 contrast = {'1 -1','1 -1','1 -1'};
 
-% each number in the list is the starting location of the 200 ms window for
-% that subject based on adjusted tc_align (-200ms), so need to factor that 
-% into the calculation
-manual_window = [0.200, 0.300, 0.300, -0.100, 0, 0.050, -0.400, 0, 0.100];
+% for the manually selected windows
+subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv']; 
+subs = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
+subs = subs(logical(subs.analyze),:);
 
 for ides = 1:length(design) % number of designs
     % 1 = {'nat','nn_novel'}
@@ -40,29 +40,21 @@ for ides = 1:length(design) % number of designs
 
         filepath = dirs.der_analyses;
 
-        % if ides == 1
-        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-novel/' cur_sub '_aligntime_nat_nn-novel'];
-        % elseif ides == 2
-        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nat_nn-learn/' cur_sub '_aligntime_nat_nn-learn'];
-        % elseif ides == 3
-        %     filepath = ['/Users/anita/School/College/Honors_Thesis/Indv_firstlevel/mat_files/nn-learn_nn-novel/' cur_sub '_aligntime_nn-learn_nn-novel'];
-        % end
-
         filename = [filepath filesep 'ttest' filesep subjs{isub} '_aligntime_' measure '_' design{ides} '_' contrast{ides}];
         load(filename);
 
         % find the indeces for the window
         x_0 = tc_align.align_time - 0.200;
         index_1 = 1;
-        while tc_align.plot_xtime(index_1) < 0.150
+        %while tc_align.plot_xtime(index_1) < 0.150
         %while tc_align.plot_xtime(index_1) < 0.350
-        %while tc_align.plot_xtime(index_1) < [x_0 + manual_window(isub)]
+        while tc_align.plot_xtime(index_1) < subs.analysis_window_start(isub)
             index_1 = index_1 + 1;
         end
         index_2 = 1;
-        while tc_align.plot_xtime(index_2) < 0.350  
+        %while tc_align.plot_xtime(index_2) < 0.350  
         %while tc_align.plot_xtime(index_2) < 0.550
-        %while tc_align.plot_xtime(index_2) < [x_0 + manual_window(isub) + 0.200]
+        while tc_align.plot_xtime(index_2) < subs.analysis_window_end(isub)
             index_2 = index_2 + 1;
         end
 
@@ -123,6 +115,7 @@ for ides = 1:3
         %raw_data = zeros(120,201,2);
         count1 = 1;
         count2 = 1;
+        raw_data = [];
 
         % load the correct subject's trials variable in (can be optimized
         % by storing when it's loaded earlier so it doesn't have to be
@@ -213,25 +206,25 @@ end
 %     end
 % end
 
-bar([mean(subjs_averaged(:,1,1)),mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2))]);
+bar([mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2)),mean(subjs_averaged(:,1,1))]);
 hold on
 for isub = 1:9
     % make the dots
-    scatter(1,subjs_averaged(isub,1,1), "filled","black");
-    text(0.6,subjs_averaged(isub,1,1), ['sp00' num2str(isub)]);
-    scatter(2,subjs_averaged(isub,2,1), "filled","black");
-    scatter(3,subjs_averaged(isub,2,2), "filled","black");
+    scatter(1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
+    text(0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
+    scatter(2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
+    scatter(3,subjs_averaged(isub,1,1), "filled","black"); % native
 
     % make the line that goes through them
-    plot([1 2], [subjs_averaged(isub,1,1) subjs_averaged(isub,2,1)], 'LineWidth',1, 'Color','black');
-    plot([2 3], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
+    plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
+    plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',1, 'Color','black');
 
 end
 % scatter(1,subjs_averaged(:,1,1), "filled");
 % scatter(2,subjs_averaged(:,2,1), "filled");
 % scatter(3,subjs_averaged(:,2,2), "filled");
 cur_ax = gca;
-cur_ax.XTickLabel = {'nat','nn-novel','nn-learned'};
+cur_ax.XTickLabel = {'nn-novel','nn-learned','nat'};
 cur_ax.YLabel.String = 'f1comp (Hz)';
 
 %% calculate the times for the window of analysis - old
