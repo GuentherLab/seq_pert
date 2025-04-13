@@ -206,25 +206,47 @@ end
 %     end
 % end
 
-bar([mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2)),mean(subjs_averaged(:,1,1))]);
+%b = bar([mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2)),mean(subjs_averaged(:,1,1))]);
+% nn_novel, nn_learned, native (in that order)
+figure
+cur_ax = gca;
+bar(cur_ax, 1,mean(subjs_averaged(:,2,1)));
+hold on
+bar(cur_ax, 2,mean(subjs_averaged(:,2,2)));
+hold on
+bar(cur_ax, 3,mean(subjs_averaged(:,1,1)));
+
+SEM = [std(subjs_averaged(:,2,1))/sqrt(length(subjs_averaged(:,2,1))),...
+    std(subjs_averaged(:,2,2))/sqrt(length(subjs_averaged(:,2,2))),...
+    std(subjs_averaged(:,1,1))/sqrt(length(subjs_averaged(:,1,1)))];
+means = [mean(subjs_averaged(:,2,1)), mean(subjs_averaged(:,2,2)), mean(subjs_averaged(:,1,1))];
+eb = errorbar(cur_ax, means,SEM);
+eb.LineWidth = 1;
+eb.LineStyle = 'none';
+
+
+% clr = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.9290 0.6940 0.1250];
+% % b.CData = clr;
+% b.CData(1,:) = [0 0.4470 0.7410];
+% b.CData(2,:) = [0.8500 0.3250 0.0980];
+% b.CData(3,:) = [0.9290 0.6940 0.1250];
 hold on
 for isub = 1:9
     % make the dots
-    scatter(1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
-    text(0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
-    scatter(2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
-    scatter(3,subjs_averaged(isub,1,1), "filled","black"); % native
+    scatter(cur_ax, 1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
+    text(cur_ax, 0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
+    scatter(cur_ax, 2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
+    scatter(cur_ax, 3,subjs_averaged(isub,1,1), "filled","black"); % native
 
     % make the line that goes through them
     plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
     plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',1, 'Color','black');
 
 end
-% scatter(1,subjs_averaged(:,1,1), "filled");
-% scatter(2,subjs_averaged(:,2,1), "filled");
-% scatter(3,subjs_averaged(:,2,2), "filled");
-cur_ax = gca;
-cur_ax.XTickLabel = {'nn-novel','nn-learned','nat'};
+
+xticks(cur_ax, [1 2 3]);
+xticklabels(cur_ax, {'nn-novel','nn-learned','native'});
+%cur_ax.XTickLabel = {'nn-novel','nn-learned','nat'};
 cur_ax.YLabel.String = 'f1comp (Hz)';
 
 %% calculate the times for the window of analysis - old

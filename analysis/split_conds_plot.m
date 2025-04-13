@@ -110,16 +110,19 @@ function split_conds_plot(sub_num, measure)
     
     % plot the result
     figure
-    plot(cond_mean{1});
+    plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{1}, 'LineWidth',2);
     hold on
-    plot(cond_mean{2});
+    plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{2}, 'LineWidth',2);
     hold on
-    plot(cond_mean{3});
-    
+    plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{3}, 'LineWidth',2);
+
+    xlabel('time (ms)');    
     if strcmp(measure, 'f1comp')
         legend('nn-novel', 'nn-learned', 'native'); 
+        ylabel('f1comp (Hz)');
     elseif strcmp(measure, 'raw-F1-mic')
         legend('U1', 'D1', 'N1');
+        ylabel('raw-F1-mic (Hz)');
     end
 
     figname = [dirs.der_analyses filesep 'ttest' filesep 'sp00' num2str(sub_num) '_split-conds-fig_' measure '.fig'];
