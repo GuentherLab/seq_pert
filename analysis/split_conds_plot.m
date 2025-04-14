@@ -110,14 +110,22 @@ function split_conds_plot(sub_num, measure)
     
     % plot the result
     figure
+    hax = gca;
     plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{1}, 'LineWidth',2);
     hold on
     plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{2}, 'LineWidth',2);
     hold on
     plot(tc_align.plot_xtime(window(1):window(2))*1000,cond_mean{3}, 'LineWidth',2);
 
+    % plot_mean_and_sem(hax, cond_mean{1},tc_align.plot_xtime(window(1):window(2))*1000,false);
+    % hold on
+    % plot_mean_and_sem(hax, cond_mean{2},tc_align.plot_xtime(window(1):window(2))*1000,false);
+    % hold on
+    % plot_mean_and_sem(hax, cond_mean{3},tc_align.plot_xtime(window(1):window(2))*1000,false);
+
     xlabel('time (ms)');    
     if strcmp(measure, 'f1comp')
+        yline(0, 'LineWidth',1);
         legend('nn-novel', 'nn-learned', 'native'); 
         ylabel('f1comp (Hz)');
     elseif strcmp(measure, 'raw-F1-mic')

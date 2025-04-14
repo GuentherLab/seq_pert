@@ -2,7 +2,7 @@ dirs = setDirs_seq_pert();
 close all
 
 % F1 mic with D1 U1 design
-measure = 'raw-F1-mic';
+% measure = 'raw-F1-mic';
 % design = 'D1 U1';
 % contrast = '1 -1';
 
@@ -11,7 +11,7 @@ measure = 'raw-F1-mic';
 % contrast = '0.33333     0.33333     0.33333';
 
 % f1comp with learning condition design
-% measure = 'f1comp';
+measure = 'f1comp';
 % design = 'nat nn_novel';
 % design = 'nat nn_learned';
 % design = 'nn_learned nn_novel';
