@@ -261,7 +261,8 @@ learnstats{'nat','f1comp'} = {subjs_averaged(:,1,1)};
 learnstats{'nn_learned','f1comp'} = {subjs_averaged(:,2,2)};
 learnstats{'nn_novel','f1comp'} = {subjs_averaged(:,2,1)};
 learnstats.f1comp_mean = cellfun(@mean,learnstats.f1comp);
-learnstats.f1comp_sem = cellfun(@(x)std(x)./length(x),learnstats.f1comp);
+learnstats.f1comp_std = cellfun(@std,learnstats.f1comp);
+learnstats.f1comp_sem = cellfun(@(x)std(x)./sqrt(length(x)),learnstats.f1comp);
 f1comp4anova = cell2mat(learnstats.f1comp);      labels4anova = repelem(learnstats.learncon,length(learnstats.f1comp{1}),1); 
 [anova_p,~,anova_stats] = anova1(f1comp4anova,labels4anova); 
 [comparison_results, means, h, gnames] = multcompare(anova_stats)    % Tukey's test
