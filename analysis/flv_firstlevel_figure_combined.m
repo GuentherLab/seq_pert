@@ -89,14 +89,13 @@ for isub = 1:9
     % openfig(filename);
 end
 
-
-if strcmp(measure,'f1comp')
-    leg = legend('nn-novel', 'nn-learned', 'native', 'Orientation', 'Horizontal');
-    %leg.Layout.Tile = 'north';
-elseif strcmp(measure,'raw-F1-mic')
-    leg = legend('U1', 'D1', 'N1', 'Orientation', 'Horizontal');
-    %leg.Layout.Tile = 'north';
-end
+% if strcmp(measure,'f1comp')
+%     leg = legend('nn-novel', 'nn-learned', 'native', 'Orientation', 'Horizontal');
+%     %leg.Layout.Tile = 'north';
+% elseif strcmp(measure,'raw-F1-mic')
+%     leg = legend('U1', 'D1', 'N1', 'Orientation', 'Horizontal');
+%     %leg.Layout.Tile = 'north';
+% end
 
 
 % filepath_nat_novel = [dirs.personal filesep 'Indv_firstlevel/figures/nat_nn-learn'];

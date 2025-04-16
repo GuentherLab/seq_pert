@@ -216,14 +216,6 @@ bar(cur_ax, 2,mean(subjs_averaged(:,2,2)));
 hold on
 bar(cur_ax, 3,mean(subjs_averaged(:,1,1)));
 
-SEM = [std(subjs_averaged(:,2,1))/sqrt(length(subjs_averaged(:,2,1))),...
-    std(subjs_averaged(:,2,2))/sqrt(length(subjs_averaged(:,2,2))),...
-    std(subjs_averaged(:,1,1))/sqrt(length(subjs_averaged(:,1,1)))];
-means = [mean(subjs_averaged(:,2,1)), mean(subjs_averaged(:,2,2)), mean(subjs_averaged(:,1,1))];
-eb = errorbar(cur_ax, means,SEM);
-eb.LineWidth = 1;
-eb.LineStyle = 'none';
-
 
 % clr = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.9290 0.6940 0.1250];
 % % b.CData = clr;
@@ -233,16 +225,24 @@ eb.LineStyle = 'none';
 hold on
 for isub = 1:9
     % make the dots
-    scatter(cur_ax, 1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
-    text(cur_ax, 0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
-    scatter(cur_ax, 2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
-    scatter(cur_ax, 3,subjs_averaged(isub,1,1), "filled","black"); % native
+    %scatter(cur_ax, 1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
+    % scatter(cur_ax, 2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
+    % scatter(cur_ax, 3,subjs_averaged(isub,1,1), "filled","black"); % native
 
     % make the line that goes through them
-    plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
-    plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',1, 'Color','black');
-
+    plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',0.75, 'Color',[0.7 0.7 0.7]);
+    plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',0.75, 'Color',[0.7 0.7 0.7]);
+    text(cur_ax, 0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
 end
+
+SEM = [std(subjs_averaged(:,2,1))/sqrt(length(subjs_averaged(:,2,1))),...
+    std(subjs_averaged(:,2,2))/sqrt(length(subjs_averaged(:,2,2))),...
+    std(subjs_averaged(:,1,1))/sqrt(length(subjs_averaged(:,1,1)))];
+means = [mean(subjs_averaged(:,2,1)), mean(subjs_averaged(:,2,2)), mean(subjs_averaged(:,1,1))];
+eb = errorbar(cur_ax, means,SEM);
+eb.LineWidth = 2;
+eb.LineStyle = 'none';
+eb.Color = 'black';
 
 xticks(cur_ax, [1 2 3]);
 xticklabels(cur_ax, {'nn-novel','nn-learned','native'});
