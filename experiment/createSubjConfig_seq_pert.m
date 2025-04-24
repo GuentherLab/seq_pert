@@ -2,7 +2,7 @@ function createSubjConfig_seq_pert(subjectNum, prefix, group, gender, varargin)
 % createSubjConfig(subjectNum, prefix, group, gender, varargin)
 %
 % function to create subject-session configuration files
-% - randomizes order of stimlus lists within a subject
+% - randomizes order of stimulus lists within a subject
 %
 % INPUTS    subjectNum      subject number (will be concatenated with prefix to create subjectID)
 %           prefix          character array, e.g., 'PPT', 'pilot', 'test'

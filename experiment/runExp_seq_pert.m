@@ -73,6 +73,12 @@ function runExp_seq_pert(subjectID, session, task)
 %
 
 op.break_every_n_trials = 120; 
+
+
+
+
+
+
 op.ortho_duration = 1.5; % time that stimulus orthography is on screen (in seconds)
 op.beep_delay = 1; % delay between the stimulus offset and the go beep onset
 op.speech_window = 1.5; % period between green cross onset (also GO beep onset) and red cross onset (also STOP beep onset)
