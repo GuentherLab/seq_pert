@@ -199,15 +199,6 @@ for ides = 1:3
 end
 
 %% plot the means
-% simple loop to determine means based on learncon and subject
-% for i=1:9 % loop through subject
-%     for j=1:3 % loop through learning condition
-%         temp = trials.f1comp{i,1};
-% 
-%         sub_plot_avg(i,j)
-%     end
-% end
-
 %b = bar([mean(subjs_averaged(:,2,1)),mean(subjs_averaged(:,2,2)),mean(subjs_averaged(:,1,1))]);
 % nn_novel, nn_learned, native (in that order)
 figure
@@ -218,33 +209,24 @@ bar(cur_ax, 2,mean(subjs_averaged(:,2,2)));
 hold on
 bar(cur_ax, 3,mean(subjs_averaged(:,1,1)));
 
+hold on
+for isub = 1:9
+    % make the line that goes through the subjects
+    plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',0.75, 'Color',[0.7 0.7 0.7]);
+    plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',0.75, 'Color',[0.7 0.7 0.7]);
+    text(cur_ax, 0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
+end
+
+ylim(cur_ax,[-25,35]);
+
 SEM = [std(subjs_averaged(:,2,1))/sqrt(length(subjs_averaged(:,2,1))),...
     std(subjs_averaged(:,2,2))/sqrt(length(subjs_averaged(:,2,2))),...
     std(subjs_averaged(:,1,1))/sqrt(length(subjs_averaged(:,1,1)))];
 means = [mean(subjs_averaged(:,2,1)), mean(subjs_averaged(:,2,2)), mean(subjs_averaged(:,1,1))];
 eb = errorbar(cur_ax, means,SEM);
-eb.LineWidth = 1;
+eb.LineWidth = 2;
 eb.LineStyle = 'none';
-
-
-% clr = [0 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.9290 0.6940 0.1250];
-% % b.CData = clr;
-% b.CData(1,:) = [0 0.4470 0.7410];
-% b.CData(2,:) = [0.8500 0.3250 0.0980];
-% b.CData(3,:) = [0.9290 0.6940 0.1250];
-hold on
-for isub = 1:9
-    % make the dots
-    scatter(cur_ax, 1,subjs_averaged(isub,2,1), "filled","black"); % nn-novel
-    text(cur_ax, 0.6,subjs_averaged(isub,2,1), ['sp00' num2str(isub)]);
-    scatter(cur_ax, 2,subjs_averaged(isub,2,2), "filled","black"); % nn-learned
-    scatter(cur_ax, 3,subjs_averaged(isub,1,1), "filled","black"); % native
-
-    % make the line that goes through them
-    plot([1 2], [subjs_averaged(isub,2,1) subjs_averaged(isub,2,2)], 'LineWidth',1, 'Color','black');
-    plot([2 3], [subjs_averaged(isub,2,2) subjs_averaged(isub,1,1)], 'LineWidth',1, 'Color','black');
-
-end
+eb.Color = 'black';
 
 xticks(cur_ax, [1 2 3]);
 xticklabels(cur_ax, {'nn-novel','nn-learned','native'});
