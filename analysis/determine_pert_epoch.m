@@ -194,6 +194,9 @@ for trial = 1:length(trialData)
     % (vowel) and ending at the end of the window (vowel)
     for timepoint = largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,3)
         move_mean(timepoint,trial) = movmean(diff(timepoint,trial),[0,window_size]);
+
+        % current problem: move_mean has a lot of 0s, there must be an
+        % error somewhere
     end
 end
 
