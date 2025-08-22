@@ -1,5 +1,7 @@
 dirs = setDirs_seq_pert();
 
+trial_to_graph = 1;
+
 subject = 'sp001';
     % need to change, start on a subject that has a medium amount of
     % deviation and unpredictableness 
@@ -163,6 +165,23 @@ for trial = 1:length(trialData)
     end
 end
 
+% plot of just the expected headphone
+figure(1)
+plot(expected_headphone(:,trial_to_graph));
+
+% plot of the expected headphone and the mic
+figure(2)
+plot(expected_headphone(:,trial_to_graph));
+hold on
+plot(trialData(trial_to_graph).s{1,raw_mic});
+hold off
+
+% plot of the expected headphone and the actual headphone
+figure(3)
+plot(expected_headphone(:,1));
+hold on
+plot(trialData(1).s{1,raw_headphones});
+
 %fprintf('after step 2: %d \n', length(trialData(2).s{1,raw_mic}));
 
 %% STEP 3
@@ -184,6 +203,9 @@ for trial = 1:length(trialData)
     diff(:,trial) = abs(expected_headphone(:,trial) - temp)./temp;
 end
 
+figure(4)
+plot(diff(trial_to_graph));
+
 %% STEP 4
 % at each timepoint compute average expected-minus-measured perturbation
 % (from step 3) using movmean (within a window of size = window_size)
@@ -199,6 +221,9 @@ for trial = 1:length(trialData)
         % error somewhere
     end
 end
+
+figure(5)
+plot(move_mean(:,trial_to_graph));
 
 %% STEP 5
 % at each timepoint, determine whether the window average is greater than
