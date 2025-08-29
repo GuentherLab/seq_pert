@@ -1,3 +1,5 @@
+%% LOOK AT ABS_MIN_MAX IN DIFFERENT SUBJECTS, GENDERS, AND WORDS (more notes in doc of figures)
+
 dirs = setDirs_seq_pert();
 
 trial_to_graph = 1;
@@ -25,7 +27,7 @@ temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
-abs_min_max = [600,1500]; % hz
+abs_min_max = [200,600]; % hz
     % neither mic nor headphones can go outside this F1 range during the
     % window (window will need to be narrowed down to just the vowel)
 window_size = 30; % ms
@@ -121,6 +123,7 @@ end
 %% STEP 2
 % compute the expected headphone range at each timepoint based on if the
 % trial is a 30% up or down trial using raw-f1-mic
+% only computed within the window range
 
 sz = size(in_out_absminmax);
 % x is data
@@ -136,9 +139,13 @@ for trial = 1:length(trialData)
         cncat_len = length(expected_headphone(:,trial)) - length(temp);
         cncat_array = zeros(cncat_len,1);
         temp = vertcat(temp,cncat_array);
-        expected_headphone(:,trial) = temp;
 
-        expected_headphone(largest_window_loc_sz(1):largest_window_loc_sz(2),trial) = temp(largest_window_loc_sz(1):largest_window_loc_sz(2))*1.3;
+        % following line only applied the transformation to the window
+        %expected_headphone(:,trial) = temp;
+        %expected_headphone(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2),trial) = temp(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2))*1.3;
+
+        expected_headphone(:,trial) = temp*1.3;
+
         temp = [];
 
     elseif contains(trialData(trial).condLabel,'D1') % down trial
@@ -147,9 +154,13 @@ for trial = 1:length(trialData)
         cncat_len = length(expected_headphone(:,trial)) - length(temp);
         cncat_array = zeros(cncat_len,1);
         temp = vertcat(temp,cncat_array);
-        expected_headphone(:,trial) = temp;
 
-        expected_headphone(largest_window_loc_sz(1):largest_window_loc_sz(2),trial) = temp(largest_window_loc_sz(1):largest_window_loc_sz(2))*0.7;
+        % following lines only applied the transformation to the window
+        %expected_headphone(:,trial) = temp;
+        %expected_headphone(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2),trial) = temp(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2))*0.7;
+        
+        expected_headphone(:,trial) = temp*0.7;
+
         temp = [];
     
     else % null trial
@@ -161,13 +172,35 @@ for trial = 1:length(trialData)
         expected_headphone(:,trial) = temp;
 
         temp = [];
-
     end
 end
 
 % plot of just the expected headphone
 figure(1)
-plot(expected_headphone(:,trial_to_graph));
+fig_1 = gca();
+
+hold on
+plot(fig_1,expected_headphone(:,trial_to_graph),'black','LineWidth',2);
+
+x_tick = fig_1.XTick;
+y_tick = fig_1.YTick;
+
+hold on
+x1 = [0,  largest_window_loc_sz(trial_to_graph,1),  largest_window_loc_sz(trial_to_graph,1),    0];
+y1 = [0,  y_tick(end),                              0,                                          y_tick(end)];
+area(fig_1,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+
+hold on
+x2 = [largest_window_loc_sz(trial_to_graph,1),      largest_window_loc_sz(trial_to_graph,2),    largest_window_loc_sz(trial_to_graph,2),    largest_window_loc_sz(trial_to_graph,1)];
+y2 = [0,                                            y_tick(end),                                0,                                          y_tick(end)];
+area(fig_1,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+
+hold on
+x3 = [largest_window_loc_sz(trial_to_graph,2),  x_tick(end),    x_tick(end),    largest_window_loc_sz(trial_to_graph,2)];
+y3 = [0,                                        y_tick(end),    0,              y_tick(end)];
+area(fig_1,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+
+hold off
 
 % plot of the expected headphone and the mic
 figure(2)
@@ -203,25 +236,26 @@ for trial = 1:length(trialData)
     diff(:,trial) = abs(expected_headphone(:,trial) - temp)./temp;
 end
 
+% plot of the difference between actual headphone and expected headphone
 figure(4)
-plot(diff(trial_to_graph));
+plot(diff(:,trial_to_graph));
 
 %% STEP 4
 % at each timepoint compute average expected-minus-measured perturbation
 % (from step 3) using movmean (within a window of size = window_size)
 
+move_mean = zeros([2040,360]);
+
 for trial = 1:length(trialData)
 
     % loop through each timepoint starting at the start of the window 
     % (vowel) and ending at the end of the window (vowel)
-    for timepoint = largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,3)
+    for timepoint = largest_window_loc_sz(trial,1):(largest_window_loc_sz(trial,1)+largest_window_loc_sz(trial,3))
         move_mean(timepoint,trial) = movmean(diff(timepoint,trial),[0,window_size]);
-
-        % current problem: move_mean has a lot of 0s, there must be an
-        % error somewhere
     end
 end
 
+% graph of the move mean
 figure(5)
 plot(move_mean(:,trial_to_graph));
 
