@@ -13,6 +13,7 @@ function testMicHeadphones(gender)
 % workspace
 close all
 dirs = setDirs('AudDev');
+%dirs = setDirs_seq_pert;
 
 type = questdlg('Do you want to run Audapter continuosly or for a 2.5-second recording?', 'Type of recording', 'Continuous', '2.5 seconds', 'Continuous');
 
