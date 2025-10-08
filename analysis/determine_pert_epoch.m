@@ -2,7 +2,7 @@
 
 dirs = setDirs_seq_pert();
 
-trial_to_graph = 1;
+trial_to_graph = 5;
 
 subject = 'sp001';
     % need to change, start on a subject that has a medium amount of
@@ -134,7 +134,7 @@ expected_headphone = zeros(sz(2),sz(1));
 % trial (or do nothing for null trial) 
 for trial = 1:length(trialData)
     if contains(trialData(trial).condLabel,'U1') % up trial
-        temp = trialData(trial).s{1,raw_mic};
+        temp = trialData(trial).s{1,raw_mic};trialData(trial).s{1,raw_mic};
 
         cncat_len = length(expected_headphone(:,trial)) - length(temp);
         cncat_array = zeros(cncat_len,1);
@@ -180,7 +180,9 @@ figure(1)
 fig_1 = gca();
 
 hold on
-plot(fig_1,expected_headphone(:,trial_to_graph),'black','LineWidth',2);
+temp = trialData(trial_to_graph).s{1,raw_mic};
+plot(fig_1,temp,'black','LineWidth',2);
+%plot(fig_1,expected_headphone(:,trial_to_graph),'black','LineWidth',2);
 
 x_tick = fig_1.XTick;
 y_tick = fig_1.YTick;
