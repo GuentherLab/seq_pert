@@ -1,2 +1,5 @@
 /data/
 *.asv
+.DS_Store
+.DS_Store
+experiment/.DS_Store
