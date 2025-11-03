@@ -1,7 +1,5 @@
-function largest_window_loc_sz = step1_pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert)
+function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert)
     dirs = setDirs_seq_pert();
-    
-    %trial_to_graph = 5;
     
     subject = sub;
         % will change when looping through subjects
@@ -40,7 +38,7 @@ function largest_window_loc_sz = step1_pertEpoch(sub, sesrun, absminmax, winsz, 
         % trials and if it is too many this or other paramteres may need to be
         % changed
 
-    %% algorithm
+    %% Step 1
     % at each timepoint, compute whether raw-f1-mic signal fall outside 
     % abs_min_max
     % narrow down the window to the longest consequtuve period where it is
@@ -114,6 +112,61 @@ function largest_window_loc_sz = step1_pertEpoch(sub, sesrun, absminmax, winsz, 
                 cur_window_loc_sz = [0,0,0];
     
             end % otherwise, the timepoint is 0 and don't update anything
+        end
+    end
+
+    %% Step 2
+    % compute the expected headphone range at each timepoint based on if the
+    % trial is a 30% up or down trial using raw-f1-mic
+    % only computed within the window range
+    
+    sz = size(in_out_absminmax);
+    % x is data
+    % y is trial
+    expected_headphone = zeros(sz(2),sz(1));
+    
+    % shift expected headphone either up 30% or down 30% based on up or down 
+    % trial (or do nothing for null trial) 
+    for trial = 1:length(trialData)
+        if contains(trialData(trial).condLabel,'U1') % up trial
+            temp = trialData(trial).s{1,raw_mic};trialData(trial).s{1,raw_mic};
+    
+            cncat_len = length(expected_headphone(:,trial)) - length(temp);
+            cncat_array = zeros(cncat_len,1);
+            temp = vertcat(temp,cncat_array);
+    
+            % following line only applied the transformation to the window
+            %expected_headphone(:,trial) = temp;
+            %expected_headphone(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2),trial) = temp(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2))*1.3;
+    
+            expected_headphone(:,trial) = temp*1.3;
+    
+            temp = [];
+    
+        elseif contains(trialData(trial).condLabel,'D1') % down trial
+            temp = trialData(trial).s{1,raw_mic};
+    
+            cncat_len = length(expected_headphone(:,trial)) - length(temp);
+            cncat_array = zeros(cncat_len,1);
+            temp = vertcat(temp,cncat_array);
+    
+            % following lines only applied the transformation to the window
+            %expected_headphone(:,trial) = temp;
+            %expected_headphone(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2),trial) = temp(largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2))*0.7;
+            
+            expected_headphone(:,trial) = temp*0.7;
+    
+            temp = [];
+        
+        else % null trial
+            temp = trialData(trial).s{1,raw_mic};
+    
+            cncat_len = length(expected_headphone(:,trial)) - length(temp);
+            cncat_array = zeros(cncat_len,1);
+            temp = vertcat(temp,cncat_array);
+            expected_headphone(:,trial) = temp;
+    
+            temp = [];
         end
     end
 end
