@@ -1,9 +1,9 @@
 dirs = setDirs_seq_pert();
-close all
+%close all
 
 %% setup
 sub = 1;
-trial = 1;
+trial = 38;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -35,6 +35,32 @@ temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
+smooth_window_size = 45; % ms
+smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
+smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
+
+% figure
+% smooth_mic_fig = gca;
+% plot(smooth_mic_fig,trialData(trial).s{1,raw_mic},'red');
+% hold on
+% plot(smooth_mic_fig, smoothed_raw_mic,'black');
+% smooth_mic_fig.Title.String = 'smoothed mic trace';
+
+% figure
+% smooth_test_fig = gca;
+% smooth_mic_more = smoothdata(trialData(trial).s{1,raw_mic}', 'movmedian', 115, 'omitmissing');
+% plot(smooth_test_fig,smooth_mic_more,'red');
+% hold on
+% plot(smooth_test_fig,smoothed_raw_mic,'blue')
+% smooth_test_fig.Title.String = 'test';
+
+% figure
+% smooth_headp_fig = gca;
+% plot(smooth_headp_fig,trialData(trial).s{1,raw_headphones},'red');
+% hold on
+% plot(smooth_headp_fig, smoothed_raw_headp,'black');
+% smooth_headp_fig.Title.String = 'smoothed headphone trace';
+
 abs_min_max = [subs_table.abs_min(sub), subs_table.abs_max(sub)]; % hz
 fprintf('abs_min_max = [%d, %d]\n', abs_min_max(1),abs_min_max(2));
     % neither mic nor headphones can go outside this F1 range during the
@@ -52,18 +78,20 @@ min_pert_epoch = 300; % ms
     % changed
 
 %% calculations
-[largest_window_loc_sz, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch);
+[largest_window_loc_sz, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size);
 % actual - expected headphone
-temp1 = trialData(trial).s{1,raw_headphones};
+temp1 = smoothed_raw_headp;
 temp2 = expected_headphone(:,trial);
 temp2 = temp2(temp2~=0);
 headphone_subtraction = abs(temp1 - temp2);
+
+plot(expected_headphone(:,trial));
 
 % calculate the window where the actual - expected headphone is outside
 % the set threshold
 %threshold = 0.15;
 threshold = 0.25;
-sub_div_mic = headphone_subtraction./trialData(trial).s{1,raw_mic};
+sub_div_mic = headphone_subtraction./smoothed_raw_mic;
 
 % loop through the current raw_mic to access each timepoint
 % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
@@ -73,6 +101,14 @@ for timepoint = largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2)
         in_out_subdivmic(timepoint) = 1;
     end
 end
+
+figure
+test_fig = gca;
+plot(test_fig,sub_div_mic);
+yline(test_fig,threshold);
+
+% plot(test_fig,in_out_subdivmic);
+% test_fig.YLim = [0,2];
 
 % window location and size for when actual - expected headphone is
 % below the threashold
@@ -117,6 +153,7 @@ end
 
 %% plot the figure
 %figure('visible','off');
+figure
 fig = gca();
 if contains(trialData(trial).condLabel,'U1')
     fig.Title.String = ['subject ' subject ', trial ' num2str(trial) ' U1'];
@@ -127,7 +164,7 @@ else
 end
 
 hold on
-temp = trialData(trial).s{1,raw_mic};
+temp = smoothed_raw_mic;
 plot(fig,temp,'black','LineWidth',2);
 
 x_tick = fig.XTick;
@@ -159,12 +196,14 @@ expected = plot(fig,expected_headphone(:,trial),'yellow','LineWidth',2);
 
 % actual headphone graph
 hold on
-temp = trialData(trial).s{1,raw_headphones};
+temp = smoothed_raw_headp;
+%temp = trialData(trial).s{1,raw_headp};
 actual = plot(fig,temp,'red','LineWidth',2);
 
 % raw_mic graph to make it above everything else
 hold on
-temp = trialData(trial).s{1,raw_mic};
+temp = smoothed_raw_mic;
+%temp = trialData(trial).s{1,raw_mic};
 raw = plot(fig,temp,'black','LineWidth',2);
 
 hold on

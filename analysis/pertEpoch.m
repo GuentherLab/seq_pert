@@ -1,4 +1,4 @@
-function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert)
+function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert, smoothed,smooth_window_size)
     dirs = setDirs_seq_pert();
     
     subject = sub;
@@ -23,7 +23,18 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
     temp = convertCharsToStrings(trialData(1).dataLabel);
     raw_mic = find(strcmp(temp,'raw-F1-mic'));
     raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
-    
+
+
+    if smoothed
+        for trial = 1:length(trialData)
+            raw_mic_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
+            raw_headp_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
+        end
+    else
+        raw_mic_trace = trialData(trial).s{1,raw_mic};
+        raw_headp_trace = trialData(trial).s{1,raw_headphones};
+    end
+
     abs_min_max = absminmax; % hz
         % neither mic nor headphones can go outside this F1 range during the
         % window (window will need to be narrowed down to just the vowel)
@@ -58,7 +69,7 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
         % loop through the current raw_mic to access each timepoint
         % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
         for timepoint = 1:length(trialData(trial).s{1,raw_mic})
-            temp = trialData(trial).s{1,raw_mic};
+            temp = raw_mic_trace(trial).s{1,1};
             if temp(timepoint) >= abs_min_max(1) && temp(timepoint) <= abs_min_max(2)
                 in_out_absminmax(trial,timepoint) = 1;
             else
@@ -87,9 +98,9 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
             if in_out_absminmax(trial,timepoint) == 0 && timepoint == 1
     
             % if the current timepoint equals 1 and the previous timepoint
-            % equals 0, OR the current timepoint equals 1 and the current
+            % equals 0, OR the data equals 1 and the current
             % timepoint is 1 then update the current window location and size
-            elseif (in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 0) || (in_out_absminmax(trial,timepoint) == 1 && timepoint == 1)
+            elseif (in_out_absminmax(trial,timepoint) == 1 && timepoint == 1) || (in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 0)
                 size_cur = cur_window_loc_sz(3) + 1;
                 cur_window_loc_sz(1) = timepoint;
                 cur_window_loc_sz(3) = size_cur;
@@ -129,7 +140,7 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
     % trial (or do nothing for null trial) 
     for trial = 1:length(trialData)
         if contains(trialData(trial).condLabel,'U1') % up trial
-            temp = trialData(trial).s{1,raw_mic};trialData(trial).s{1,raw_mic};
+            temp = raw_mic_trace(trial).s{1,1};
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
@@ -144,7 +155,7 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
             temp = [];
     
         elseif contains(trialData(trial).condLabel,'D1') % down trial
-            temp = trialData(trial).s{1,raw_mic};
+            temp = raw_mic_trace(trial).s{1,1};
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
@@ -159,7 +170,7 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
             temp = [];
         
         else % null trial
-            temp = trialData(trial).s{1,raw_mic};
+            temp = raw_mic_trace(trial).s{1,1};
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
