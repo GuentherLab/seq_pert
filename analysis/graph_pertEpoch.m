@@ -57,17 +57,21 @@ min_pert_epoch = 300; % ms
     % trials and if it is too many this or other paramteres may need to be
     % changed
 
+fig_raw = figure('Name','Raw Data','NumberTitle','off');
 if num_trials_to_show == 50
-    tiled_raw = tiledlayout(10,5); % when there are 50 trials being examined
+    tiled_raw = tiledlayout(fig_raw, 10,5); % when there are 50 trials being examined
 elseif num_trials_to_show == 12
-    tiled_raw = tiledlayout(4,3); % when there are 10 trials being examined
+    tiled_raw = tiledlayout(fig_raw, 4,3); % when there are 12 trials being examined
 end
 
+fig_smooth = figure('Name','Smoothed Data','NumberTitle','off');
 if num_trials_to_show == 50
-    tiled_smooth = tiledlayout(10,5); % when there are 50 trials being examined
+    tiled_smooth = tiledlayout(fig_smooth, 10,5); % when there are 50 trials being examined
 elseif num_trials_to_show == 12
-    tiled_smooth = tiledlayout(4,3); % when there are 10 trials being examined
+    tiled_smooth = tiledlayout(fig_smooth, 4,3); % when there are 12 trials being examined
 end
+
+%% calculations
 
 %% create figure
 for i = 1:length(trials_to_graph)
@@ -147,59 +151,68 @@ for i = 1:length(trials_to_graph)
     
 
     % plot the raw figure
-    figure('visible','off');
-    fig_raw = gca();
+    %figure('visible','off');
+    nexttile(tiled_raw)
+    ax_raw = gca();
 
     if contains(trialData(trials_to_graph(i)).condLabel,'U1')
-        fig_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
+        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
     elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
-        fig_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
     else
-        fig_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
     end
     
     hold on
     temp = trialData(trials_to_graph(i)).s{1,raw_mic};
-    plot(fig_raw,temp,'black','LineWidth',2);
+    plot(ax_raw,temp,'black','LineWidth',2);
+    %plot(temp,'black','LineWidth',2);
     
-    x_tick = fig_raw.XTick;
-    y_tick = fig_raw.YTick;
+    x_tick = ax_raw.XTick;
+    y_tick = ax_raw.YTick;
 
     hold on
     x1 = [0,  largest_window_loc_sz(trials_to_graph(i),1),  largest_window_loc_sz(trials_to_graph(i),1),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
-    area(fig_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    %area(x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     
     hold on
     x2 = [largest_window_loc_sz(trials_to_graph(i),1),      largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),1)];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
-    area(fig_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+    %area(x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     
     hold on
     x3 = [largest_window_loc_sz(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_loc_sz(trials_to_graph(i),2)];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
-    area(fig_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    %area(x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
     x4 = [largest_window_loc_sz_1(1),largest_window_loc_sz_1(2),largest_window_loc_sz_1(2),largest_window_loc_sz_1(1)];
     y4 = [0,y_tick(end),0,y_tick(end)];
-    area(fig_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+    %area(x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
         hold on
-        expected = plot(fig_raw,expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
+        expected = plot(ax_raw,expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
+        %expected = plot(expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
     
         % actual headphone graph
         hold on
         temp = trialData(trials_to_graph(i)).s{1,raw_headphones};
-        actual = plot(fig_raw,temp,'red','LineWidth',2);
+        actual = plot(ax_raw,temp,'red','LineWidth',2);
+        %actual = plot(temp,'red','LineWidth',2);
     %end
 
     % raw_mic graph to make it above everything else
     hold on
     temp = trialData(trials_to_graph(i)).s{1,raw_mic};
-    raw = plot(fig_raw,temp,'black','LineWidth',2);
+    raw = plot(ax_raw,temp,'black','LineWidth',2);
+    %raw = plot(temp,'black','LineWidth',2);
 
     hold on
     yline(abs_min_max(1),'LineWidth',1);
@@ -207,85 +220,87 @@ for i = 1:length(trials_to_graph)
     
     hold off
 
-    fig_raw.Parent = tiled_raw;
-    fig_raw.Layout.Tile = i;
-
-    pause(0.1)
+    %ax_raw.Parent = tiled_raw;
+    %gcf = tiled_raw;
+    %ax_raw.Layout.Tile = i;
 
 
     % plot the smooth figure
-    figure('visible','off');
-    fig_smooth = gca();
+    %figure('visible','off');
+    nexttile(tiled_smooth)
+    ax_smooth = gca();
+
     if contains(trialData(trials_to_graph(i)).condLabel,'U1')
-        fig_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
+        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
     elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
-        fig_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
     else
-        fig_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
     end
-    
+
     hold on
     temp = smoothed_raw_mic;
-    plot(fig_smooth,temp,'black','LineWidth',2);
-    
-    x_tick = fig_smooth.XTick;
-    y_tick = fig_smooth.YTick;
+    plot(ax_smooth,temp,'black','LineWidth',2);
+
+    x_tick = ax_smooth.XTick;
+    y_tick = ax_smooth.YTick;
 
     hold on
     x1 = [0,  largest_window_loc_sz(trials_to_graph(i),1),  largest_window_loc_sz(trials_to_graph(i),1),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
-    area(fig_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
-    
+    area(ax_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+
     hold on
     x2 = [largest_window_loc_sz(trials_to_graph(i),1),      largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),1)];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
-    area(fig_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
-    
+    area(ax_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+
     hold on
     x3 = [largest_window_loc_sz(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_loc_sz(trials_to_graph(i),2)];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
-    area(fig_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
     x4 = [largest_window_loc_sz_1(1),largest_window_loc_sz_1(2),largest_window_loc_sz_1(2),largest_window_loc_sz_1(1)];
     y4 = [0,y_tick(end),0,y_tick(end)];
-    area(fig_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+    area(ax_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
         hold on
-        expected = plot(fig_smooth,expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
-    
+        smooth_expHP = smoothdata(expected_headphone(:,trials_to_graph(i)), 'movmedian', smooth_window_size, 'omitmissing');
+        expected = plot(ax_smooth,smooth_expHP,'yellow','LineWidth',2);
+
         % actual headphone graph
         hold on
-        temp = trialData(trials_to_graph(i)).s{1,raw_headphones};
-        actual = plot(fig_smooth,temp,'red','LineWidth',2);
+        temp = smoothed_raw_headp;
+        actual = plot(ax_smooth,temp,'red','LineWidth',2);
     %end
 
     % raw_mic graph to make it above everything else
     hold on
     temp = trialData(trials_to_graph(i)).s{1,raw_mic};
-    raw = plot(fig_smooth,temp,'black','LineWidth',2);
+    raw = plot(ax_smooth,temp,'black','LineWidth',2);
 
     hold on
     yline(abs_min_max(1),'LineWidth',1);
     yline(abs_min_max(2),'LineWidth',1);
-    
+
     hold off
 
-    fig_smooth.Parent = tiled_smooth;
-    fig_smooth.Layout.Tile = i;
+    % ax_smooth.Parent = tiled_smooth;
+    % ax_smooth.Layout.Tile = i;
 
     pause(0.1)
 end
 
 %if num_trials_to_show == 12
     subset = [expected, actual, raw];
-    lg_raw = legend(fig_smooth,subset,'expected headphone','measured headphone','raw-mic');
+    lg_raw = legend(ax_raw,subset,'expected headphone','measured headphone','raw-mic');
     lg_raw.Parent = tiled_raw;
     lg_raw.Layout.Tile = 'north';
 
-    lg_smooth = legend(fig_smooth,subset,'expected headphone','measured headphone','raw-mic');
+    lg_smooth = legend(ax_smooth,subset,'expected headphone','measured headphone','raw-mic');
     lg_smooth.Parent = tiled_smooth;
     lg_smooth.Layout.Tile = 'north';
 %end
