@@ -323,3 +323,7 @@ window_loc_sz_blue = largest_window_loc_sz(1:num_trials_for_analysis,:);
 window_loc_sz_green = largest_window_loc_sz_1(1:num_trials_for_analysis,:);
 green_in_blue(:,1) = window_loc_sz_green(:,3)./window_loc_sz_blue(:,3);
 green_in_blue(:,2) = green_in_blue(:,1) < threshold_for_exclusion;
+
+num_excluded = sum(green_in_blue(:,2));
+pct_excluded = 100 * num_excluded/num_trials_for_analysis;
+fprintf('Excluded %d of %d trials (%.1f%%)\n', num_excluded,num_trials_for_analysis,pct_excluded);
