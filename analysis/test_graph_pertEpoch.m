@@ -2,14 +2,12 @@ dirs = setDirs_seq_pert();
 close all
 %clear
 
-num_trials_for_analysis = 120;
-
 num_trials_to_show = 50;
 %num_trials_to_show = 12;
 
 %trial_to_graph = 20;
 %trials_to_graph = randi([1,120],1,num_trials_to_show);
-trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
+trials_to_graph = randperm(120,num_trials_to_show);
 %trials_to_graph = randi([120,360],1,20);
 
 subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
@@ -75,9 +73,9 @@ elseif num_trials_to_show == 12
 end
 
 %% calculations
-largest_window_loc_sz_1 = zeros([num_trials_for_analysis,3]);
+largest_window_loc_sz_1 = zeros([length(trialData),3]);
 %for trial=1:length(trialData)
-for trial=1:num_trials_for_analysis
+for trial=1:120
     fprintf('trial: %d\n', trial);
 
     smooth_window_size = 45; % ms
@@ -313,13 +311,3 @@ end
     lg_smooth.Parent = tiled_smooth;
     lg_smooth.Layout.Tile = 'north';
 %end
-
-threshold_for_exclusion = 0.20;
-% first column is the percentage of the amount of blue that is also green
-% second column is whether to exclude (1) the trial from analysis based on
-% the threshold
-green_in_blue = zeros(num_trials_for_analysis,2);
-window_loc_sz_blue = largest_window_loc_sz(1:num_trials_for_analysis,:);
-window_loc_sz_green = largest_window_loc_sz_1(1:num_trials_for_analysis,:);
-green_in_blue(:,1) = window_loc_sz_green(:,3)./window_loc_sz_blue(:,3);
-green_in_blue(:,2) = green_in_blue(:,1) < threshold_for_exclusion;
