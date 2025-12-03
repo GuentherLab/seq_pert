@@ -3,7 +3,7 @@ dirs = setDirs_seq_pert();
 
 %% setup
 sub = 1;
-trial = 38;
+trial = 114;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -35,7 +35,8 @@ temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
-smooth_window_size = 45; % ms
+% smooth_window_size = 45; % ms
+smooth_window_size = 58; % ms
 smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
 smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
 

@@ -1,3 +1,6 @@
+function [green_in_blue,num_excluded] = graph_pertEpoch(sub)
+%disp('FUNCTION CALLED');
+
 dirs = setDirs_seq_pert();
 close all
 %clear
@@ -9,18 +12,27 @@ num_trials_to_show = 50;
 
 %trial_to_graph = 20;
 %trials_to_graph = randi([1,120],1,num_trials_to_show);
-trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
-%trials_to_graph = randi([120,360],1,20);
+trials_to_include = [44, 118];
+if length(trials_to_include) > 0
+    trials_to_graph = trials_to_include;
+    temp_trials = randperm(num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
+    trials_to_graph = cat(2,trials_to_graph,temp_trials);
+else
+    trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
+    %trials_to_graph = randi([120,360],1,20);
+end
 
 subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
 subs_table = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
 
-sub = 1;
+%sub = 1;
 if sub < 10
     subject = ['sp00' num2str(sub)];
 else
     subject = ['sp0' num2str(sub)];
 end
+
+disp(subject);
     
 ses_run = [subs_table.test_ses(sub),subs_table.test_run(sub)];
 %ses_run = [2,3];
@@ -76,11 +88,11 @@ end
 
 %% calculations
 largest_window_loc_sz_1 = zeros([num_trials_for_analysis,3]);
+smooth_window_size = 58; % ms
 %for trial=1:length(trialData)
 for trial=1:num_trials_for_analysis
-    fprintf('trial: %d\n', trial);
+    %fprintf('trial: %d\n', trial);
 
-    smooth_window_size = 45; % ms
     smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
     smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
 
@@ -124,7 +136,7 @@ for trial=1:num_trials_for_analysis
         % if the current timepoint equals 1 and the previous timepoint
         % equals 0, OR the current timepoint equals 1 and the current
         % timepoint is 1 then update the current window location and size
-        elseif (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0) || (in_out_subdivmic(timepoint) == 1 && timepoint == 1)
+        elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
             size_cur = cur_window_loc_sz_1(3) + 1;
             cur_window_loc_sz_1(1) = timepoint;
             cur_window_loc_sz_1(3) = size_cur;
@@ -155,7 +167,6 @@ end
 
 %% create figure
 for i = 1:length(trials_to_graph)
-    smooth_window_size = 45; % ms
     smoothed_raw_mic = smoothdata(trialData(trials_to_graph(i)).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
     smoothed_raw_headp = smoothdata(trialData(trials_to_graph(i)).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
 
@@ -314,7 +325,7 @@ end
     lg_smooth.Layout.Tile = 'north';
 %end
 
-threshold_for_exclusion = 0.20;
+threshold_for_exclusion = 0.60;
 % first column is the percentage of the amount of blue that is also green
 % second column is whether to exclude (1) the trial from analysis based on
 % the threshold
@@ -326,4 +337,6 @@ green_in_blue(:,2) = green_in_blue(:,1) < threshold_for_exclusion;
 
 num_excluded = sum(green_in_blue(:,2));
 pct_excluded = 100 * num_excluded/num_trials_for_analysis;
-fprintf('Excluded %d of %d trials (%.1f%%)\n', num_excluded,num_trials_for_analysis,pct_excluded);
+fprintf('Excluded %d of %d trials for subject %d (%.1f%%)\n', num_excluded,num_trials_for_analysis, sub, pct_excluded);
+
+end
