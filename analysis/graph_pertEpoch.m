@@ -175,6 +175,11 @@ end
 % generate the final window (where the magnitude of the waveform is above a
 % specified value
 for trial=1:num_trials_for_analysis
+
+    if any(largest_window_green(trial,:)==0) 
+        error('no ''green window'' timepoints found - this is an unusual trial, recommended to manually examine it')
+    end
+
     raw_Amp_mic = trialData(trial).s{1,7};
     Amp_thresh = subs_table.Amp_thresh(sub); % amp
 
