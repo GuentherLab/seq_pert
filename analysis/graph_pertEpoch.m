@@ -1,5 +1,6 @@
 function [green_in_blue,num_excluded] = graph_pertEpoch(sub)
-%disp('FUNCTION CALLED');
+% blue window: the longest region within a manually determined y-axis window
+% green window: the longest region within the blue window where the expected and actual headphones are close to each other
 
 dirs = setDirs_seq_pert();
 close all
@@ -87,9 +88,15 @@ elseif num_trials_to_show == 12
 end
 
 %% calculations
-largest_window_loc_sz_1 = zeros([num_trials_for_analysis,3]);
+largest_window_green = zeros([num_trials_for_analysis,3]);
+largest_window_final = zeros([num_trials_for_analysis,3]);
 smooth_window_size = 58; % ms
 %for trial=1:length(trialData)
+
+% generate the blue window and expected headphone
+[largest_window_blue, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size); % smoothed
+
+% generate the green window
 for trial=1:num_trials_for_analysis
     %fprintf('trial: %d\n', trial);
 
@@ -97,7 +104,7 @@ for trial=1:num_trials_for_analysis
     smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
 
     % pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch); % unsmoothed
-    [largest_window_loc_sz, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size); % smoothed
+    %[largest_window_loc_sz, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size); % smoothed
     % actual - expected headphone
     temp1 = smoothed_raw_headp; % smoothed
     % temp1 = trialData(trials_to_graph(i)).s{1,raw_headphones}; % unsmoothed
@@ -111,11 +118,11 @@ for trial=1:num_trials_for_analysis
     %sub_div_mic = headphone_subtraction./trialData(trials_to_graph(i)).s{1,raw_mic};
     sub_div_mic = headphone_subtraction./smoothed_raw_mic;
 
-    % loop through the current raw_mic to access each timepoint
+    % loop through the blue window to access each timepoint
     % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
     in_out_subdivmic = zeros([1,length(sub_div_mic)]);
     % looping through just the blue window (vowel)
-    for timepoint = largest_window_loc_sz(trial,1):largest_window_loc_sz(trial,2)
+    for timepoint = largest_window_blue(trial,1):largest_window_blue(trial,2)
         if sub_div_mic(timepoint) <= threshold
             in_out_subdivmic(timepoint) = 1;
         end
@@ -123,7 +130,7 @@ for trial=1:num_trials_for_analysis
 
     % window location and size for when actual - expected headphone is
     % below the threashold
-    cur_window_loc_sz_1 = [0,0,0];
+    cur_window_green = [0,0,0];
 
     % itirate until a '1' is found
     % start counting with each new '1' found
@@ -137,14 +144,14 @@ for trial=1:num_trials_for_analysis
         % equals 0, OR the current timepoint equals 1 and the current
         % timepoint is 1 then update the current window location and size
         elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
-            size_cur = cur_window_loc_sz_1(3) + 1;
-            cur_window_loc_sz_1(1) = timepoint;
-            cur_window_loc_sz_1(3) = size_cur;
+            size_cur = cur_window_green(3) + 1;
+            cur_window_green(1) = timepoint;
+            cur_window_green(3) = size_cur;
 
         % if the current timepoint equals 1 and the previous timepoint
         % equals 1, then update the current window size
         elseif in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 1
-            cur_window_loc_sz_1(3) = cur_window_loc_sz_1(3) + 1;
+            cur_window_green(3) = cur_window_green(3) + 1;
 
         % if the current timepoint is 0 and the next timepoint is 1,
         % this signals the end of a window. compare the current window to
@@ -152,17 +159,72 @@ for trial=1:num_trials_for_analysis
         % larger then update the largest window size and location.
         % regardless, reset the current window size and location
         elseif in_out_subdivmic(timepoint) == 0 && in_out_subdivmic(timepoint-1) == 1
-            cur_window_loc_sz_1(2) = timepoint-1;
-            if cur_window_loc_sz_1(3) > largest_window_loc_sz_1(trial,3)
-                largest_window_loc_sz_1(trial,:) = cur_window_loc_sz_1;
+            cur_window_green(2) = timepoint-1;
+            if cur_window_green(3) > largest_window_green(trial,3)
+                largest_window_green(trial,:) = cur_window_green;
             end
-            cur_window_loc_sz_1 = [0,0,0];
+            cur_window_green = [0,0,0];
 
         end % otherwise, the timepoint is 0 and don't update anything
     end
 
-    % largest_window_loc_sz is for the vowel window
-    % largest_window_loc_sz_1 is for the headphone subtracted window
+    % largest_window_blue is for the vowel window
+    % largest_window_green is for the headphone subtracted window
+end
+
+% generate the final window (where the magnitude of the waveform is above a
+% specified value
+for trial=1:num_trials_for_analysis
+    raw_Amp_mic = trialData(trial).s{1,7};
+    Amp_thresh = subs_table.Amp_thresh(sub); % amp
+
+    % loop through the green window to access each timepoint
+    % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
+    in_out_AmpMic = zeros([1,length(raw_Amp_mic)]);
+    % looping through just the green window
+    for timepoint = largest_window_green(trial,1):largest_window_green(trial,2)
+        if raw_Amp_mic(timepoint) >= Amp_thresh
+            in_out_AmpMic(timepoint) = 1;
+        end
+    end
+
+    cur_window_final = [0,0,0];
+
+    % itirate until a '1' is found
+    % start counting with each new '1' found
+    % once a '0' is hit, compare the current window with the previous one
+    for timepoint = 1:length(raw_Amp_mic)
+        % if the current timepoint is 0 and the index is 1 (first
+        % timepoint), don't do anything
+        if in_out_AmpMic(timepoint) == 0 && timepoint == 1
+
+        % if the current timepoint equals 1 and the previous timepoint
+        % equals 0, OR the current timepoint equals 1 and the current
+        % timepoint is 1 then update the current window location and size
+        elseif (in_out_AmpMic(timepoint) == 1 && timepoint == 1) || (in_out_AmpMic(timepoint) == 1 && in_out_AmpMic(timepoint-1) == 0)
+            size_cur = cur_window_final(3) + 1;
+            cur_window_final(1) = timepoint;
+            cur_window_final(3) = size_cur;
+
+        % if the current timepoint equals 1 and the previous timepoint
+        % equals 1, then update the current window size
+        elseif in_out_AmpMic(timepoint) == 1 && in_out_AmpMic(timepoint-1) == 1
+            cur_window_final(3) = cur_window_final(3) + 1;
+
+        % if the current timepoint is 0 and the next timepoint is 1,
+        % this signals the end of a window. compare the current window to
+        % the largest window, and if the size of the current window is
+        % larger then update the largest window size and location.
+        % regardless, reset the current window size and location
+        elseif in_out_AmpMic(timepoint) == 0 && in_out_AmpMic(timepoint-1) == 1
+            cur_window_final(2) = timepoint-1;
+            if cur_window_final(3) > largest_window_final(trial,3)
+                largest_window_final(trial,:) = cur_window_final;
+            end
+            cur_window_final = [0,0,0];
+
+        end % otherwise, the timepoint is 0 and don't update anything
+    end
 end
 
 %% create figure
@@ -191,29 +253,39 @@ for i = 1:length(trials_to_graph)
     x_tick = ax_raw.XTick;
     y_tick = ax_raw.YTick;
 
+    % first red area (before blue)
     hold on
-    x1 = [0,  largest_window_loc_sz(trials_to_graph(i),1),  largest_window_loc_sz(trials_to_graph(i),1),    0];
+    x1 = [0,  largest_window_blue(trials_to_graph(i),1),  largest_window_blue(trials_to_graph(i),1),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
     area(ax_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     
+    % blue area
     hold on
-    x2 = [largest_window_loc_sz(trials_to_graph(i),1),      largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),1)];
+    x2 = [largest_window_blue(trials_to_graph(i),1),      largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),1)];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
     area(ax_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     
+    % second red area (after blue)
     hold on
-    x3 = [largest_window_loc_sz(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_loc_sz(trials_to_graph(i),2)];
+    x3 = [largest_window_blue(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_blue(trials_to_graph(i),2)];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
     area(ax_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
+    % green area
     hold on
-    x4 = [largest_window_loc_sz_1(trials_to_graph(i),1),largest_window_loc_sz_1(trials_to_graph(i),2),largest_window_loc_sz_1(trials_to_graph(i),2),largest_window_loc_sz_1(trials_to_graph(i),1)];
+    x4 = [largest_window_green(trials_to_graph(i),1),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),1)];
     y4 = [0,y_tick(end),0,y_tick(end)];
     area(ax_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+
+    % yellow and final area
+    hold on
+    x5 = [largest_window_final(trials_to_graph(i),1),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),1)];
+    y5 = [0,y_tick(end),0,y_tick(end)];
+    area(ax_raw,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
@@ -266,24 +338,30 @@ for i = 1:length(trials_to_graph)
     y_tick = ax_smooth.YTick;
 
     hold on
-    x1 = [0,  largest_window_loc_sz(trials_to_graph(i),1),  largest_window_loc_sz(trials_to_graph(i),1),    0];
+    x1 = [0,  largest_window_blue(trials_to_graph(i),1),  largest_window_blue(trials_to_graph(i),1),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
     area(ax_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x2 = [largest_window_loc_sz(trials_to_graph(i),1),      largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),2),    largest_window_loc_sz(trials_to_graph(i),1)];
+    x2 = [largest_window_blue(trials_to_graph(i),1),      largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),1)];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
     area(ax_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x3 = [largest_window_loc_sz(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_loc_sz(trials_to_graph(i),2)];
+    x3 = [largest_window_blue(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_blue(trials_to_graph(i),2)];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
     area(ax_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x4 = [largest_window_loc_sz_1(trials_to_graph(i),1),largest_window_loc_sz_1(trials_to_graph(i),2),largest_window_loc_sz_1(trials_to_graph(i),2),largest_window_loc_sz_1(trials_to_graph(i),1)];
+    x4 = [largest_window_green(trials_to_graph(i),1),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),1)];
     y4 = [0,y_tick(end),0,y_tick(end)];
     area(ax_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+
+    % yellow and final area
+    hold on
+    x5 = [largest_window_final(trials_to_graph(i),1),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),1)];
+    y5 = [0,y_tick(end),0,y_tick(end)];
+    area(ax_smooth,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
@@ -330,8 +408,8 @@ threshold_for_exclusion = 0.60;
 % second column is whether to exclude (1) the trial from analysis based on
 % the threshold
 green_in_blue = zeros(num_trials_for_analysis,2);
-window_loc_sz_blue = largest_window_loc_sz(1:num_trials_for_analysis,:);
-window_loc_sz_green = largest_window_loc_sz_1(1:num_trials_for_analysis,:);
+window_loc_sz_blue = largest_window_blue(1:num_trials_for_analysis,:);
+window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
 green_in_blue(:,1) = window_loc_sz_green(:,3)./window_loc_sz_blue(:,3);
 green_in_blue(:,2) = green_in_blue(:,1) < threshold_for_exclusion;
 
