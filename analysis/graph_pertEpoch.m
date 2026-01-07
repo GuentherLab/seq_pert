@@ -141,8 +141,8 @@ for trial=1:num_trials_for_analysis
         if in_out_subdivmic(timepoint) == 0 && timepoint == 1
 
         % if the current timepoint equals 1 and the previous timepoint
-        % equals 0, OR the current timepoint equals 1 and the current
-        % timepoint is 1 then update the current window location and size
+        % equals 0, OR the current timepoint equals 1 and the index is 1 
+        % then update the current window location and size
         elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
             size_cur = cur_window_green(3) + 1;
             cur_window_green(1) = timepoint;
@@ -153,7 +153,7 @@ for trial=1:num_trials_for_analysis
         elseif in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 1
             cur_window_green(3) = cur_window_green(3) + 1;
 
-        % if the current timepoint is 0 and the next timepoint is 1,
+        % if the current timepoint is 0 and the previous timepoint is 1,
         % this signals the end of a window. compare the current window to
         % the largest window, and if the size of the current window is
         % larger then update the largest window size and location.
