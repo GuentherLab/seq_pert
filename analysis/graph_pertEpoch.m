@@ -177,7 +177,7 @@ end
 for trial=1:num_trials_for_analysis
 
     if any(largest_window_green(trial,:)==0) 
-        error('no ''green window'' timepoints found for trial ' numstr(trial) ' - this is an unusual trial, recommended to manually examine it')
+        error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
     end
 
     raw_Amp_mic = trialData(trial).s{1,7};
