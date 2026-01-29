@@ -2,8 +2,9 @@ dirs = setDirs_seq_pert();
 %close all
 
 %% setup
-sub = 5;
-trial = 115;
+sub = 16;
+% trial = 37;
+trial = 35;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -127,7 +128,7 @@ for timepoint = 1:length(in_out_subdivmic)
     % if the current timepoint equals 1 and the previous timepoint
     % equals 0, OR the current timepoint equals 1 and the current
     % timepoint is 1 then update the current window location and size
-    elseif (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0) || (in_out_subdivmic(timepoint) == 1 && timepoint == 1)
+    elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
         size_cur = cur_window_green(3) + 1;
         cur_window_green(1) = timepoint;
         cur_window_green(3) = size_cur;

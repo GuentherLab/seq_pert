@@ -1,3 +1,7 @@
 subject,session,trial,comments
 sp001,testing,77,Online f1 tracking is fluctuating unexpectedly
 sp005,testing,115,F1 tracking dips lower than can be used in analysis
+sp007,testing,82,F1 tracking dips lower than can be used in analysis
+sp007,testing,39,Background noise f1 at the end is considered window rather than vowel
+sp009,testing,13,Blue window in incorrect place so green window comes back as 0
+sp013,testing,92,Blue window in incorrect place so green window comes back as 0

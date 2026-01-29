@@ -11,18 +11,6 @@ num_trials_for_analysis = 120;
 num_trials_to_show = 50;
 %num_trials_to_show = 12;
 
-%trial_to_graph = 20;
-%trials_to_graph = randi([1,120],1,num_trials_to_show);
-trials_to_include = [44, 118];
-if length(trials_to_include) > 0
-    trials_to_graph = trials_to_include;
-    temp_trials = randperm(num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
-    trials_to_graph = cat(2,trials_to_graph,temp_trials);
-else
-    trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
-    %trials_to_graph = randi([120,360],1,20);
-end
-
 subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
 subs_table = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
 
@@ -34,6 +22,44 @@ else
 end
 
 disp(subject);
+
+% loading the excluded trials
+manual_excluded_file = [dirs.projRepo, filesep, 'seqpert_manual_bad_trials.csv'];
+auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
+
+manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter",'comma');
+auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
+
+rows_manual = strcmp(manual_excluded.subject, subject) & strcmp(manual_excluded.session, 'testing');
+rows_auto = strcmp(manual_excluded.subject, subject);
+
+excluded_trials_cursub = cat(1, manual_excluded.trial(rows_manual), auto_excluded(rows_auto));
+
+%trial_to_graph = 20;
+%trials_to_graph = randi([1,120],1,num_trials_to_show);
+trials_to_include = [44, 118];
+if ~isempty(trials_to_include)
+    if ~isempty(excluded_trials_cursub) % if there are trials to exclude
+        temp = 1:num_trials_for_analysis;
+        temp(excluded_trials_cursub) = [];
+        temp_trials = temp(randperm(numel(temp),num_trials_to_show-length(trials_to_include)));
+        trials_to_graph = cat(2,trials_to_include,temp_trials);
+    else
+        temp_trials = randperm(num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
+        trials_to_graph = cat(2,trials_to_include,temp_trials);
+    end
+else
+    if ~isempty(excluded_trials_cursub) % if there are trials to exclude
+        temp = 1:num_trials_for_analysis;
+        temp(excluded_trials_cursub) = [];
+        trials_to_graph = temp(randperm(numel(temp),num_trials_to_show-length(trials_to_include)));
+    else
+        trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
+        %trials_to_graph = randi([120,360],1,20);
+    end
+end
+
+trials_to_graph = sort(trials_to_graph);
     
 ses_run = [subs_table.test_ses(sub),subs_table.test_run(sub)];
 %ses_run = [2,3];
@@ -99,6 +125,14 @@ smooth_window_size = 58; % ms
 % generate the green window
 for trial=1:num_trials_for_analysis
     %fprintf('trial: %d\n', trial);
+    % window location and size for when actual - expected headphone is
+    % below the threashold
+    cur_window_green = [0,0,0];
+
+    if ismember(trial, excluded_trials_cursub)
+        largest_window_green(trial,:) = [NaN, NaN, NaN];
+        continue
+    end
 
     smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
     smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
@@ -127,10 +161,6 @@ for trial=1:num_trials_for_analysis
             in_out_subdivmic(timepoint) = 1;
         end
     end
-
-    % window location and size for when actual - expected headphone is
-    % below the threashold
-    cur_window_green = [0,0,0];
 
     % itirate until a '1' is found
     % start counting with each new '1' found
@@ -175,7 +205,10 @@ end
 % generate the final window (where the magnitude of the waveform is above a
 % specified value
 for trial=1:num_trials_for_analysis
-
+    if ismember(trial, excluded_trials_cursub)
+        continue
+    end
+    
     if any(largest_window_green(trial,:)==0) 
         error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
     end
@@ -408,18 +441,5 @@ end
     lg_smooth.Layout.Tile = 'north';
 %end
 
-threshold_for_exclusion = 0.60;
-% first column is the percentage of the amount of blue that is also green
-% second column is whether to exclude (1) the trial from analysis based on
-% the threshold
-green_in_blue = zeros(num_trials_for_analysis,2);
-window_loc_sz_blue = largest_window_blue(1:num_trials_for_analysis,:);
-window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
-green_in_blue(:,1) = window_loc_sz_green(:,3)./window_loc_sz_blue(:,3);
-green_in_blue(:,2) = green_in_blue(:,1) < threshold_for_exclusion;
-
-num_excluded = sum(green_in_blue(:,2));
-pct_excluded = 100 * num_excluded/num_trials_for_analysis;
-fprintf('Excluded %d of %d trials for subject %d (%.1f%%)\n', num_excluded,num_trials_for_analysis, sub, pct_excluded);
-
+findAutoExcluded(largest_window_blue, largest_window_green);
 end

@@ -2,7 +2,7 @@
 % graph_pertEpoch(2); 
 % graph_pertEpoch(3);  
 % graph_pertEpoch(4); 
-graph_pertEpoch(5);  
+% graph_pertEpoch(5);  
 % graph_pertEpoch(6); 
 % graph_pertEpoch(7);  
 % graph_pertEpoch(8);  
@@ -12,3 +12,18 @@ graph_pertEpoch(5);
 % graph_pertEpoch(12); 
 % graph_pertEpoch(13); 
 % graph_pertEpoch(16);
+
+findAutoExcluded(1);  
+% findAutoExcluded(2); 
+% findAutoExcluded(3);  
+% findAutoExcluded(4); 
+% findAutoExcluded(5);  
+% findAutoExcluded(6); 
+% findAutoExcluded(7);  
+% findAutoExcluded(8);  
+% findAutoExcluded(9);  
+% findAutoExcluded(10); 
+% findAutoExcluded(11); 
+% findAutoExcluded(12); 
+% findAutoExcluded(13); 
+% findAutoExcluded(16);
