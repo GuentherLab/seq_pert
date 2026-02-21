@@ -155,15 +155,18 @@ subject_mentions(:) = find(strcmp(auto_excluded.subject, subject));
 auto_excluded(subject_mentions,:) = [];
 
 % add excluded_trials to the csv file
+cur_indx = length(auto_excluded.subject);
 for i = 1:length(excluded_trials)
     cur_trial = excluded_trials(i);
     
-    auto_excluded.subject{i} = subject;
-    auto_excluded.trial(i) = cur_trial;
-    auto_excluded.absolute_f1(i) = window_loc_sz_blue(cur_trial,3);
-    auto_excluded.expected_minus_actual(i) = window_loc_sz_green(cur_trial,3);
-    auto_excluded.percentage(i) = round(green_in_blue.percentage(cur_trial),3);
-    % auto_excluded.comments(i) = "expected - actual to absolute f1 window ratio was too small";
+    auto_excluded.subject{cur_indx} = subject;
+    auto_excluded.trial(cur_indx) = cur_trial;
+    auto_excluded.absolute_f1(cur_indx) = window_loc_sz_blue(cur_trial,3);
+    auto_excluded.expected_minus_actual(cur_indx) = window_loc_sz_green(cur_trial,3);
+    auto_excluded.percentage(cur_indx) = round(green_in_blue.percentage(cur_trial),3);
+    % auto_excluded.comments(cur_indx) = "expected - actual to absolute f1 window ratio was too small";
+
+    cur_indx = cur_indx + 1;
 end
 
 num_excluded = sum(green_in_blue.excluded);
