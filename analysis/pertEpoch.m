@@ -1,4 +1,4 @@
-function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert, smoothed,smooth_window_size)
+function [largest_window_blue, expected_headphone] = pertEpoch(sub, sesrun, absminmax, winsz, devthresh, minpert, smoothed,smooth_window_size)
     dirs = setDirs_seq_pert();
     
     subject = sub;
@@ -86,7 +86,12 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
     % second timepoint is where the window ends
     % third timepoint is the size of the window
     cur_window_loc_sz = [0,0,0];
-    largest_window_loc_sz = zeros([length(trialData),3]);
+    %largest_window_loc_sz = zeros([length(trialData),3]);
+    %largest_window_blue = table;
+    sz = [length(trialData) 3];
+    varTypes = ["double","double","double"];
+    varNames = ["start","end","length"];
+    largest_window_blue = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
     
     % itirate until a '1' is found
     % start counting with each new '1' found
@@ -117,8 +122,10 @@ function [largest_window_loc_sz, expected_headphone] = pertEpoch(sub, sesrun, ab
             % regardless, reset the current window size and location
             elseif in_out_absminmax(trial,timepoint) == 0 && in_out_absminmax(trial,timepoint-1) == 1
                 cur_window_loc_sz(2) = timepoint-1;
-                if cur_window_loc_sz(3) > largest_window_loc_sz(trial,3)
-                    largest_window_loc_sz(trial,:) = cur_window_loc_sz;
+                if cur_window_loc_sz(3) > largest_window_blue.length(trial)
+                    largest_window_blue.start(trial) = cur_window_loc_sz(1);
+                    largest_window_blue.end(trial) = cur_window_loc_sz(2);
+                    largest_window_blue.length(trial) = cur_window_loc_sz(3);
                 end
                 cur_window_loc_sz = [0,0,0];
     

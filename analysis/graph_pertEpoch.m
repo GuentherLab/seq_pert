@@ -2,6 +2,8 @@ function [green_in_blue,num_excluded] = graph_pertEpoch(sub)
 % blue window: the longest region within a manually determined y-axis window
 % green window: the longest region within the blue window where the expected and actual headphones are close to each other
 
+% 'sub' is the subject's number, 'subject' is the full subject code (string)
+
 dirs = setDirs_seq_pert();
 close all
 %clear
@@ -30,10 +32,14 @@ auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
 manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter",'comma');
 auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
 
-rows_manual = strcmp(manual_excluded.subject, subject) & strcmp(manual_excluded.session, 'testing');
-rows_auto = strcmp(manual_excluded.subject, subject);
+temp_manual_subjects = string(manual_excluded.subject);
+temp_auto_subjects = string(auto_excluded.subject);
 
-excluded_trials_cursub = cat(1, manual_excluded.trial(rows_manual), auto_excluded(rows_auto));
+%rows_manual = strcmp(manual_excluded.subject, subject) & strcmp(manual_excluded.session, 'testing');
+rows_manual = find(temp_manual_subjects==subject);
+rows_auto = find(temp_auto_subjects==subject);
+
+excluded_trials_cursub = cat(1, manual_excluded.trial(rows_manual), auto_excluded.trial(rows_auto));
 
 %trial_to_graph = 20;
 %trials_to_graph = randi([1,120],1,num_trials_to_show);
@@ -114,8 +120,18 @@ elseif num_trials_to_show == 12
 end
 
 %% calculations
-largest_window_green = zeros([num_trials_for_analysis,3]);
-largest_window_final = zeros([num_trials_for_analysis,3]);
+%largest_window_green = zeros([num_trials_for_analysis,3]);
+sz = [num_trials_for_analysis, 3];
+varTypes = ["double","double","double"];
+varNames = ["start","end","length"];
+largest_window_green = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
+
+%largest_window_final = zeros([num_trials_for_analysis,3]);
+sz = [num_trials_for_analysis, 3];
+varTypes = ["double","double","double"];
+varNames = ["start","end","length"];
+largest_window_final = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
+
 smooth_window_size = 58; % ms
 %for trial=1:length(trialData)
 
@@ -130,7 +146,9 @@ for trial=1:num_trials_for_analysis
     cur_window_green = [0,0,0];
 
     if ismember(trial, excluded_trials_cursub)
-        largest_window_green(trial,:) = [NaN, NaN, NaN];
+        largest_window_green.start(trial) = NaN;
+        largest_window_green.end(trial) = NaN;
+        largest_window_green.length(trial) = NaN;
         continue
     end
 
@@ -156,7 +174,7 @@ for trial=1:num_trials_for_analysis
     % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
     in_out_subdivmic = zeros([1,length(sub_div_mic)]);
     % looping through just the blue window (vowel)
-    for timepoint = largest_window_blue(trial,1):largest_window_blue(trial,2)
+    for timepoint = largest_window_blue.start(trial):largest_window_blue.end(trial)
         if sub_div_mic(timepoint) <= threshold
             in_out_subdivmic(timepoint) = 1;
         end
@@ -190,8 +208,10 @@ for trial=1:num_trials_for_analysis
         % regardless, reset the current window size and location
         elseif in_out_subdivmic(timepoint) == 0 && in_out_subdivmic(timepoint-1) == 1
             cur_window_green(2) = timepoint-1;
-            if cur_window_green(3) > largest_window_green(trial,3)
-                largest_window_green(trial,:) = cur_window_green;
+            if cur_window_green(3) > largest_window_green.length(trial)
+                largest_window_green.start(trial) = cur_window_green(1);
+                largest_window_green.end(trial) = cur_window_green(2);
+                largest_window_green.length(trial) = cur_window_green(3);
             end
             cur_window_green = [0,0,0];
 
@@ -209,7 +229,7 @@ for trial=1:num_trials_for_analysis
         continue
     end
     
-    if any(largest_window_green(trial,:)==0) 
+    if largest_window_green.start(trial)==0 && largest_window_green.end(trial)==0 && largest_window_green.length(trial)==0
         error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
     end
 
@@ -220,7 +240,7 @@ for trial=1:num_trials_for_analysis
     % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
     in_out_AmpMic = zeros([1,length(raw_Amp_mic)]);
     % looping through just the green window
-    for timepoint = largest_window_green(trial,1):largest_window_green(trial,2)
+    for timepoint = largest_window_green.start(trial):largest_window_green.end(trial)
         if raw_Amp_mic(timepoint) >= Amp_thresh
             in_out_AmpMic(timepoint) = 1;
         end
@@ -256,8 +276,10 @@ for trial=1:num_trials_for_analysis
         % regardless, reset the current window size and location
         elseif in_out_AmpMic(timepoint) == 0 && in_out_AmpMic(timepoint-1) == 1
             cur_window_final(2) = timepoint-1;
-            if cur_window_final(3) > largest_window_final(trial,3)
-                largest_window_final(trial,:) = cur_window_final;
+            if cur_window_final(3) > largest_window_final.length(trial)
+                largest_window_final.start(trial) = cur_window_final(1);
+                largest_window_final.end(trial) = cur_window_final(2);
+                largest_window_final.length(trial) = cur_window_final(3);
             end
             cur_window_final = [0,0,0];
 
@@ -293,35 +315,35 @@ for i = 1:length(trials_to_graph)
 
     % first red area (before blue)
     hold on
-    x1 = [0,  largest_window_blue(trials_to_graph(i),1),  largest_window_blue(trials_to_graph(i),1),    0];
+    x1 = [0,  largest_window_blue.start(trials_to_graph(i)),  largest_window_blue.start(trials_to_graph(i)),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
     area(ax_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     
     % blue area
     hold on
-    x2 = [largest_window_blue(trials_to_graph(i),1),      largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),1)];
+    x2 = [largest_window_blue.start(trials_to_graph(i)),      largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.start(trials_to_graph(i))];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
     area(ax_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     
     % second red area (after blue)
     hold on
-    x3 = [largest_window_blue(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_blue(trials_to_graph(i),2)];
+    x3 = [largest_window_blue.end(trials_to_graph(i)),  x_tick(end),    x_tick(end),    largest_window_blue.end(trials_to_graph(i))];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
     area(ax_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % green area
     hold on
-    x4 = [largest_window_green(trials_to_graph(i),1),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),1)];
+    x4 = [largest_window_green.start(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.start(trials_to_graph(i))];
     y4 = [0,y_tick(end),0,y_tick(end)];
     area(ax_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % yellow and final area
     hold on
-    x5 = [largest_window_final(trials_to_graph(i),1),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),1)];
+    x5 = [largest_window_final.start(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.start(trials_to_graph(i))];
     y5 = [0,y_tick(end),0,y_tick(end)];
     area(ax_raw,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
@@ -376,28 +398,28 @@ for i = 1:length(trials_to_graph)
     y_tick = ax_smooth.YTick;
 
     hold on
-    x1 = [0,  largest_window_blue(trials_to_graph(i),1),  largest_window_blue(trials_to_graph(i),1),    0];
+    x1 = [0,  largest_window_blue.start(trials_to_graph(i)),  largest_window_blue.start(trials_to_graph(i)),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
     area(ax_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x2 = [largest_window_blue(trials_to_graph(i),1),      largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),2),    largest_window_blue(trials_to_graph(i),1)];
+    x2 = [largest_window_blue.start(trials_to_graph(i)),      largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.start(trials_to_graph(i))];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
     area(ax_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x3 = [largest_window_blue(trials_to_graph(i),2),  x_tick(end),    x_tick(end),    largest_window_blue(trials_to_graph(i),2)];
+    x3 = [largest_window_blue.end(trials_to_graph(i)),  x_tick(end),    x_tick(end),    largest_window_blue.end(trials_to_graph(i))];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
     area(ax_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
-    x4 = [largest_window_green(trials_to_graph(i),1),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),2),largest_window_green(trials_to_graph(i),1)];
+    x4 = [largest_window_green.start(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.start(trials_to_graph(i))];
     y4 = [0,y_tick(end),0,y_tick(end)];
     area(ax_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % yellow and final area
     hold on
-    x5 = [largest_window_final(trials_to_graph(i),1),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),2),largest_window_final(trials_to_graph(i),1)];
+    x5 = [largest_window_final.start(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.start(trials_to_graph(i))];
     y5 = [0,y_tick(end),0,y_tick(end)];
     area(ax_smooth,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
@@ -441,5 +463,32 @@ end
     lg_smooth.Layout.Tile = 'north';
 %end
 
-findAutoExcluded(largest_window_blue, largest_window_green);
+% find the excluded trials
+%findAutoExcluded(sub);
+
+% store the windows for analysis
+stored_windows_file = [dirs.projRepo, filesep, 'seqpert_windows_for_analysis.csv'];
+stored_windows = readtable(stored_windows_file, "FileType","text", "Delimiter",'comma');
+
+% format the list of windows to be added
+sz = [length(largest_window_final.start), 5];
+varTypes = ["string","double","logical","double","double"];
+varNames = ["subject","trial","excluded","windowStart","windowEnd"];
+final_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
+
+final_windows.subject(:) = subject;
+final_windows.trial(:) = 1:length(largest_window_final.start);
+final_windows.excluded(excluded_trials_cursub) = 1;
+final_windows.windowStart = largest_window_final.start;
+final_windows.windowEnd = largest_window_final.end;
+
+% remove previous mentions of the current subject
+subject_mentions(:) = find(strcmp(stored_windows.subject, subject)); 
+stored_windows(subject_mentions,:) = [];
+
+% add the new list to the file
+% first concatenate the new list to the old list
+stored_windows = cat(1,stored_windows,final_windows);
+writetable(stored_windows, stored_windows_file);
+
 end

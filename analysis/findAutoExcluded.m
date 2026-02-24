@@ -91,7 +91,7 @@ for trial=1:num_trials_for_analysis
     % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
     in_out_subdivmic = zeros([1,length(sub_div_mic)]);
     % looping through just the blue window (vowel)
-    for timepoint = largest_window_blue(trial,1):largest_window_blue(trial,2)
+    for timepoint = largest_window_blue.start(trial):largest_window_blue.end(trial)
         if sub_div_mic(timepoint) <= threshold
             in_out_subdivmic(timepoint) = 1;
         end
@@ -143,9 +143,14 @@ threshold_for_exclusion = 0.60;
 % second column is whether to exclude (1) the trial from analysis based on
 % the threshold
 green_in_blue = table;
-window_loc_sz_blue = largest_window_blue(1:num_trials_for_analysis,:);
+
+window_loc_sz_blue.start = largest_window_blue.start(1:num_trials_for_analysis); 
+window_loc_sz_blue.end = largest_window_blue.end(1:num_trials_for_analysis); 
+window_loc_sz_blue.length = largest_window_blue.length(1:num_trials_for_analysis);
+
 window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
-green_in_blue.percentage = window_loc_sz_green(:,3)./window_loc_sz_blue(:,3);
+
+green_in_blue.percentage = window_loc_sz_green(:,3)./window_loc_sz_blue.length(:);
 green_in_blue.excluded = green_in_blue.percentage < threshold_for_exclusion;
 
 excluded_trials(:) = find(green_in_blue.excluded == 1);
@@ -161,7 +166,7 @@ for i = 1:length(excluded_trials)
     
     auto_excluded.subject{cur_indx} = subject;
     auto_excluded.trial(cur_indx) = cur_trial;
-    auto_excluded.absolute_f1(cur_indx) = window_loc_sz_blue(cur_trial,3);
+    auto_excluded.absolute_f1(cur_indx) = window_loc_sz_blue.length(cur_trial);
     auto_excluded.expected_minus_actual(cur_indx) = window_loc_sz_green(cur_trial,3);
     auto_excluded.percentage(cur_indx) = round(green_in_blue.percentage(cur_trial),3);
     % auto_excluded.comments(cur_indx) = "expected - actual to absolute f1 window ratio was too small";
