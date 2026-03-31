@@ -2,9 +2,9 @@ dirs = setDirs_seq_pert();
 %close all
 
 %% setup
-sub = 16;
+sub = 15;
 % trial = 37;
-trial = 35;
+trial = 64;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -80,7 +80,8 @@ min_pert_epoch = 300; % ms
     % changed
 
 %% calculations
-[largest_window_blue, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size);
+[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,false,true);
+%[largest_window_blue, expected_headphone] = graph_pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size);
 % actual - expected headphone
 temp1 = smoothed_raw_headp;
 temp2 = expected_headphone(:,trial);
@@ -98,7 +99,7 @@ sub_div_mic = headphone_subtraction./smoothed_raw_mic;
 % loop through the current raw_mic to access each timepoint
 % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
 in_out_subdivmic = zeros([1,length(sub_div_mic)]);
-for timepoint = largest_window_blue(trial,1):largest_window_blue(trial,2)
+for timepoint = largest_window_blue.start(trial):largest_window_blue.end(trial)
     if sub_div_mic(timepoint) <= threshold
         in_out_subdivmic(timepoint) = 1;
     end
@@ -114,6 +115,9 @@ end
 
 % window location and size for when actual - expected headphone is
 % below the threashold
+
+%% old green window analysis
+%{
 cur_window_green = [0,0,0];
 largest_window_green = [0,0,0];
 
@@ -208,6 +212,7 @@ for timepoint = 1:length(raw_Amp_mic)
 
     end % otherwise, the timepoint is 0 and don't update anything
 end
+%}
 
 %% plot the figure
 figure
@@ -235,28 +240,28 @@ x_tick = ax.XTick;
 y_tick = ax.YTick;
 
 hold on
-x1 = [0,  largest_window_blue(trial,1),  largest_window_blue(trial,1),    0];
+x1 = [0,  largest_window_blue.start(trial),  largest_window_blue.start(trial),    0];
 y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
 area(ax,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
 hold on
-x2 = [largest_window_blue(trial,1),      largest_window_blue(trial,2),    largest_window_blue(trial,2),    largest_window_blue(trial,1)];
+x2 = [largest_window_blue.start(trial),      largest_window_blue.end(trial),    largest_window_blue.end(trial),    largest_window_blue.start(trial)];
 y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
 area(ax,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
 
 hold on
-x3 = [largest_window_blue(trial,2),  x_tick(end),    x_tick(end),    largest_window_blue(trial,2)];
+x3 = [largest_window_blue.end(trial),  x_tick(end),    x_tick(end),    largest_window_blue.end(trial)];
 y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
 area(ax,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
 hold on
-x4 = [largest_window_green(1),largest_window_green(2),largest_window_green(2),largest_window_green(1)];
+x4 = [largest_window_green.start(trial),largest_window_green.end(trial),largest_window_green.end(trial),largest_window_green.start(trial)];
 y4 = [0,y_tick(end),0,y_tick(end)];
 area(ax,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
 % yellow and final area
 hold on
-x5 = [largest_window_final(1),largest_window_final(2),largest_window_final(2),largest_window_final(1)];
+x5 = [largest_window_final.start(trial),largest_window_final.end(trial),largest_window_final.end(trial),largest_window_final.start(trial)];
 y5 = [0,y_tick(end),0,y_tick(end)];
 area(ax,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 

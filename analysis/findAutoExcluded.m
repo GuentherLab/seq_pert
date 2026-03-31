@@ -1,4 +1,4 @@
-function [excluded_trials, num_excluded, pct_excluded] = findAutoExcluded(sub)
+function [excluded_bg, num_excluded, pct_excluded] = findAutoExcluded(sub)
 dirs = setDirs_seq_pert();
 
 num_trials_for_analysis = 120;
@@ -50,6 +50,8 @@ auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
 auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
 
 %% calculations
+[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,false,true);
+%{
 largest_window_green = zeros([num_trials_for_analysis,3]);
 smooth_window_size = 58; % ms
 %for trial=1:length(trialData)
@@ -136,45 +138,106 @@ for trial=1:num_trials_for_analysis
     % largest_window_blue is for the vowel window
     % largest_window_green is for the headphone subtracted window
 end
+%}
 
 %% find excluded
-threshold_for_exclusion = 0.60;
+% two types of excluded trials:
+% 1. excluded based on amount of blue window that is also green. If the
+%    green section isn't big enough, it gets excluded
+% 2. excluded based on amount of green window that is also yellow. If the
+%    yellow section isn't big enough, it gets excluded.
+
+
+% first exclusion (blue/green)
+threshold_for_exclusion_bg = 0.60;
 % first column is the percentage of the amount of blue that is also green
 % second column is whether to exclude (1) the trial from analysis based on
 % the threshold
 green_in_blue = table;
 
-window_loc_sz_blue.start = largest_window_blue.start(1:num_trials_for_analysis); 
-window_loc_sz_blue.end = largest_window_blue.end(1:num_trials_for_analysis); 
-window_loc_sz_blue.length = largest_window_blue.length(1:num_trials_for_analysis);
+blue_window = table;
+blue_window.start(:) = largest_window_blue.start(1:num_trials_for_analysis); 
+blue_window.end(:) = largest_window_blue.end(1:num_trials_for_analysis); 
+blue_window.length(:) = largest_window_blue.length(1:num_trials_for_analysis);
 
-window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
+%window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
+green_window = table;
+green_window.start = largest_window_green.start(1:num_trials_for_analysis); 
+green_window.end = largest_window_green.end(1:num_trials_for_analysis); 
+green_window.length = largest_window_green.length(1:num_trials_for_analysis);
 
-green_in_blue.percentage = window_loc_sz_green(:,3)./window_loc_sz_blue.length(:);
-green_in_blue.excluded = green_in_blue.percentage < threshold_for_exclusion;
+green_in_blue.percentage = green_window.length(:)./blue_window.length(:);
+green_in_blue.excluded = green_in_blue.percentage < threshold_for_exclusion_bg;
 
-excluded_trials(:) = find(green_in_blue.excluded == 1);
+excluded_bg = table;
+excluded_bg.trial(:) = find(green_in_blue.excluded == 1);
+excluded_bg.id(:) = "bg";
+
+% second exclusion (green/yellow)
+threshold_for_exclusion_gy = 0.60;
+yellow_in_green = table;
+
+% pull the green window from the previous calculation
+% green_window.start = largest_window_green.start(1:num_trials_for_analysis); 
+% green_window.end = largest_window_green.end(1:num_trials_for_analysis); 
+% green_window.length = largest_window_green.length(1:num_trials_for_analysis);
+
+%window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
+final_window = table;
+final_window.start = largest_window_final.start(1:num_trials_for_analysis); 
+final_window.end = largest_window_final.end(1:num_trials_for_analysis); 
+final_window.length = largest_window_final.length(1:num_trials_for_analysis);
+
+yellow_in_green.percentage = final_window.length(:)./green_window.length(:);
+yellow_in_green.excluded = yellow_in_green.percentage < threshold_for_exclusion_gy;
+
+excluded_gy = table;
+excluded_gy.trial(:) = find(yellow_in_green.excluded == 1);
+excluded_gy.id(:) = "gy";
 
 % remove all the previous mentions of that subject in the csv file
 subject_mentions(:) = find(strcmp(auto_excluded.subject, subject)); 
 auto_excluded(subject_mentions,:) = [];
+%auto_excluded(:,subject_mentions) = [];
+% auto_excluded.subject(subject_mentions) = [];
+% auto_excluded.trial(subject_mentions) = [];
+% auto_excluded.absolute_f1(subject_mentions) = [];
+% auto_excluded.expected_minus_actual(subject_mentions) = [];
+% auto_excluded.amplitude(subject_mentions) = [];
+% auto_excluded.percentage(subject_mentions) = [];
+% auto_excluded.comments(subject_mentions) = [];
 
-% add excluded_trials to the csv file
-cur_indx = length(auto_excluded.subject);
-for i = 1:length(excluded_trials)
-    cur_trial = excluded_trials(i);
+total_excluded = table;
+total_excluded.trial = cat(1,excluded_bg.trial(:),excluded_gy.trial(:));
+total_excluded.id = cat(1,excluded_bg.id(:),excluded_gy.id(:));
+
+% add excluded_trials to the csv file, starting at the end of the file
+cur_indx = length(auto_excluded.subject)+1;
+for i = 1:length(total_excluded.trial)
+    %cur_trial = excluded_bg(i);
+    cur_trial = total_excluded.trial(i);
     
     auto_excluded.subject{cur_indx} = subject;
     auto_excluded.trial(cur_indx) = cur_trial;
-    auto_excluded.absolute_f1(cur_indx) = window_loc_sz_blue.length(cur_trial);
-    auto_excluded.expected_minus_actual(cur_indx) = window_loc_sz_green(cur_trial,3);
-    auto_excluded.percentage(cur_indx) = round(green_in_blue.percentage(cur_trial),3);
-    % auto_excluded.comments(cur_indx) = "expected - actual to absolute f1 window ratio was too small";
+
+    if strcmp(total_excluded.id(i),"bg")
+        auto_excluded.absolute_f1(cur_indx) = blue_window.length(cur_trial);
+        auto_excluded.expected_minus_actual(cur_indx) = green_window.length(cur_trial);
+        auto_excluded.amplitude(cur_indx) = 0;
+        auto_excluded.percentage(cur_indx) = round(green_in_blue.percentage(cur_trial),3);
+        auto_excluded.comments{cur_indx} = "expected - actual to absolute f1 ratio too small";
+    elseif strcmp(total_excluded.id(i),"gy")
+        auto_excluded.absolute_f1(cur_indx) = 0;
+        auto_excluded.expected_minus_actual(cur_indx) = green_window.length(cur_trial);
+        auto_excluded.amplitude(cur_indx) = final_window.length(cur_trial);
+        auto_excluded.percentage(cur_indx) = round(yellow_in_green.percentage(cur_trial),3);
+        auto_excluded.comments{cur_indx} = "amplitude to expected - actual ratio too small";
+    end
 
     cur_indx = cur_indx + 1;
 end
 
-num_excluded = sum(green_in_blue.excluded);
+num_excluded = sum(green_in_blue.excluded) + sum(yellow_in_green.excluded);
 pct_excluded = 100 * num_excluded/num_trials_for_analysis;
 fprintf('Excluded %d of %d trials for subject %d (%.1f%%)\n', num_excluded,num_trials_for_analysis, sub, pct_excluded);
 

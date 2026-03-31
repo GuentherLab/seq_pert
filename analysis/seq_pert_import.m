@@ -31,7 +31,7 @@ clear
 % op.ses = 2;
 % op.run = 3; 
 
-op.sub = 'sp003';
+op.sub = 'sp015';
 op.ses = 2;
 op.run = 2; 
 

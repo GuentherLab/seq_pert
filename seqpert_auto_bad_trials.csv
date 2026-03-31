@@ -1,74 +1,49 @@
-subject,trial,absolute_f1,expected_minus_actual,percentage,comments
-sp003,2,846,348,0.411,0
-sp003,6,950,501,0.527,0
-sp003,8,955,460,0.482,0
-sp003,11,1051,245,0.233,0
-sp003,14,414,240,0.58,0
-sp003,27,963,146,0.152,0
-sp003,48,1077,311,0.289,0
-sp003,61,1018,558,0.548,0
-sp003,67,1165,165,0.142,0
-sp003,69,970,452,0.466,0
-sp003,73,1070,479,0.448,0
-sp003,93,941,386,0.41,0
-sp003,102,687,247,0.36,0
-sp005,9,846,505,0.597,0
-sp005,21,677,377,0.557,0
-sp005,25,481,206,0.428,0
-sp005,34,580,294,0.507,0
-sp005,49,537,309,0.575,0
-sp005,65,191,29,0.152,0
-sp005,66,588,62,0.105,0
-sp005,77,527,145,0.275,0
-sp005,78,630,143,0.227,0
-sp005,79,282,112,0.397,0
-sp005,80,721,163,0.226,0
-sp005,84,1047,503,0.48,0
-sp005,85,681,286,0.42,0
-sp005,108,648,359,0.554,0
-sp005,109,590,229,0.388,0
-sp006,2,631,335,0.531,0
-sp006,16,1032,582,0.564,0
-sp006,25,1022,592,0.579,0
-sp006,26,1331,769,0.578,0
-sp007,3,1400,783,0.559,0
-sp007,16,718,168,0.234,0
-sp007,18,1458,742,0.509,0
-sp007,32,663,378,0.57,0
-sp007,46,598,331,0.554,0
-sp007,52,1199,457,0.381,0
-sp007,78,755,37,0.049,0
-sp007,84,574,305,0.531,0
-sp007,87,1226,693,0.565,0
-sp007,89,534,298,0.558,0
-sp007,96,901,459,0.509,0
-sp007,97,265,12,0.045,0
-sp007,101,2070,902,0.436,0
-sp007,103,996,473,0.475,0
-sp008,12,156,89,0.571,0
-sp008,16,602,237,0.394,0
-sp008,19,198,54,0.273,0
-sp008,37,590,353,0.598,0
-sp008,82,590,257,0.436,0
-sp008,85,507,98,0.193,0
-sp010,1,1228,717,0.584,0
-sp010,39,1293,102,0.079,0
-sp011,35,706,226,0.32,0
-sp011,48,1186,347,0.293,0
-sp011,51,1086,307,0.283,0
-sp011,65,818,148,0.181,0
-sp011,68,626,182,0.291,0
-sp011,69,845,116,0.137,0
-sp012,50,599,96,0.16,0
-sp012,68,734,2,0.003,0
-sp012,103,748,18,0.024,0
-sp012,113,934,92,0.099,0
-sp013,23,473,252,0.533,0
-sp013,37,573,138,0.241,0
-sp013,43,737,8,0.011,0
-sp013,62,722,115,0.159,0
-sp001,1,350,65,0.186,0
-sp001,24,611,159,0.26,0
-sp002,7,833,246,0.295,0
-sp002,49,897,505,0.563,0
-sp002,97,1181,698,0.591,0
+subject,trial,absolute_f1,expected_minus_actual,amplitude,percentage,comments
+sp001,32,487,163,0,0.335,expected - actual to absolute f1 ratio too small
+sp001,52,613,245,0,0.4,expected - actual to absolute f1 ratio too small
+sp001,59,745,415,0,0.557,expected - actual to absolute f1 ratio too small
+sp001,63,831,136,0,0.164,expected - actual to absolute f1 ratio too small
+sp001,72,828,224,0,0.271,expected - actual to absolute f1 ratio too small
+sp001,88,607,139,0,0.229,expected - actual to absolute f1 ratio too small
+sp001,95,698,203,0,0.291,expected - actual to absolute f1 ratio too small
+sp002,97,1181,698,0,0.591,expected - actual to absolute f1 ratio too small
+sp003,113,969,556,0,0.574,expected - actual to absolute f1 ratio too small
+sp005,120,649,221,0,0.341,expected - actual to absolute f1 ratio too small
+sp005,10,0,801,479,0.598,amplitude to expected - actual ratio too small
+sp005,60,0,336,0,0,amplitude to expected - actual ratio too small
+sp005,62,0,497,291,0.586,amplitude to expected - actual ratio too small
+sp005,86,0,821,450,0.548,amplitude to expected - actual ratio too small
+sp005,112,0,527,170,0.323,amplitude to expected - actual ratio too small
+sp006,28,876,525,0,0.599,expected - actual to absolute f1 ratio too small
+sp007,119,859,478,0,0.556,expected - actual to absolute f1 ratio too small
+sp007,10,0,807,424,0.525,amplitude to expected - actual ratio too small
+sp007,22,0,914,531,0.581,amplitude to expected - actual ratio too small
+sp007,58,0,686,306,0.446,amplitude to expected - actual ratio too small
+sp007,59,0,824,478,0.58,amplitude to expected - actual ratio too small
+sp007,66,0,750,445,0.593,amplitude to expected - actual ratio too small
+sp007,77,0,457,221,0.484,amplitude to expected - actual ratio too small
+sp007,92,0,812,207,0.255,amplitude to expected - actual ratio too small
+sp007,98,0,996,424,0.426,amplitude to expected - actual ratio too small
+sp007,115,0,600,44,0.073,amplitude to expected - actual ratio too small
+sp007,120,0,557,332,0.596,amplitude to expected - actual ratio too small
+sp008,89,493,240,0,0.487,expected - actual to absolute f1 ratio too small
+sp008,40,0,370,156,0.422,amplitude to expected - actual ratio too small
+sp010,46,834,490,0,0.588,expected - actual to absolute f1 ratio too small
+sp011,101,1226,683,0,0.557,expected - actual to absolute f1 ratio too small
+sp011,7,0,926,541,0.584,amplitude to expected - actual ratio too small
+sp012,119,989,16,0,0.016,expected - actual to absolute f1 ratio too small
+sp012,21,0,440,262,0.595,amplitude to expected - actual ratio too small
+sp012,54,0,753,0,0,amplitude to expected - actual ratio too small
+sp012,69,0,989,48,0.049,amplitude to expected - actual ratio too small
+sp012,119,0,16,0,0,amplitude to expected - actual ratio too small
+sp013,104,903,435,0,0.482,expected - actual to absolute f1 ratio too small
+sp013,68,0,932,554,0.594,amplitude to expected - actual ratio too small
+sp015,5,0,649,239,0.368,amplitude to expected - actual ratio too small
+sp015,19,0,604,319,0.528,amplitude to expected - actual ratio too small
+sp015,38,0,699,62,0.089,amplitude to expected - actual ratio too small
+sp015,56,0,677,199,0.294,amplitude to expected - actual ratio too small
+sp015,77,0,852,444,0.521,amplitude to expected - actual ratio too small
+sp015,78,0,611,345,0.565,amplitude to expected - actual ratio too small
+sp015,84,0,746,237,0.318,amplitude to expected - actual ratio too small
+sp016,44,808,478,0,0.592,expected - actual to absolute f1 ratio too small
+sp016,96,0,475,0,0,amplitude to expected - actual ratio too small
