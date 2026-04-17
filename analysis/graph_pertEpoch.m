@@ -1,4 +1,5 @@
-function [green_in_blue,num_excluded] = graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, absminmax, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size)
+%function graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, absminmax, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, include_analysis, analysis_windows)
+function graph_pertEpoch(sub, info_to_graph)
 % blue window: the longest region within a manually determined y-axis window
 % green window: the longest region within the blue window where the expected and actual headphones are close to each other
 
@@ -44,22 +45,26 @@ end
 % create the list of trials to graph
 trials_to_include = [];
 if ~isempty(trials_to_include)
-    if ~isempty(excluded_trials_cursub) % if there are trials to exclude
+    %if ~isempty(excluded_trials_cursub) % if there are trials to exclude
+    if ~isempty(info_to_graph.excluded)
         temp = 1:num_trials_for_analysis;
-        temp(excluded_trials_cursub) = [];
+        %temp(excluded_trials_cursub) = [];
+        temp(info_to_graph.excluded)
         temp_trials = temp(randperm(numel(temp),num_trials_to_show-length(trials_to_include)));
         trials_to_graph = cat(2,trials_to_include,temp_trials);
     else
-        temp_trials = randperm(num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
+        temp_trials = randperm(info_to_graph.num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
         trials_to_graph = cat(2,trials_to_include,temp_trials);
     end
 else
-    if ~isempty(excluded_trials_cursub) % if there are trials to exclude
-        temp = 1:num_trials_for_analysis;
-        temp(excluded_trials_cursub) = [];
+    %if ~isempty(excluded_trials_cursub) % if there are trials to exclude
+    if ~isempty(info_to_graph.excluded)
+        temp = 1:info_to_graph.num_trials_for_analysis;
+        %temp(excluded_trials_cursub) = [];
+        temp(info_to_graph.excluded) = [];
         trials_to_graph = temp(randperm(numel(temp),num_trials_to_show-length(trials_to_include)));
     else
-        trials_to_graph = randperm(num_trials_for_analysis,num_trials_to_show);
+        trials_to_graph = randperm(info_to_graph.num_trials_for_analysis,num_trials_to_show);
         %trials_to_graph = randi([120,360],1,20);
     end
 end
@@ -83,12 +88,12 @@ trials_to_graph = sort(trials_to_graph);
 %        trialData(itrial).(fields_to_edit{ifield}) = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
 %     end
 % end
-
+trialData = info_to_graph.trialData;
 temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
-abs_min_max = absminmax; % hz
+abs_min_max = info_to_graph.abs_min_max; % hz
 % fprintf('abs_min_max = [%d, %d]\n', abs_min_max(1),abs_min_max(2));
     % neither mic nor headphones can go outside this F1 range during the
     % window (window will need to be narrowed down to just the stable 
@@ -104,14 +109,18 @@ abs_min_max = absminmax; % hz
 %     % trials and if it is too many this or other paramteres may need to be
 %     % changed
 
-fig_raw = figure('Name','Raw Data','NumberTitle','off');
+raw_title = [subject ' Raw Data'];
+%fig_raw = figure('Name','Raw Data','NumberTitle','off');
+fig_raw = figure('Name',raw_title,'NumberTitle','off');
 if num_trials_to_show == 50
     tiled_raw = tiledlayout(fig_raw, 10,5); % when there are 50 trials being examined
 elseif num_trials_to_show == 12
     tiled_raw = tiledlayout(fig_raw, 4,3); % when there are 12 trials being examined
 end
 
-fig_smooth = figure('Name','Smoothed Data','NumberTitle','off');
+smooth_title = [subject ' Smoothed Data'];
+%fig_smooth = figure('Name','Smoothed Data','NumberTitle','off');
+fig_smooth = figure('Name',smooth_title,'NumberTitle','off');
 if num_trials_to_show == 50
     tiled_smooth = tiledlayout(fig_smooth, 10,5); % when there are 50 trials being examined
 elseif num_trials_to_show == 12
@@ -286,10 +295,16 @@ end
 %     end
 % end
 
+largest_window_blue = info_to_graph.blue_window;
+largest_window_green = info_to_graph.green_window;
+largest_window_final = info_to_graph.final_window;
+
+analysis_windows = info_to_graph.analysis_windows;
+
 %% create figure
 for i = 1:length(trials_to_graph)
-    smoothed_raw_mic = smoothdata(trialData(trials_to_graph(i)).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
-    smoothed_raw_headp = smoothdata(trialData(trials_to_graph(i)).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
+    smoothed_raw_mic = smoothdata(trialData(trials_to_graph(i)).s{1,raw_mic}, 'movmedian', info_to_graph.smooth_window_size, 'omitmissing');
+    smoothed_raw_headp = smoothdata(trialData(trials_to_graph(i)).s{1,raw_headphones}, 'movmedian', info_to_graph.smooth_window_size, 'omitmissing');
 
     % plot the raw figure
     %figure('visible','off');
@@ -349,7 +364,7 @@ for i = 1:length(trials_to_graph)
     %if num_trials_to_show == 12
         % expected headphone graph
         hold on
-        expected = plot(ax_raw,expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
+        expected = plot(ax_raw,info_to_graph.expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
         %expected = plot(expected_headphone(:,trials_to_graph(i)),'yellow','LineWidth',2);
     
         % actual headphone graph
@@ -425,7 +440,7 @@ for i = 1:length(trials_to_graph)
     %if num_trials_to_show == 12
         % expected headphone graph
         hold on
-        smooth_expHP = smoothdata(expected_headphone(:,trials_to_graph(i)), 'movmedian', smooth_window_size, 'omitmissing');
+        smooth_expHP = smoothdata(info_to_graph.expected_headphone(:,trials_to_graph(i)), 'movmedian', info_to_graph.smooth_window_size, 'omitmissing');
         expected = plot(ax_smooth,smooth_expHP,'yellow','LineWidth',2);
 
         % actual headphone graph
@@ -442,6 +457,13 @@ for i = 1:length(trials_to_graph)
     hold on
     yline(abs_min_max(1),'LineWidth',1);
     yline(abs_min_max(2),'LineWidth',1);
+
+    % graph the window for analysis as calculated by analysisWindow.m
+    if info_to_graph.include_analysis
+        hold on
+        xline(analysis_windows.start(trials_to_graph(i)),'LineWidth',1);
+        xline(analysis_windows.end(trials_to_graph(i)),'LineWidth',1);
+    end
 
     hold off
 

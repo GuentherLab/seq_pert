@@ -13,7 +13,9 @@ function concat_runs(SUB,ses,run1,run2,run1_range,run2_range,run_new)
     TASK_MAT = 'task-aud-reflexive';
     TASK_OST = 'task-aud';
     
-    FILEPATH = flvoice('PRIVATE.ROOT');
+    %FILEPATH = flvoice('PRIVATE.ROOT');
+    dirs = setDirs_seq_pert();
+    FILEPATH = dirs.data;
     SUB_PATH = [FILEPATH filesep SUB];
     BEH_PATH = [SUB_PATH filesep SES filesep 'beh'];
     RUN1_PATH = [BEH_PATH filesep RUN1];

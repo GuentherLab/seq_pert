@@ -1,8 +1,10 @@
+function [analysis_windows] = analysisWindow(sub, num_trials_for_analysis, graph)
 % find the final window that will be used for all further analyses
 
 dirs = setDirs_seq_pert();
 
-sub = 1;
+%sub = 1;
+%num_trials_for_analysis = 120;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -10,17 +12,20 @@ else
     subject = ['sp0' num2str(sub)];
 end
 
-lockTimeBegin = 'start';
+% make sure that the window doesn't go before 150 ms after the beginning 
+% of the trial
+%lockTimeBegin = 'start';
 %lockTimeBegin = 'mid';
-%lockTimeBegin = 'end';
-distFrom_beginLock = 150; % ms
+lockTimeBegin = 'end';
+distFrom_beginLock = -100; % ms
     % can be either positive or negative, depending on the direction wanted
+    % takes into account that the window cannot go past begin+150ms
 
 %lockTimeEnd = 'start';
 %lockTimeEnd = 'mid';
 lockTimeEnd = 'end';
 %lockTimeEnd = 'begin';
-distFrom_endLock = -50; % ms
+distFrom_endLock = 0; % ms
     % can be either positive or negative, depending on the direction wanted
 
 subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
@@ -28,41 +33,63 @@ subs_table = readtable(subject_table_master_file, "FileType","text", "Delimiter"
 
 ses_run = [subs_table.test_ses(sub),subs_table.test_run(sub)];
 
+% loading the excluded trials
+    manual_excluded_file = [dirs.projRepo, filesep, 'seqpert_manual_bad_trials.csv'];
+    auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
+    
+    manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter",'comma');
+    auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
+    
+    temp_manual_subjects = string(manual_excluded.subject);
+    temp_auto_subjects = string(auto_excluded.subject);
+    
+    rows_manual = find(temp_manual_subjects==subject);
+    rows_auto = find(temp_auto_subjects==subject);
+
+    excluded_trials_cursub = cat(1, manual_excluded.trial(rows_manual), auto_excluded.trial(rows_auto));
+
 % load the trial data
-filepath = dirs.der_acoustic;
-filename = [filepath filesep 'sub-' subject filesep 'ses-' num2str(ses_run(1)) filesep 'sub-' subject '_ses-' num2str(ses_run(1)) '_run-' num2str(ses_run(2)) '_task-aud-reflexive_desc-formants.mat'];
-mat_file = load(filename);
-trialData = mat_file.trialData;
+    filepath = dirs.der_acoustic;
+    filename = [filepath filesep 'sub-' subject filesep 'ses-' num2str(ses_run(1)) filesep 'sub-' subject '_ses-' num2str(ses_run(1)) '_run-' num2str(ses_run(2)) '_task-aud-reflexive_desc-formants.mat'];
+    mat_file = load(filename);
+    trialData = mat_file.trialData;
 
 % delete vars already present named that are empty '[]'
-ind_to_delete = cellfun(@isempty, trialData(1).dataLabel) == 1;
-fields_to_edit = {'s','dataLabel','dataUnits','t'};
-for itrial = 1:length(trialData)
-    for ifield = 1:numel(fields_to_edit)
-       ind_to_delete = cellfun(@isempty, trialData(itrial).dataLabel) == 1;
-       trialData(itrial).(fields_to_edit{ifield}) = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
+    ind_to_delete = cellfun(@isempty, trialData(1).dataLabel) == 1;
+    fields_to_edit = {'s','dataLabel','dataUnits','t'};
+    for itrial = 1:length(trialData)
+        for ifield = 1:numel(fields_to_edit)
+           ind_to_delete = cellfun(@isempty, trialData(itrial).dataLabel) == 1;
+           trialData(itrial).(fields_to_edit{ifield}) = trialData(itrial).(fields_to_edit{ifield})(~ind_to_delete);
+        end
     end
-end
 
 temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
-% load the file holding the vowel windows
-filepath = dirs.projRepo;
-filename = [filepath filesep 'seqpert_windows_for_analysis'];
-vowel_windows_all = readtable(filename, "FileType","text", "Delimiter",'comma');
-vowel_windows_rows = find(string(vowel_windows_all.subject)==subject);
-vowel_windows = vowel_windows_all(vowel_windows_rows,:);
-vowel_windows.windowLength = vowel_windows.windowEnd - vowel_windows.windowStart;
+% load the vowel windows
+    [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, false, true, false);
+    filepath = dirs.projRepo;
+    filename = [filepath filesep 'seqpert_pertEpoch_windows'];
+    vowel_windows_all = readtable(filename, "FileType","text", "Delimiter",'comma');
+    vowel_windows_rows = find(string(vowel_windows_all.subject)==subject);
+    vowel_windows = vowel_windows_all(vowel_windows_rows,:);
+    vowel_windows.windowLength = vowel_windows.windowEnd - vowel_windows.windowStart;
 
-sz = [length(vowel_windows.subject) 3];
+%sz = [length(vowel_windows_all.start) 3];
+sz = [length(num_trials_for_analysis) 3];
 varTypes = ["double","double","double"];
 varNames = ["start","end","length"];
 analysis_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames); 
 
-for i = 1:length(vowel_windows.subject)
+%for i = 1:length(vowel_windows_all.start)
+for i = 1:num_trials_for_analysis
     if vowel_windows.excluded(i) == 1
+        analysis_windows.start(i) = NaN;
+        analysis_windows.end(i) = NaN;
+        analysis_windows.length(i) = NaN;
+
         continue
     end
 
@@ -93,4 +120,21 @@ for i = 1:length(vowel_windows.subject)
     end
 
     analysis_windows.length(i) = analysis_windows.end(i) - analysis_windows.start(i);
+end
+
+if graph
+    abs_min_max = [subs_table.abs_min(sub), subs_table.abs_max(sub)]; % hz
+    smooth_window_size = 58; % ms
+    graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, true, analysis_windows)
+end
+
+for trial = 1:num_trials_for_analysis
+    if vowel_windows.excluded(trial) == 1
+        analysis_windows.data{trial} = [];
+
+        continue
+    end
+
+    temp = trialData(trial).s{1,3};
+    analysis_windows.data{trial} = temp(analysis_windows.start(trial):analysis_windows.end(trial));
 end

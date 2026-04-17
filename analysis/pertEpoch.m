@@ -1,4 +1,4 @@
-function [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, generate_graph, smoothed)
+function [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, num_trials_for_analysis, generate_graph, smoothed, save_file, graph_with_analysis)
     % this script is the master script for the first step of
     % finding the window for analysis: finding the epoch for the subject's 
     % perturbation response
@@ -13,7 +13,7 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     
     disp(subject);
 
-    num_trials_for_analysis = 120;
+    % num_trials_for_analysis = 120;
 
     subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
     subs_table = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
@@ -24,6 +24,12 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     filename = [filepath filesep 'sub-' subject filesep 'ses-' num2str(ses_run(1)) filesep 'sub-' subject '_ses-' num2str(ses_run(1)) '_run-' num2str(ses_run(2)) '_task-aud-reflexive_desc-formants.mat'];
     mat_file = load(filename);
     trialData = mat_file.trialData;
+
+    if num_trials_for_analysis > length(trialData)
+        % if there are less trials then expected, make
+        % num_trials_for_analysis smaller
+        num_trials_for_analysis = length(trialData);
+    end
     
     % delete vars already present named that are empty '[]'
     ind_to_delete = cellfun(@isempty, trialData(1).dataLabel) == 1;
@@ -49,8 +55,6 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         raw_mic_trace = trialData(trial).s{1,raw_mic};
         raw_headp_trace = trialData(trial).s{1,raw_headphones};
     end
-
-    num_trials_for_analysis = 120;
 
     num_trials_to_show = 50;
     %num_trials_to_show = 12;
@@ -246,12 +250,14 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         % below the threashold
         cur_window_green = [0,0,0];
     
-        if ismember(trial, excluded_trials_cursub)
-            largest_window_green.start(trial) = NaN;
-            largest_window_green.end(trial) = NaN;
-            largest_window_green.length(trial) = NaN;
-            continue
-        end
+        % need to store the values of the excluded files (which is why this
+        % is commended out)
+        % if ismember(trial, excluded_trials_cursub) && exclude
+        %     largest_window_green.start(trial) = NaN;
+        %     largest_window_green.end(trial) = NaN;
+        %     largest_window_green.length(trial) = NaN;
+        %     continue
+        % end
     
         smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
         smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
@@ -330,12 +336,15 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     varNames = ["start","end","length"];
     largest_window_final = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
     for trial=1:num_trials_for_analysis
-        if ismember(trial, excluded_trials_cursub)
-            continue
-        end
+        % need to store the values of the excluded files (which is why this
+        % is commended out)
+        % if ismember(trial, excluded_trials_cursub) && exclude
+        %     continue
+        % end
         
         if largest_window_green.start(trial)==0 && largest_window_green.end(trial)==0 && largest_window_green.length(trial)==0
-            error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
+            continue
+            % error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
         end
     
         raw_Amp_mic = trialData(trial).s{1,7};
@@ -393,11 +402,31 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     end
 
     if generate_graph
-        graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size);
+        info_to_graph.trialData = trialData;
+        info_to_graph.blue_window = largest_window_blue;
+        info_to_graph.green_window = largest_window_green;
+        info_to_graph.final_window = largest_window_final;
+        info_to_graph.expected_headphone = expected_headphone;
+        info_to_graph.abs_min_max = abs_min_max;
+        info_to_graph.excluded = excluded_trials_cursub;
+        info_to_graph.num_trials_for_analysis = num_trials_for_analysis;
+        info_to_graph.smooth_window_size = smooth_window_size;
+        info_to_graph.include_analysis = false;
+
+        if graph_with_analysis
+            info_to_graph.include_analysis = true;
+            % generate the windows for analysis
+            info_to_graph.analysis_windows = analysisWindow(sub, num_trials_for_analysis, false);
+        else
+            info_to_graph.include_analysis = false;
+        end
+
+        graph_pertEpoch(sub, info_to_graph);
+        %graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, false);
     end
 
     %% store the windows for analysis
-    stored_windows_file = [dirs.projRepo, filesep, 'seqpert_windows_for_analysis.csv'];
+    stored_windows_file = [dirs.projRepo, filesep, 'seqpert_pertEpoch_windows.csv'];
     stored_windows = readtable(stored_windows_file, "FileType","text", "Delimiter",'comma');
     
     % format the list of windows to be added
@@ -416,8 +445,12 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     subject_mentions(:) = find(strcmp(stored_windows.subject, subject)); 
     stored_windows(subject_mentions,:) = [];
     
-    % add the new list to the file
-    % first concatenate the new list to the old list
-    stored_windows = cat(1,stored_windows,final_windows);
-    writetable(stored_windows, stored_windows_file);
+    if save_file
+        %save_pertEpoch_windows(subject, stored_windows_file, stored_windows);
+
+        % add the new list to the file
+        % first concatenate the new list to the old list
+        stored_windows = cat(1,stored_windows,final_windows);
+        writetable(stored_windows, stored_windows_file);
+    end
 end

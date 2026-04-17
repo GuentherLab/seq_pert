@@ -1,7 +1,7 @@
-function [excluded_bg, num_excluded, pct_excluded] = findAutoExcluded(sub)
+function [excluded_bg, num_excluded, pct_excluded] = findAutoExcluded(sub, gy_excludeBy, num_trials_for_analysis)
 dirs = setDirs_seq_pert();
 
-num_trials_for_analysis = 120;
+%num_trials_for_analysis = 120;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -40,17 +40,11 @@ min_pert_epoch = 300; % ms
     % trials and if it is too many this or other paramteres may need to be
     % changed
 
-% loading the excluded trials
-manual_excluded_file = [dirs.projRepo, filesep, 'seqpert_manual_bad_trials.csv'];
-manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter",'comma');
-rows_manual = strcmp(manual_excluded.subject, subject) & strcmp(manual_excluded.session, 'testing');
-manual_excluded_cursub = manual_excluded.trial(rows_manual);
-
 auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
 auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
 
 %% calculations
-[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,false,true);
+[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, false, true, false);
 %{
 largest_window_green = zeros([num_trials_for_analysis,3]);
 smooth_window_size = 58; % ms
@@ -174,24 +168,25 @@ excluded_bg.trial(:) = find(green_in_blue.excluded == 1);
 excluded_bg.id(:) = "bg";
 
 % second exclusion (green/yellow)
-threshold_for_exclusion_gy = 0.60;
-yellow_in_green = table;
-
 % pull the green window from the previous calculation
-% green_window.start = largest_window_green.start(1:num_trials_for_analysis); 
-% green_window.end = largest_window_green.end(1:num_trials_for_analysis); 
-% green_window.length = largest_window_green.length(1:num_trials_for_analysis);
 
-%window_loc_sz_green = largest_window_green(1:num_trials_for_analysis,:);
 final_window = table;
 final_window.start = largest_window_final.start(1:num_trials_for_analysis); 
 final_window.end = largest_window_final.end(1:num_trials_for_analysis); 
 final_window.length = largest_window_final.length(1:num_trials_for_analysis);
-
-yellow_in_green.percentage = final_window.length(:)./green_window.length(:);
-yellow_in_green.excluded = yellow_in_green.percentage < threshold_for_exclusion_gy;
-
+if strcmp(gy_excludeBy,'ratio')
+    threshold_for_exclusion_gy = 0.60;
+    yellow_in_green = table;
+    
+    yellow_in_green.percentage = final_window.length(:)./green_window.length(:);
+    yellow_in_green.excluded = yellow_in_green.percentage < threshold_for_exclusion_gy;
+elseif strcmp(gy_excludeBy,'set length')
+    length_for_exclusion = 200; % ms
+    yellow_in_green.excluded = final_window.length < length_for_exclusion;
+end
+    
 excluded_gy = table;
+%excluded_gy.trial(:) = find(yellow_in_green.excluded == 1 && green_in_blue.excluded ~= 1);
 excluded_gy.trial(:) = find(yellow_in_green.excluded == 1);
 excluded_gy.id(:) = "gy";
 
@@ -228,10 +223,18 @@ for i = 1:length(total_excluded.trial)
         auto_excluded.comments{cur_indx} = "expected - actual to absolute f1 ratio too small";
     elseif strcmp(total_excluded.id(i),"gy")
         auto_excluded.absolute_f1(cur_indx) = 0;
-        auto_excluded.expected_minus_actual(cur_indx) = green_window.length(cur_trial);
         auto_excluded.amplitude(cur_indx) = final_window.length(cur_trial);
-        auto_excluded.percentage(cur_indx) = round(yellow_in_green.percentage(cur_trial),3);
-        auto_excluded.comments{cur_indx} = "amplitude to expected - actual ratio too small";
+        
+        if strcmp(gy_excludeBy,'ratio')
+            auto_excluded.comments{cur_indx} = "amplitude to expected - actual ratio too small";
+            auto_excluded.expected_minus_actual(cur_indx) = green_window.length(cur_trial);
+            auto_excluded.percentage(cur_indx) = round(yellow_in_green.percentage(cur_trial),3);
+            auto_excluded.target(cur_indx) = threshold_for_exclusion_gy;
+        elseif strcmp(gy_excludeBy,'set length')
+            auto_excluded.comments{cur_indx} = "length of final window too small";
+            auto_excluded.expected_minus_actual(cur_indx) = 0;
+            auto_excluded.target(cur_indx) = length_for_exclusion;
+        end
     end
 
     cur_indx = cur_indx + 1;
@@ -242,6 +245,38 @@ pct_excluded = 100 * num_excluded/num_trials_for_analysis;
 fprintf('Excluded %d of %d trials for subject %d (%.1f%%)\n', num_excluded,num_trials_for_analysis, sub, pct_excluded);
 
 writetable(auto_excluded, auto_excluded_file);
+
+%% update the pertEpoch spreadsheet
+% with both the auto excluded trials and the manually excluded trials
+
+pertEpoch_windows_file = [dirs.projRepo, filesep, 'seqpert_pertEpoch_windows.csv'];
+pertEpoch_windows = readtable(pertEpoch_windows_file, "FileType","text", "Delimiter",'comma');
+
+% load the file containing manually excluded trials
+manual_excluded_file = [dirs.projRepo, filesep, 'seqpert_manual_bad_trials.csv'];
+manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter",'comma');
+rows_manual = strcmp(manual_excluded.subject, subject) & strcmp(manual_excluded.session, 'testing');
+manual_excluded_cursub = manual_excluded.trial(rows_manual);
+
+% find the rows with the current subject
+cur_sub_rows(:) = find(strcmp(pertEpoch_windows.subject, subject));
+
+% create a copy of the current subject, and erase the current subject's
+% data from the previous spreadsheet
+curSub_pertEpoch = pertEpoch_windows(cur_sub_rows,:);
+pertEpoch_windows(cur_sub_rows,:) = [];
+
+% erase the values in the rows of the excluded column of the current 
+% subject
+curSub_pertEpoch.excluded(:) = 0;
+
+curSub_pertEpoch.excluded(auto_excluded.trial(:)) = 1;
+curSub_pertEpoch.excluded(manual_excluded_cursub) = 1;
+
+pertEpoch_windows = cat(1,pertEpoch_windows,curSub_pertEpoch);
+
+writetable(pertEpoch_windows, pertEpoch_windows_file);
+%save_pertEpoch_windows(subject, pertEpoch_windows_file, pertEpoch_windows);
 end
 
 

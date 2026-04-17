@@ -2,9 +2,11 @@ dirs = setDirs_seq_pert();
 %close all
 
 %% setup
-sub = 15;
+sub = 5;
 % trial = 37;
-trial = 64;
+trial = 318;
+
+num_trials_for_analysis = 350;
 
 if sub < 10
     subject = ['sp00' num2str(sub)];
@@ -80,7 +82,7 @@ min_pert_epoch = 300; % ms
     % changed
 
 %% calculations
-[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,false,true);
+[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, num_trials_for_analysis, false,true,false);
 %[largest_window_blue, expected_headphone] = graph_pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size);
 % actual - expected headphone
 temp1 = smoothed_raw_headp;
@@ -293,6 +295,8 @@ lg = legend(ax,subset,'expected headphone','measured headphone','raw-mic');
 %% plot the amplitude of the waveform
 nexttile(tile)
 ax2 = gca;
+
+Amp_thresh = subs_table.Amp_thresh(sub); % amp
 
 plot(ax2, trialData(trial).s{1,7});
 hold on

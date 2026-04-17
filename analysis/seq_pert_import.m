@@ -1,3 +1,4 @@
+function seq_pert_import(sub)
 % After data collection, run this script to extract formants and reformat data such that it can be analyzed in FLVoice
 
 
@@ -20,7 +21,7 @@
 % 4. add detailed condition labels
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear
+%clear
 [dirs, host] = setDirs_seq_pert();
 
 % op.sub = 'sp001';
@@ -31,9 +32,21 @@ clear
 % op.ses = 2;
 % op.run = 3; 
 
-op.sub = 'sp015';
-op.ses = 2;
-op.run = 2; 
+%sub = 1;
+
+if sub < 10
+    subject = ['sp00' num2str(sub)];
+else
+    subject = ['sp0' num2str(sub)];
+end
+
+op.sub = subject;
+
+subject_table_master_file = [dirs.projRepo, filesep, 'subject_analysis_master.csv'];
+subs_table = readtable(subject_table_master_file, "FileType","text", "Delimiter",'comma');
+
+op.ses = subs_table.test_ses(sub);
+op.run = subs_table.test_run(sub); 
 
 op.task = 'aud-reflexive';
 
@@ -79,7 +92,8 @@ trials.f1comp = cell(ntrials,1);
 %    to-do: mask out null trials which have been marked as bad in QC GUI
 %    to-do: only compare U1 and D1 trials to N1 values with the exact same syllable name
 null_trial_inds = string(trials.condLabel) == 'N1'; % which trials were not F1-perturbed
-null_trial_f1_mat = cell2mat(trials.f1); 
+%null_trial_f1_mat = cell2mat(trials.f1); 
+null_trial_f1_mat = cell2mat(trials.f1(null_trial_inds));
 null_f1_mean_timecourse = mean(null_trial_f1_mat,1); % mean f1 of null trials at each timepoint
 
 % pert compensation = null trial f1 mean minus f1 of this trial ....
@@ -125,4 +139,6 @@ if op.plot_mean_f1comp
     hyline = yline(0);
     ylabel ('Perturbation compensation (Hz)')
     xlabel ('Time (ms)')
+end
+
 end
