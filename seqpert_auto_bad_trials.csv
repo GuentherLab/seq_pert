@@ -1,7 +1,48 @@
 subject,trial,absolute_f1,expected_minus_actual,amplitude,percentage,target,comments
+sp001,1,350,65,0,0.186,0,expected - actual to absolute f1 ratio too small
+sp001,24,611,159,0,0.26,0,expected - actual to absolute f1 ratio too small
+sp001,32,487,163,0,0.335,0,expected - actual to absolute f1 ratio too small
+sp001,52,613,245,0,0.4,0,expected - actual to absolute f1 ratio too small
+sp001,59,745,415,0,0.557,0,expected - actual to absolute f1 ratio too small
+sp001,63,831,136,0,0.164,0,expected - actual to absolute f1 ratio too small
+sp001,72,828,224,0,0.271,0,expected - actual to absolute f1 ratio too small
+sp001,77,651,156,0,0.24,0,expected - actual to absolute f1 ratio too small
+sp001,88,607,139,0,0.229,0,expected - actual to absolute f1 ratio too small
+sp001,95,698,203,0,0.291,0,expected - actual to absolute f1 ratio too small
+sp001,144,748,211,0,0.282,0,expected - actual to absolute f1 ratio too small
+sp001,152,529,219,0,0.414,0,expected - actual to absolute f1 ratio too small
+sp001,166,571,303,0,0.531,0,expected - actual to absolute f1 ratio too small
+sp001,168,561,129,0,0.23,0,expected - actual to absolute f1 ratio too small
+sp001,183,874,194,0,0.222,0,expected - actual to absolute f1 ratio too small
+sp001,192,849,133,0,0.157,0,expected - actual to absolute f1 ratio too small
+sp001,197,655,328,0,0.501,0,expected - actual to absolute f1 ratio too small
+sp001,208,631,300,0,0.475,0,expected - actual to absolute f1 ratio too small
+sp001,217,746,340,0,0.456,0,expected - actual to absolute f1 ratio too small
+sp001,228,815,113,0,0.139,0,expected - actual to absolute f1 ratio too small
+sp001,235,629,235,0,0.374,0,expected - actual to absolute f1 ratio too small
+sp001,247,736,376,0,0.511,0,expected - actual to absolute f1 ratio too small
+sp001,263,872,483,0,0.554,0,expected - actual to absolute f1 ratio too small
+sp001,264,804,73,0,0.091,0,expected - actual to absolute f1 ratio too small
+sp001,286,92,54,0,0.587,0,expected - actual to absolute f1 ratio too small
+sp001,295,684,378,0,0.553,0,expected - actual to absolute f1 ratio too small
+sp001,312,729,139,0,0.191,0,expected - actual to absolute f1 ratio too small
+sp001,337,658,386,0,0.587,0,expected - actual to absolute f1 ratio too small
+sp001,348,715,367,0,0.513,0,expected - actual to absolute f1 ratio too small
+sp001,354,655,288,0,0.44,0,expected - actual to absolute f1 ratio too small
+sp001,355,449,117,0,0.261,0,expected - actual to absolute f1 ratio too small
 sp002,7,833,246,0,0.295,0,expected - actual to absolute f1 ratio too small
 sp002,49,897,505,0,0.563,0,expected - actual to absolute f1 ratio too small
 sp002,97,1181,698,0,0.591,0,expected - actual to absolute f1 ratio too small
+sp002,142,952,288,0,0.303,0,expected - actual to absolute f1 ratio too small
+sp002,146,914,451,0,0.493,0,expected - actual to absolute f1 ratio too small
+sp002,169,868,216,0,0.249,0,expected - actual to absolute f1 ratio too small
+sp002,184,757,186,0,0.246,0,expected - actual to absolute f1 ratio too small
+sp002,188,949,194,0,0.204,0,expected - actual to absolute f1 ratio too small
+sp002,236,870,175,0,0.201,0,expected - actual to absolute f1 ratio too small
+sp002,245,922,77,0,0.084,0,expected - actual to absolute f1 ratio too small
+sp002,260,857,307,0,0.358,0,expected - actual to absolute f1 ratio too small
+sp002,320,859,440,0,0.512,0,expected - actual to absolute f1 ratio too small
+sp002,356,1028,380,0,0.37,0,expected - actual to absolute f1 ratio too small
 sp003,2,846,348,0,0.411,0,expected - actual to absolute f1 ratio too small
 sp003,6,950,501,0,0.527,0,expected - actual to absolute f1 ratio too small
 sp003,8,955,460,0,0.482,0,expected - actual to absolute f1 ratio too small
@@ -16,9 +57,48 @@ sp003,73,1070,479,0,0.448,0,expected - actual to absolute f1 ratio too small
 sp003,93,941,386,0,0.41,0,expected - actual to absolute f1 ratio too small
 sp003,102,687,247,0,0.36,0,expected - actual to absolute f1 ratio too small
 sp003,113,969,556,0,0.574,0,expected - actual to absolute f1 ratio too small
-sp003,11,0,0,82,0,200,length of final window too small
-sp003,27,0,0,146,0,200,length of final window too small
-sp003,67,0,0,165,0,200,length of final window too small
+sp003,122,870,489,0,0.562,0,expected - actual to absolute f1 ratio too small
+sp003,127,740,425,0,0.574,0,expected - actual to absolute f1 ratio too small
+sp003,128,1070,348,0,0.325,0,expected - actual to absolute f1 ratio too small
+sp003,146,891,517,0,0.58,0,expected - actual to absolute f1 ratio too small
+sp003,147,805,206,0,0.256,0,expected - actual to absolute f1 ratio too small
+sp003,168,955,285,0,0.298,0,expected - actual to absolute f1 ratio too small
+sp003,176,1085,459,0,0.423,0,expected - actual to absolute f1 ratio too small
+sp003,178,1124,665,0,0.592,0,expected - actual to absolute f1 ratio too small
+sp003,179,882,520,0,0.59,0,expected - actual to absolute f1 ratio too small
+sp003,181,1153,178,0,0.154,0,expected - actual to absolute f1 ratio too small
+sp003,185,848,222,0,0.262,0,expected - actual to absolute f1 ratio too small
+sp003,187,1023,368,0,0.36,0,expected - actual to absolute f1 ratio too small
+sp003,189,891,213,0,0.239,0,expected - actual to absolute f1 ratio too small
+sp003,196,770,262,0,0.34,0,expected - actual to absolute f1 ratio too small
+sp003,202,957,195,0,0.204,0,expected - actual to absolute f1 ratio too small
+sp003,210,621,345,0,0.556,0,expected - actual to absolute f1 ratio too small
+sp003,212,721,406,0,0.563,0,expected - actual to absolute f1 ratio too small
+sp003,237,948,417,0,0.44,0,expected - actual to absolute f1 ratio too small
+sp003,246,973,578,0,0.594,0,expected - actual to absolute f1 ratio too small
+sp003,248,893,238,0,0.267,0,expected - actual to absolute f1 ratio too small
+sp003,262,663,379,0,0.572,0,expected - actual to absolute f1 ratio too small
+sp003,266,949,513,0,0.541,0,expected - actual to absolute f1 ratio too small
+sp003,267,863,336,0,0.389,0,expected - actual to absolute f1 ratio too small
+sp003,270,752,116,0,0.154,0,expected - actual to absolute f1 ratio too small
+sp003,273,764,420,0,0.55,0,expected - actual to absolute f1 ratio too small
+sp003,275,917,436,0,0.475,0,expected - actual to absolute f1 ratio too small
+sp003,278,634,292,0,0.461,0,expected - actual to absolute f1 ratio too small
+sp003,284,849,366,0,0.431,0,expected - actual to absolute f1 ratio too small
+sp003,294,700,142,0,0.203,0,expected - actual to absolute f1 ratio too small
+sp003,295,540,305,0,0.565,0,expected - actual to absolute f1 ratio too small
+sp003,304,671,340,0,0.507,0,expected - actual to absolute f1 ratio too small
+sp003,307,813,470,0,0.578,0,expected - actual to absolute f1 ratio too small
+sp003,309,901,300,0,0.333,0,expected - actual to absolute f1 ratio too small
+sp003,322,763,370,0,0.485,0,expected - actual to absolute f1 ratio too small
+sp003,337,648,309,0,0.477,0,expected - actual to absolute f1 ratio too small
+sp003,355,846,387,0,0.457,0,expected - actual to absolute f1 ratio too small
+sp003,251,0,0,102,0,200,length of final window too small
+sp004,137,567,24,0,0.042,0,expected - actual to absolute f1 ratio too small
+sp004,262,1261,728,0,0.577,0,expected - actual to absolute f1 ratio too small
+sp004,264,428,193,0,0.451,0,expected - actual to absolute f1 ratio too small
+sp004,346,1862,975,0,0.524,0,expected - actual to absolute f1 ratio too small
+sp004,349,0,0,0,0,200,length of final window too small
 sp005,9,846,505,0,0.597,0,expected - actual to absolute f1 ratio too small
 sp005,21,677,377,0,0.557,0,expected - actual to absolute f1 ratio too small
 sp005,25,481,206,0,0.428,0,expected - actual to absolute f1 ratio too small
@@ -36,22 +116,48 @@ sp005,108,648,359,0,0.554,0,expected - actual to absolute f1 ratio too small
 sp005,109,590,229,0,0.388,0,expected - actual to absolute f1 ratio too small
 sp005,115,364,0,0,0,0,expected - actual to absolute f1 ratio too small
 sp005,120,649,221,0,0.341,0,expected - actual to absolute f1 ratio too small
-sp005,25,0,0,136,0,200,length of final window too small
+sp005,124,683,406,0,0.594,0,expected - actual to absolute f1 ratio too small
+sp005,154,613,155,0,0.253,0,expected - actual to absolute f1 ratio too small
+sp005,155,830,491,0,0.592,0,expected - actual to absolute f1 ratio too small
+sp005,168,527,222,0,0.421,0,expected - actual to absolute f1 ratio too small
+sp005,186,534,318,0,0.596,0,expected - actual to absolute f1 ratio too small
+sp005,196,619,217,0,0.351,0,expected - actual to absolute f1 ratio too small
+sp005,205,677,157,0,0.232,0,expected - actual to absolute f1 ratio too small
+sp005,221,593,350,0,0.59,0,expected - actual to absolute f1 ratio too small
+sp005,229,589,238,0,0.404,0,expected - actual to absolute f1 ratio too small
+sp005,230,709,17,0,0.024,0,expected - actual to absolute f1 ratio too small
+sp005,234,548,306,0,0.558,0,expected - actual to absolute f1 ratio too small
+sp005,250,418,59,0,0.141,0,expected - actual to absolute f1 ratio too small
+sp005,253,565,1,0,0.002,0,expected - actual to absolute f1 ratio too small
+sp005,259,641,111,0,0.173,0,expected - actual to absolute f1 ratio too small
+sp005,261,631,348,0,0.552,0,expected - actual to absolute f1 ratio too small
+sp005,281,688,400,0,0.581,0,expected - actual to absolute f1 ratio too small
+sp005,283,779,149,0,0.191,0,expected - actual to absolute f1 ratio too small
+sp005,285,556,13,0,0.023,0,expected - actual to absolute f1 ratio too small
+sp005,299,599,174,0,0.29,0,expected - actual to absolute f1 ratio too small
+sp005,313,629,313,0,0.498,0,expected - actual to absolute f1 ratio too small
+sp005,318,1678,823,0,0.49,0,expected - actual to absolute f1 ratio too small
+sp005,322,870,515,0,0.592,0,expected - actual to absolute f1 ratio too small
+sp005,329,533,276,0,0.518,0,expected - actual to absolute f1 ratio too small
+sp005,331,577,296,0,0.513,0,expected - actual to absolute f1 ratio too small
+sp005,332,575,1,0,0.002,0,expected - actual to absolute f1 ratio too small
+sp005,334,552,105,0,0.19,0,expected - actual to absolute f1 ratio too small
+sp005,347,580,238,0,0.41,0,expected - actual to absolute f1 ratio too small
 sp005,60,0,0,0,0,200,length of final window too small
-sp005,65,0,0,2,0,200,length of final window too small
-sp005,66,0,0,62,0,200,length of final window too small
 sp005,76,0,0,173,0,200,length of final window too small
-sp005,77,0,0,121,0,200,length of final window too small
-sp005,78,0,0,123,0,200,length of final window too small
-sp005,79,0,0,104,0,200,length of final window too small
-sp005,80,0,0,86,0,200,length of final window too small
 sp005,112,0,0,170,0,200,length of final window too small
-sp005,115,0,0,0,0,200,length of final window too small
+sp005,140,0,0,0,0,200,length of final window too small
+sp005,165,0,0,87,0,200,length of final window too small
+sp005,171,0,0,180,0,200,length of final window too small
+sp005,239,0,0,0,0,200,length of final window too small
+sp005,268,0,0,0,0,200,length of final window too small
 sp006,2,631,335,0,0.531,0,expected - actual to absolute f1 ratio too small
 sp006,16,1032,582,0,0.564,0,expected - actual to absolute f1 ratio too small
 sp006,25,1022,592,0,0.579,0,expected - actual to absolute f1 ratio too small
 sp006,26,1331,769,0,0.578,0,expected - actual to absolute f1 ratio too small
 sp006,28,876,525,0,0.599,0,expected - actual to absolute f1 ratio too small
+sp006,255,961,540,0,0.562,0,expected - actual to absolute f1 ratio too small
+sp006,320,858,501,0,0.584,0,expected - actual to absolute f1 ratio too small
 sp007,3,1400,783,0,0.559,0,expected - actual to absolute f1 ratio too small
 sp007,16,718,168,0,0.234,0,expected - actual to absolute f1 ratio too small
 sp007,18,1458,742,0,0.509,0,expected - actual to absolute f1 ratio too small
@@ -69,13 +175,49 @@ sp007,97,265,12,0,0.045,0,expected - actual to absolute f1 ratio too small
 sp007,101,2070,902,0,0.436,0,expected - actual to absolute f1 ratio too small
 sp007,103,996,473,0,0.475,0,expected - actual to absolute f1 ratio too small
 sp007,119,859,478,0,0.556,0,expected - actual to absolute f1 ratio too small
-sp007,16,0,0,168,0,200,length of final window too small
-sp007,39,0,0,0,0,200,length of final window too small
-sp007,78,0,0,0,0,200,length of final window too small
-sp007,82,0,0,0,0,200,length of final window too small
-sp007,97,0,0,0,0,200,length of final window too small
-sp007,101,0,0,0,0,200,length of final window too small
+sp007,123,1409,733,0,0.52,0,expected - actual to absolute f1 ratio too small
+sp007,130,849,1,0,0.001,0,expected - actual to absolute f1 ratio too small
+sp007,131,1277,148,0,0.116,0,expected - actual to absolute f1 ratio too small
+sp007,139,1260,741,0,0.588,0,expected - actual to absolute f1 ratio too small
+sp007,148,969,126,0,0.13,0,expected - actual to absolute f1 ratio too small
+sp007,149,1167,548,0,0.47,0,expected - actual to absolute f1 ratio too small
+sp007,155,693,384,0,0.554,0,expected - actual to absolute f1 ratio too small
+sp007,157,1225,581,0,0.474,0,expected - actual to absolute f1 ratio too small
+sp007,173,459,274,0,0.597,0,expected - actual to absolute f1 ratio too small
+sp007,186,487,68,0,0.14,0,expected - actual to absolute f1 ratio too small
+sp007,187,484,216,0,0.446,0,expected - actual to absolute f1 ratio too small
+sp007,198,584,156,0,0.267,0,expected - actual to absolute f1 ratio too small
+sp007,210,836,444,0,0.531,0,expected - actual to absolute f1 ratio too small
+sp007,234,1148,72,0,0.063,0,expected - actual to absolute f1 ratio too small
+sp007,241,734,277,0,0.377,0,expected - actual to absolute f1 ratio too small
+sp007,258,756,439,0,0.581,0,expected - actual to absolute f1 ratio too small
+sp007,261,785,439,0,0.559,0,expected - actual to absolute f1 ratio too small
+sp007,276,828,412,0,0.498,0,expected - actual to absolute f1 ratio too small
+sp007,295,774,383,0,0.495,0,expected - actual to absolute f1 ratio too small
+sp007,307,534,98,0,0.184,0,expected - actual to absolute f1 ratio too small
+sp007,318,524,50,0,0.095,0,expected - actual to absolute f1 ratio too small
+sp007,320,1164,635,0,0.546,0,expected - actual to absolute f1 ratio too small
+sp007,323,889,38,0,0.043,0,expected - actual to absolute f1 ratio too small
+sp007,330,768,450,0,0.586,0,expected - actual to absolute f1 ratio too small
+sp007,352,794,461,0,0.581,0,expected - actual to absolute f1 ratio too small
+sp007,360,743,102,0,0.137,0,expected - actual to absolute f1 ratio too small
 sp007,115,0,0,44,0,200,length of final window too small
+sp007,161,0,0,0,0,200,length of final window too small
+sp007,175,0,0,29,0,200,length of final window too small
+sp007,183,0,0,45,0,200,length of final window too small
+sp007,200,0,0,190,0,200,length of final window too small
+sp007,201,0,0,164,0,200,length of final window too small
+sp007,218,0,0,50,0,200,length of final window too small
+sp007,222,0,0,101,0,200,length of final window too small
+sp007,231,0,0,17,0,200,length of final window too small
+sp007,240,0,0,142,0,200,length of final window too small
+sp007,252,0,0,104,0,200,length of final window too small
+sp007,254,0,0,78,0,200,length of final window too small
+sp007,278,0,0,40,0,200,length of final window too small
+sp007,280,0,0,141,0,200,length of final window too small
+sp007,289,0,0,124,0,200,length of final window too small
+sp007,290,0,0,28,0,200,length of final window too small
+sp007,299,0,0,190,0,200,length of final window too small
 sp008,12,156,89,0,0.571,0,expected - actual to absolute f1 ratio too small
 sp008,16,602,237,0,0.394,0,expected - actual to absolute f1 ratio too small
 sp008,19,198,54,0,0.273,0,expected - actual to absolute f1 ratio too small
@@ -83,16 +225,22 @@ sp008,37,590,353,0,0.598,0,expected - actual to absolute f1 ratio too small
 sp008,82,590,257,0,0.436,0,expected - actual to absolute f1 ratio too small
 sp008,85,507,98,0,0.193,0,expected - actual to absolute f1 ratio too small
 sp008,89,493,240,0,0.487,0,expected - actual to absolute f1 ratio too small
-sp008,12,0,0,75,0,200,length of final window too small
-sp008,19,0,0,0,0,200,length of final window too small
+sp008,157,632,301,0,0.476,0,expected - actual to absolute f1 ratio too small
+sp008,168,662,354,0,0.535,0,expected - actual to absolute f1 ratio too small
+sp008,238,892,527,0,0.591,0,expected - actual to absolute f1 ratio too small
+sp008,240,915,286,0,0.313,0,expected - actual to absolute f1 ratio too small
+sp008,343,793,457,0,0.576,0,expected - actual to absolute f1 ratio too small
 sp008,40,0,0,156,0,200,length of final window too small
-sp008,85,0,0,98,0,200,length of final window too small
 sp009,13,607,0,0,0,0,expected - actual to absolute f1 ratio too small
-sp009,13,0,0,0,0,200,length of final window too small
 sp010,1,1228,717,0,0.584,0,expected - actual to absolute f1 ratio too small
 sp010,39,1293,102,0,0.079,0,expected - actual to absolute f1 ratio too small
 sp010,46,834,490,0,0.588,0,expected - actual to absolute f1 ratio too small
-sp010,39,0,0,0,0,200,length of final window too small
+sp010,146,952,546,0,0.574,0,expected - actual to absolute f1 ratio too small
+sp010,279,769,368,0,0.479,0,expected - actual to absolute f1 ratio too small
+sp010,333,670,340,0,0.507,0,expected - actual to absolute f1 ratio too small
+sp010,353,578,206,0,0.356,0,expected - actual to absolute f1 ratio too small
+sp010,216,0,0,0,0,200,length of final window too small
+sp010,301,0,0,189,0,200,length of final window too small
 sp011,35,706,226,0,0.32,0,expected - actual to absolute f1 ratio too small
 sp011,48,1186,347,0,0.293,0,expected - actual to absolute f1 ratio too small
 sp011,51,1086,307,0,0.283,0,expected - actual to absolute f1 ratio too small
@@ -100,49 +248,86 @@ sp011,65,818,148,0,0.181,0,expected - actual to absolute f1 ratio too small
 sp011,68,626,182,0,0.291,0,expected - actual to absolute f1 ratio too small
 sp011,69,845,116,0,0.137,0,expected - actual to absolute f1 ratio too small
 sp011,101,1226,683,0,0.557,0,expected - actual to absolute f1 ratio too small
-sp011,65,0,0,148,0,200,length of final window too small
-sp011,68,0,0,182,0,200,length of final window too small
-sp011,69,0,0,111,0,200,length of final window too small
+sp011,122,786,389,0,0.495,0,expected - actual to absolute f1 ratio too small
+sp011,155,751,186,0,0.248,0,expected - actual to absolute f1 ratio too small
+sp011,168,684,275,0,0.402,0,expected - actual to absolute f1 ratio too small
+sp011,171,976,443,0,0.454,0,expected - actual to absolute f1 ratio too small
+sp011,185,736,253,0,0.344,0,expected - actual to absolute f1 ratio too small
+sp011,189,810,333,0,0.411,0,expected - actual to absolute f1 ratio too small
+sp011,200,1293,698,0,0.54,0,expected - actual to absolute f1 ratio too small
+sp011,246,772,406,0,0.526,0,expected - actual to absolute f1 ratio too small
+sp011,275,681,222,0,0.326,0,expected - actual to absolute f1 ratio too small
+sp011,288,982,264,0,0.269,0,expected - actual to absolute f1 ratio too small
+sp011,291,1077,499,0,0.463,0,expected - actual to absolute f1 ratio too small
+sp011,305,1025,503,0,0.491,0,expected - actual to absolute f1 ratio too small
+sp011,309,615,138,0,0.224,0,expected - actual to absolute f1 ratio too small
+sp011,321,955,349,0,0.365,0,expected - actual to absolute f1 ratio too small
+sp011,354,799,226,0,0.283,0,expected - actual to absolute f1 ratio too small
+sp011,318,0,0,178,0,200,length of final window too small
 sp012,50,599,96,0,0.16,0,expected - actual to absolute f1 ratio too small
 sp012,68,734,2,0,0.003,0,expected - actual to absolute f1 ratio too small
 sp012,103,748,18,0,0.024,0,expected - actual to absolute f1 ratio too small
 sp012,113,934,92,0,0.099,0,expected - actual to absolute f1 ratio too small
 sp012,119,989,16,0,0.016,0,expected - actual to absolute f1 ratio too small
-sp012,50,0,0,0,0,200,length of final window too small
+sp012,126,1024,1,0,0.001,0,expected - actual to absolute f1 ratio too small
+sp012,143,971,21,0,0.022,0,expected - actual to absolute f1 ratio too small
+sp012,155,1053,6,0,0.006,0,expected - actual to absolute f1 ratio too small
+sp012,226,842,1,0,0.001,0,expected - actual to absolute f1 ratio too small
+sp012,288,125,5,0,0.04,0,expected - actual to absolute f1 ratio too small
+sp012,313,51,13,0,0.255,0,expected - actual to absolute f1 ratio too small
 sp012,54,0,0,0,0,200,length of final window too small
-sp012,68,0,0,0,0,200,length of final window too small
 sp012,69,0,0,48,0,200,length of final window too small
-sp012,103,0,0,0,0,200,length of final window too small
-sp012,113,0,0,0,0,200,length of final window too small
-sp012,119,0,0,0,0,200,length of final window too small
+sp012,130,0,0,0,0,200,length of final window too small
+sp012,169,0,0,175,0,200,length of final window too small
+sp012,197,0,0,107,0,200,length of final window too small
+sp012,238,0,0,0,0,200,length of final window too small
+sp012,251,0,0,0,0,200,length of final window too small
+sp012,261,0,0,0,0,200,length of final window too small
+sp012,300,0,0,0,0,200,length of final window too small
+sp012,308,0,0,0,0,200,length of final window too small
+sp012,318,0,0,140,0,200,length of final window too small
+sp012,320,0,0,0,0,200,length of final window too small
+sp012,331,0,0,91,0,200,length of final window too small
+sp012,334,0,0,0,0,200,length of final window too small
+sp012,346,0,0,45,0,200,length of final window too small
+sp012,350,0,0,41,0,200,length of final window too small
+sp012,351,0,0,129,0,200,length of final window too small
 sp013,23,473,252,0,0.533,0,expected - actual to absolute f1 ratio too small
 sp013,37,573,138,0,0.241,0,expected - actual to absolute f1 ratio too small
 sp013,43,737,8,0,0.011,0,expected - actual to absolute f1 ratio too small
 sp013,62,722,115,0,0.159,0,expected - actual to absolute f1 ratio too small
 sp013,92,696,0,0,0,0,expected - actual to absolute f1 ratio too small
 sp013,104,903,435,0,0.482,0,expected - actual to absolute f1 ratio too small
-sp013,23,0,0,0,0,200,length of final window too small
-sp013,37,0,0,98,0,200,length of final window too small
-sp013,43,0,0,8,0,200,length of final window too small
-sp013,62,0,0,27,0,200,length of final window too small
-sp013,92,0,0,0,0,200,length of final window too small
+sp013,132,989,33,0,0.033,0,expected - actual to absolute f1 ratio too small
+sp013,163,715,33,0,0.046,0,expected - actual to absolute f1 ratio too small
+sp013,167,751,75,0,0.1,0,expected - actual to absolute f1 ratio too small
+sp013,172,625,367,0,0.587,0,expected - actual to absolute f1 ratio too small
+sp013,175,484,9,0,0.019,0,expected - actual to absolute f1 ratio too small
+sp013,176,654,15,0,0.023,0,expected - actual to absolute f1 ratio too small
+sp013,179,608,292,0,0.48,0,expected - actual to absolute f1 ratio too small
+sp013,205,1044,583,0,0.558,0,expected - actual to absolute f1 ratio too small
+sp013,211,788,471,0,0.598,0,expected - actual to absolute f1 ratio too small
+sp013,254,1003,598,0,0.596,0,expected - actual to absolute f1 ratio too small
+sp013,278,636,359,0,0.564,0,expected - actual to absolute f1 ratio too small
+sp013,294,577,83,0,0.144,0,expected - actual to absolute f1 ratio too small
+sp013,300,459,18,0,0.039,0,expected - actual to absolute f1 ratio too small
+sp013,302,673,29,0,0.043,0,expected - actual to absolute f1 ratio too small
+sp013,328,638,324,0,0.508,0,expected - actual to absolute f1 ratio too small
+sp013,333,925,486,0,0.525,0,expected - actual to absolute f1 ratio too small
+sp013,342,1028,530,0,0.516,0,expected - actual to absolute f1 ratio too small
+sp013,149,0,0,10,0,200,length of final window too small
+sp013,166,0,0,0,0,200,length of final window too small
+sp013,173,0,0,47,0,200,length of final window too small
+sp013,239,0,0,0,0,200,length of final window too small
+sp013,248,0,0,0,0,200,length of final window too small
+sp013,255,0,0,104,0,200,length of final window too small
+sp013,306,0,0,98,0,200,length of final window too small
+sp013,319,0,0,0,0,200,length of final window too small
+sp013,359,0,0,0,0,200,length of final window too small
+sp015,274,705,410,0,0.582,0,expected - actual to absolute f1 ratio too small
 sp015,38,0,0,62,0,200,length of final window too small
 sp015,56,0,0,199,0,200,length of final window too small
+sp015,245,0,0,74,0,200,length of final window too small
+sp015,258,0,0,192,0,200,length of final window too small
 sp016,44,808,478,0,0.592,0,expected - actual to absolute f1 ratio too small
 sp016,96,0,0,0,0,200,length of final window too small
-sp001,1,350,65,0,0.186,0,expected - actual to absolute f1 ratio too small
-sp001,24,611,159,0,0.26,0,expected - actual to absolute f1 ratio too small
-sp001,32,487,163,0,0.335,0,expected - actual to absolute f1 ratio too small
-sp001,52,613,245,0,0.4,0,expected - actual to absolute f1 ratio too small
-sp001,59,745,415,0,0.557,0,expected - actual to absolute f1 ratio too small
-sp001,63,831,136,0,0.164,0,expected - actual to absolute f1 ratio too small
-sp001,72,828,224,0,0.271,0,expected - actual to absolute f1 ratio too small
-sp001,77,651,156,0,0.24,0,expected - actual to absolute f1 ratio too small
-sp001,88,607,139,0,0.229,0,expected - actual to absolute f1 ratio too small
-sp001,95,698,203,0,0.291,0,expected - actual to absolute f1 ratio too small
-sp001,1,0,0,65,0,200,length of final window too small
-sp001,24,0,0,159,0,200,length of final window too small
-sp001,32,0,0,163,0,200,length of final window too small
-sp001,63,0,0,136,0,200,length of final window too small
-sp001,77,0,0,156,0,200,length of final window too small
-sp001,88,0,0,139,0,200,length of final window too small

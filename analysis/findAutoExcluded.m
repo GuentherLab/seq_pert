@@ -20,6 +20,12 @@ filename = [filepath filesep 'sub-' subject filesep 'ses-' num2str(ses_run(1)) f
 mat_file = load(filename);
 trialData = mat_file.trialData;
 
+if num_trials_for_analysis > length(trialData)
+    % if there are less trials then expected, make
+    % num_trials_for_analysis smaller
+    num_trials_for_analysis = length(trialData);
+end
+
 temp = convertCharsToStrings(trialData(1).dataLabel);
 raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
@@ -44,7 +50,7 @@ auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
 auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
 
 %% calculations
-[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, false, true, false);
+[largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,num_trials_for_analysis, false,true,true);
 %{
 largest_window_green = zeros([num_trials_for_analysis,3]);
 smooth_window_size = 58; % ms
@@ -182,6 +188,12 @@ if strcmp(gy_excludeBy,'ratio')
     yellow_in_green.excluded = yellow_in_green.percentage < threshold_for_exclusion_gy;
 elseif strcmp(gy_excludeBy,'set length')
     length_for_exclusion = 200; % ms
+
+    % exclude the bg excluded trials from yg exclusion analysis
+    final_window.start(excluded_bg.trial(:)) = NaN;
+    final_window.end(excluded_bg.trial(:)) = NaN;
+    final_window.length(excluded_bg.trial(:)) = NaN;
+
     yellow_in_green.excluded = final_window.length < length_for_exclusion;
 end
     
@@ -270,8 +282,8 @@ pertEpoch_windows(cur_sub_rows,:) = [];
 % subject
 curSub_pertEpoch.excluded(:) = 0;
 
-curSub_pertEpoch.excluded(auto_excluded.trial(:)) = 1;
-curSub_pertEpoch.excluded(manual_excluded_cursub) = 1;
+curSub_pertEpoch.excluded(total_excluded.trial(:)) = 1;
+curSub_pertEpoch.excluded(manual_excluded_cursub(:)) = 1;
 
 pertEpoch_windows = cat(1,pertEpoch_windows,curSub_pertEpoch);
 

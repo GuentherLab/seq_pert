@@ -22,6 +22,7 @@ function seq_pert_import(sub)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %clear
+clearvars -except sub
 [dirs, host] = setDirs_seq_pert();
 
 % op.sub = 'sp001';
@@ -92,6 +93,11 @@ trials.f1comp = cell(ntrials,1);
 %    to-do: mask out null trials which have been marked as bad in QC GUI
 %    to-do: only compare U1 and D1 trials to N1 values with the exact same syllable name
 null_trial_inds = string(trials.condLabel) == 'N1'; % which trials were not F1-perturbed
+
+% replace the NaN rows with empty arrays ('[]')
+% temp_null = trials.f1(null_trial_inds);
+% nan_rows = isnan(temp_null{:});
+
 %null_trial_f1_mat = cell2mat(trials.f1); 
 null_trial_f1_mat = cell2mat(trials.f1(null_trial_inds));
 null_f1_mean_timecourse = mean(null_trial_f1_mat,1); % mean f1 of null trials at each timepoint

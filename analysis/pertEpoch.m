@@ -421,31 +421,31 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
             info_to_graph.include_analysis = false;
         end
 
-        graph_pertEpoch(sub, info_to_graph);
+        graph_pertEpoch(sub, info_to_graph, num_trials_for_analysis);
         %graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, false);
     end
 
     %% store the windows for analysis
-    stored_windows_file = [dirs.projRepo, filesep, 'seqpert_pertEpoch_windows.csv'];
-    stored_windows = readtable(stored_windows_file, "FileType","text", "Delimiter",'comma');
-    
-    % format the list of windows to be added
-    sz = [length(largest_window_final.start), 5];
-    varTypes = ["string","double","logical","double","double"];
-    varNames = ["subject","trial","excluded","windowStart","windowEnd"];
-    final_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
-    
-    final_windows.subject(:) = subject;
-    final_windows.trial(:) = 1:length(largest_window_final.start);
-    final_windows.excluded(excluded_trials_cursub) = 1;
-    final_windows.windowStart = largest_window_final.start;
-    final_windows.windowEnd = largest_window_final.end;
-    
-    % remove previous mentions of the current subject
-    subject_mentions(:) = find(strcmp(stored_windows.subject, subject)); 
-    stored_windows(subject_mentions,:) = [];
-    
     if save_file
+        stored_windows_file = [dirs.projRepo, filesep, 'seqpert_pertEpoch_windows.csv'];
+        stored_windows = readtable(stored_windows_file, "FileType","text", "Delimiter",'comma');
+        
+        % format the list of windows to be added
+        sz = [length(largest_window_final.start), 5];
+        varTypes = ["string","double","logical","double","double"];
+        varNames = ["subject","trial","excluded","windowStart","windowEnd"];
+        final_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
+        
+        final_windows.subject(:) = subject;
+        final_windows.trial(:) = 1:length(largest_window_final.start);
+        final_windows.excluded(excluded_trials_cursub) = 1;
+        final_windows.windowStart = largest_window_final.start;
+        final_windows.windowEnd = largest_window_final.end;
+        
+        % remove previous mentions of the current subject
+        subject_mentions(:) = find(strcmp(stored_windows.subject, subject)); 
+        stored_windows(subject_mentions,:) = [];
+        
         %save_pertEpoch_windows(subject, stored_windows_file, stored_windows);
 
         % add the new list to the file

@@ -1,5 +1,5 @@
 %function graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, absminmax, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, include_analysis, analysis_windows)
-function graph_pertEpoch(sub, info_to_graph)
+function graph_pertEpoch(sub, info_to_graph, num_trials_for_analysis)
 % blue window: the longest region within a manually determined y-axis window
 % green window: the longest region within the blue window where the expected and actual headphones are close to each other
 
@@ -61,6 +61,7 @@ else
     if ~isempty(info_to_graph.excluded)
         temp = 1:info_to_graph.num_trials_for_analysis;
         %temp(excluded_trials_cursub) = [];
+        info_to_graph.excluded(info_to_graph.excluded > num_trials_for_analysis) = [];
         temp(info_to_graph.excluded) = [];
         trials_to_graph = temp(randperm(numel(temp),num_trials_to_show-length(trials_to_include)));
     else
@@ -299,7 +300,9 @@ largest_window_blue = info_to_graph.blue_window;
 largest_window_green = info_to_graph.green_window;
 largest_window_final = info_to_graph.final_window;
 
-analysis_windows = info_to_graph.analysis_windows;
+if info_to_graph.include_analysis
+    analysis_windows = info_to_graph.analysis_windows;
+end
 
 %% create figure
 for i = 1:length(trials_to_graph)
