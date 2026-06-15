@@ -1,5 +1,11 @@
 %function graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, absminmax, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, include_analysis, analysis_windows)
 function graph_pertEpoch(sub, info_to_graph, num_trials_for_analysis)
+% info_to_graph looks for: 
+% trialData, blue_window, green_window, final_window, expected_headphone,
+% abs_min_max, excluded, num_trials_for_analysis, smooth_window_size,
+% include_analysis, analysis_windows (optional), dont_exclude (optional),
+% only_excluded (optional)
+
 % blue window: the longest region within a manually determined y-axis window
 % green window: the longest region within the blue window where the expected and actual headphones are close to each other
 
@@ -44,9 +50,30 @@ end
 
 % create the list of trials to graph
 trials_to_include = [];
-if ~isempty(trials_to_include)
+if info_to_graph.only_excluded
+    % create a new 'num_trials_to_show' based on the number of excluded
+    % trials
+    if length(info_to_graph.excluded) >= 50
+        num_trials_to_show = 50;
+    elseif length(info_to_graph.excluded) >= 30
+        num_trials_to_show = 30;
+    elseif length(info_to_graph.excluded) >= 12
+        num_trials_to_show = 12;
+    elseif length(info_to_graph.excluded) >= 5
+        num_trials_to_show = 5;
+    elseif length(info_to_graph.excluded) >= 2
+        num_trials_to_show = 2;
+    elseif length(info_to_graph.excluded) >= 1
+        num_trials_to_show = 1;
+    end
+
+    trials_to_graph = info_to_graph.excluded(1:num_trials_to_show);
+elseif ~isempty(trials_to_include)
     %if ~isempty(excluded_trials_cursub) % if there are trials to exclude
-    if ~isempty(info_to_graph.excluded)
+    if info_to_graph.dont_exclude
+        temp_trials = randperm(info_to_graph.num_trials_for_analysis,num_trials_to_show-length(trials_to_include));
+        trials_to_graph = cat(2,trials_to_include,temp_trials);
+    elseif ~isempty(info_to_graph.excluded)
         temp = 1:num_trials_for_analysis;
         %temp(excluded_trials_cursub) = [];
         temp(info_to_graph.excluded)
@@ -58,7 +85,9 @@ if ~isempty(trials_to_include)
     end
 else
     %if ~isempty(excluded_trials_cursub) % if there are trials to exclude
-    if ~isempty(info_to_graph.excluded)
+    if info_to_graph.dont_exclude
+        trials_to_graph = randperm(info_to_graph.num_trials_for_analysis,num_trials_to_show);
+    elseif ~isempty(info_to_graph.excluded)
         temp = 1:info_to_graph.num_trials_for_analysis;
         %temp(excluded_trials_cursub) = [];
         info_to_graph.excluded(info_to_graph.excluded > num_trials_for_analysis) = [];
@@ -113,20 +142,44 @@ abs_min_max = info_to_graph.abs_min_max; % hz
 raw_title = [subject ' Raw Data'];
 %fig_raw = figure('Name','Raw Data','NumberTitle','off');
 fig_raw = figure('Name',raw_title,'NumberTitle','off');
-if num_trials_to_show == 50
-    tiled_raw = tiledlayout(fig_raw, 10,5); % when there are 50 trials being examined
-elseif num_trials_to_show == 12
-    tiled_raw = tiledlayout(fig_raw, 4,3); % when there are 12 trials being examined
-end
 
 smooth_title = [subject ' Smoothed Data'];
 %fig_smooth = figure('Name','Smoothed Data','NumberTitle','off');
 fig_smooth = figure('Name',smooth_title,'NumberTitle','off');
-if num_trials_to_show == 50
-    tiled_smooth = tiledlayout(fig_smooth, 10,5); % when there are 50 trials being examined
-elseif num_trials_to_show == 12
-    tiled_smooth = tiledlayout(fig_smooth, 4,3); % when there are 12 trials being examined
+
+if num_trials_to_show == 50 % when there are 50 trials being examined
+    tiled_raw = tiledlayout(fig_raw, 10,5); 
+    tiled_smooth = tiledlayout(fig_smooth, 10,5);
+elseif num_trials_to_show == 30
+    tiled_raw = tiledlayout(fig_raw, 6,5); 
+    tiled_smooth = tiledlayout(fig_smooth, 6,5);
+elseif num_trials_to_show == 12 % when there are 12 trials being examined
+    tiled_raw = tiledlayout(fig_raw, 4,3); 
+    tiled_smooth = tiledlayout(fig_smooth, 4,3);
+elseif num_trials_to_show == 5
+    tiled_raw = tiledlayout(fig_raw, 1,5); 
+    tiled_smooth = tiledlayout(fig_smooth, 1,5);
+elseif num_trials_to_show == 2
+    tiled_raw = tiledlayout(fig_raw, 1,2); 
+    tiled_smooth = tiledlayout(fig_smooth, 1,2);
+elseif num_trials_to_show == 1
+    tiled_raw = tiledlayout(fig_raw, 1,1); 
+    tiled_smooth = tiledlayout(fig_smooth, 1,1);
+else
+    error('known number of trials to show');
 end
+title(tiled_raw, raw_title);
+title(tiled_smooth, smooth_title);
+
+% smooth_title = [subject ' Smoothed Data'];
+% %fig_smooth = figure('Name','Smoothed Data','NumberTitle','off');
+% fig_smooth = figure('Name',smooth_title,'NumberTitle','off');
+% if num_trials_to_show == 50
+%     tiled_smooth = tiledlayout(fig_smooth, 10,5); % when there are 50 trials being examined
+% elseif num_trials_to_show == 12
+%     tiled_smooth = tiledlayout(fig_smooth, 4,3); % when there are 12 trials being examined
+% end
+% title(tiled_smooth, smooth_title);
 
 % %% calculations
 % %largest_window_green = zeros([num_trials_for_analysis,3]);
@@ -314,12 +367,23 @@ for i = 1:length(trials_to_graph)
     nexttile(tiled_raw)
     ax_raw = gca();
 
-    if contains(trialData(trials_to_graph(i)).condLabel,'U1')
-        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
-    elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
-        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+    %if info_to_graph.dont_exclude && ismember(trials_to_graph(i), info_to_graph.excluded)
+    if ismember(trials_to_graph(i), info_to_graph.excluded)
+        if contains(trialData(trials_to_graph(i)).condLabel,'U1')
+            ax_raw.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' U1'];
+        elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
+            ax_raw.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' D1'];
+        else
+            ax_raw.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' N1'];
+        end
     else
-        ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        if contains(trialData(trials_to_graph(i)).condLabel,'U1')
+            ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
+        elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
+            ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+        else
+            ax_raw.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        end
     end
     
     hold on
@@ -334,35 +398,35 @@ for i = 1:length(trials_to_graph)
     hold on
     x1 = [0,  largest_window_blue.start(trials_to_graph(i)),  largest_window_blue.start(trials_to_graph(i)),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
-    area(ax_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    red1 = area(ax_raw,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     
     % blue area
     hold on
     x2 = [largest_window_blue.start(trials_to_graph(i)),      largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.start(trials_to_graph(i))];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
-    area(ax_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+    blue = area(ax_raw,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
     
     % second red area (after blue)
     hold on
     x3 = [largest_window_blue.end(trials_to_graph(i)),  x_tick(end),    x_tick(end),    largest_window_blue.end(trials_to_graph(i))];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
-    area(ax_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    red2 = area(ax_raw,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % green area
     hold on
     x4 = [largest_window_green.start(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.start(trials_to_graph(i))];
     y4 = [0,y_tick(end),0,y_tick(end)];
-    area(ax_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+    green = area(ax_raw,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
     %area(x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % yellow and final area
     hold on
     x5 = [largest_window_final.start(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.start(trials_to_graph(i))];
     y5 = [0,y_tick(end),0,y_tick(end)];
-    area(ax_raw,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
+    yellow = area(ax_raw,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
@@ -399,12 +463,23 @@ for i = 1:length(trials_to_graph)
     nexttile(tiled_smooth)
     ax_smooth = gca();
 
-    if contains(trialData(trials_to_graph(i)).condLabel,'U1')
-        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
-    elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
-        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+    %if info_to_graph.dont_exclude && ismember(trials_to_graph(i), info_to_graph.excluded)
+    if ismember(trials_to_graph(i), info_to_graph.excluded)
+        if contains(trialData(trials_to_graph(i)).condLabel,'U1')
+            ax_smooth.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' U1'];
+        elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
+            ax_smooth.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' D1'];
+        else
+            ax_smooth.Title.String = ['\color{red}trial ' num2str(trials_to_graph(i)) ' N1'];
+        end
     else
-        ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        if contains(trialData(trials_to_graph(i)).condLabel,'U1')
+            ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' U1'];
+        elseif contains(trialData(trials_to_graph(i)).condLabel,'D1')
+            ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' D1'];
+        else
+            ax_smooth.Title.String = ['trial ' num2str(trials_to_graph(i)) ' N1'];
+        end
     end
 
     hold on
@@ -417,28 +492,28 @@ for i = 1:length(trials_to_graph)
     hold on
     x1 = [0,  largest_window_blue.start(trials_to_graph(i)),  largest_window_blue.start(trials_to_graph(i)),    0];
     y1 = [0,  y_tick(end),                 0,                             y_tick(end)];
-    area(ax_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    red1 = area(ax_smooth,x1,y1,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
     x2 = [largest_window_blue.start(trials_to_graph(i)),      largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.end(trials_to_graph(i)),    largest_window_blue.start(trials_to_graph(i))];
     y2 = [0,                                                y_tick(end),                   0,                             y_tick(end)];
-    area(ax_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
+    blue = area(ax_smooth,x2,y2,'FaceColor','blue','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
     x3 = [largest_window_blue.end(trials_to_graph(i)),  x_tick(end),    x_tick(end),    largest_window_blue.end(trials_to_graph(i))];
     y3 = [0,                           y_tick(end),                   0,                             y_tick(end)];
-    area(ax_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
+    red2 = area(ax_smooth,x3,y3,'FaceColor','red','FaceAlpha',.3,'EdgeAlpha',.3);
 
     hold on
     x4 = [largest_window_green.start(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.end(trials_to_graph(i)),largest_window_green.start(trials_to_graph(i))];
     y4 = [0,y_tick(end),0,y_tick(end)];
-    area(ax_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
+    green = area(ax_smooth,x4,y4,'FaceColor','green','FaceAlpha',.3,'EdgeAlpha',.3);
 
     % yellow and final area
     hold on
     x5 = [largest_window_final.start(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.end(trials_to_graph(i)),largest_window_final.start(trials_to_graph(i))];
     y5 = [0,y_tick(end),0,y_tick(end)];
-    area(ax_smooth,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
+    yellow = area(ax_smooth,x5,y5,'FaceColor','yellow','FaceAlpha',.3,'EdgeAlpha',.3);
 
     %if num_trials_to_show == 12
         % expected headphone graph
@@ -477,14 +552,24 @@ for i = 1:length(trials_to_graph)
 end
 
 %if num_trials_to_show == 12
-    subset = [expected, actual, raw];
-    lg_raw = legend(ax_raw,subset,'expected headphone','measured headphone','raw-mic');
-    lg_raw.Parent = tiled_raw;
-    lg_raw.Layout.Tile = 'north';
+line_handle = [expected,actual,raw];
+area_handle = [red1,blue,green,yellow];
+line_names = ['expected headphone','measured headphone','raw-mic'];
+area_names = ['not included','absolute f1','expected minus actual','amplitude'];
 
-    lg_smooth = legend(ax_smooth,subset,'expected headphone','measured headphone','raw-mic');
-    lg_smooth.Parent = tiled_smooth;
-    lg_smooth.Layout.Tile = 'north';
+%lg_raw = legend(ax_raw,line_handle,'expected headphone','measured headphone','raw-mic');
+lg_raw = legend(ax_raw,[area_handle, line_handle],'not included','absolute f1','expected minus actual','amplitude', 'expected headphone','measured headphone','smoothed-mic');
+legend(ax_raw,'boxoff')
+lg_raw.Parent = tiled_raw;
+lg_raw.Layout.Tile = 'north';
+lg_raw.NumColumns = 2;
+
+%lg_smooth = legend(ax_smooth,line_handle,'expected headphone','measured headphone','smoothed-mic');
+lg_smooth = legend(ax_smooth,[area_handle, line_handle],'not included','absolute f1','expected minus actual','amplitude', 'expected headphone','measured headphone','smoothed-mic');
+legend(ax_smooth,'boxoff')
+lg_smooth.Parent = tiled_smooth;
+lg_smooth.Layout.Tile = 'north';
+lg_smooth.NumColumns = 2;
 %end
 
 % find the excluded trials

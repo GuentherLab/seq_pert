@@ -1,4 +1,8 @@
 % script to generate the simpleDIVA file
+% sp014 is excluded from analysis, and is left out of the simpleDIVA file.
+% This means that there are 15 columns, despite subject numbering going up
+% to sp016
+
 dirs = setDirs_seq_pert();
 
 %MASTER_num_trials_for_analysis = 360;
@@ -40,11 +44,18 @@ manual_excluded = readtable(manual_excluded_file, "FileType","text", "Delimiter"
 auto_excluded_file = [dirs.projRepo, filesep, 'seqpert_auto_bad_trials.csv'];
 auto_excluded = readtable(auto_excluded_file, "FileType","text", "Delimiter",'comma');
 
-%% first loop to find the number of trials in each condition
+%% find the trials in each condition
 % in this loop eliminate the trials that are marked for exclusion
+num_subs_excluded = 0;
 for sub = 1:16
     % if the subject is marked for exclusion in the master file, skip it
+    index = sub - num_subs_excluded;
+    %sub = index + num_subs_excluded;
+    % if sub > 16
+    %     break
+    % end
     if subs_table.analyze(sub) == 0
+        num_subs_excluded = num_subs_excluded+1;
         continue
     end
 
@@ -95,17 +106,21 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            novel_up_trials(:,sub) = temp;
+            %novel_up_trials(:,sub) = temp;
+            novel_up_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             novel_up_trials(start_row:end_row,:) = NaN;
-            novel_up_trials(:,sub) = temp;
+            %novel_up_trials(:,sub) = temp;
+            novel_up_trials(:,index) = temp;
         else
-            novel_up_trials(:,sub) = temp;
+            %novel_up_trials(:,sub) = temp;
+            novel_up_trials(:,index) = temp;
         end
     else
-        novel_up_trials(:,sub) = temp;
+        %novel_up_trials(:,sub) = temp;
+        novel_up_trials(:,index) = temp;
     end
 
     % novel down
@@ -116,19 +131,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            novel_down_trials(:,sub) = temp;
+            %novel_down_trials(:,sub) = temp;
+            novel_down_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             novel_down_trials(start_row:end_row,:) = NaN;
-            novel_down_trials(:,sub) = temp;
+            %novel_down_trials(:,sub) = temp;
+            novel_down_trials(:,index) = temp;
         else
-            novel_down_trials(:,sub) = temp;
+            %novel_down_trials(:,sub) = temp;
+            novel_down_trials(:,index) = temp;
         end  
     else
-        novel_down_trials(:,sub) = temp;
+        %novel_down_trials(:,sub) = temp;
+        novel_down_trials(:,index) = temp;
     end
 
     % novel null
@@ -139,17 +158,21 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            novel_null_trials(:,sub) = temp;
+            %novel_null_trials(:,sub) = temp;
+            novel_null_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             novel_null_trials(start_row:end_row,:) = NaN;
-            novel_null_trials(:,sub) = temp;
+            %novel_null_trials(:,sub) = temp;
+            novel_null_trials(:,index) = temp;
         else
-            novel_null_trials(:,sub) = temp;
+            %novel_null_trials(:,sub) = temp;
+            novel_null_trials(:,index) = temp;
         end
     else
-        novel_null_trials(:,sub) = temp;
+        %novel_null_trials(:,sub) = temp;
+        novel_null_trials(:,index) = temp;
     end
         
     % learned up
@@ -160,19 +183,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            learned_up_trials(:,sub) = temp;
+            %learned_up_trials(:,sub) = temp;
+            learned_up_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             learned_up_trials(start_row:end_row,:) = NaN;
-            learned_up_trials(:,sub) = temp;
+            %learned_up_trials(:,sub) = temp;
+            learned_up_trials(:,index) = temp;
         else
-            learned_up_trials(:,sub) = temp;
+            %learned_up_trials(:,sub) = temp;
+            learned_up_trials(:,index) = temp;
         end
     else
-        learned_up_trials(:,sub) = temp;
+        %learned_up_trials(:,sub) = temp;
+        learned_up_trials(:,index) = temp;
     end
 
     % learned down
@@ -183,19 +210,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            learned_down_trials(:,sub) = temp;
+            %learned_down_trials(:,sub) = temp;
+            learned_down_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             learned_down_trials(start_row:end_row,:) = NaN;
-            learned_down_trials(:,sub) = temp;
+            %learned_down_trials(:,sub) = temp;
+            learned_down_trials(:,index) = temp;
         else
-            learned_down_trials(:,sub) = temp;
+            %learned_down_trials(:,sub) = temp;
+            learned_down_trials(:,index) = temp;
         end
     else
-        learned_down_trials(:,sub) = temp;
+        %learned_down_trials(:,sub) = temp;
+        learned_down_trials(:,index) = temp;
     end
 
     % learned null
@@ -206,19 +237,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            learned_null_trials(:,sub) = temp;
+            %learned_null_trials(:,sub) = temp;
+            learned_null_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             learned_null_trials(start_row:end_row,:) = NaN;
-            learned_null_trials(:,sub) = temp;
+            %learned_null_trials(:,sub) = temp;
+            learned_null_trials(:,index) = temp;
         else
-            learned_null_trials(:,sub) = temp;
+            %learned_null_trials(:,sub) = temp;
+            learned_null_trials(:,index) = temp;
         end
     else
-        learned_null_trials(:,sub) = temp;
+        %learned_null_trials(:,sub) = temp;
+        learned_null_trials(:,index) = temp;
     end
 
     % native up
@@ -229,19 +264,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            native_up_trials(:,sub) = temp;
+            %native_up_trials(:,sub) = temp;
+            native_up_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             native_up_trials(start_row:end_row,:) = NaN;
-            native_up_trials(:,sub) = temp;
+            %native_up_trials(:,sub) = temp;
+            native_up_trials(:,index) = temp;
         else
-            native_up_trials(:,sub) = temp;
+            %native_up_trials(:,sub) = temp;
+            native_up_trials(:,index) = temp;
         end
     else
-        native_up_trials(:,sub) = temp;
+        %native_up_trials(:,sub) = temp;
+        native_up_trials(:,index) = temp;
     end
 
     % native down
@@ -252,19 +291,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            native_down_trials(:,sub) = temp;
+            %native_down_trials(:,sub) = temp;
+            native_down_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             native_down_trials(start_row:end_row,:) = NaN;
-            native_down_trials(:,sub) = temp;
+            %native_down_trials(:,sub) = temp;
+            native_down_trials(:,index) = temp;
         else
-            native_down_trials(:,sub) = temp;
+            %native_down_trials(:,sub) = temp;
+            native_down_trials(:,index) = temp;
         end
     else
-        native_down_trials(:,sub) = temp;
+        %native_down_trials(:,sub) = temp;
+        native_down_trials(:,index) = temp;
     end
 
     % native null
@@ -275,19 +318,23 @@ for sub = 1:16
         if length(temp) < nnnUp_sz(1)
             temp_nans = NaN([nnnUp_sz(1)-length(temp)],1);
             temp = cat(1, temp,temp_nans);
-            native_null_trials(:,sub) = temp;
+            %native_null_trials(:,sub) = temp;
+            native_null_trials(:,index) = temp;
         elseif length(temp) > nnnUp_sz(1)
             % add NaNs to the end of each of the existing rows
             start_row = nnnUp_sz(1)+1;
             end_row = length(temp)-nnnUp_sz(1);
             %temp_nans = NaN(sz(1),[end_col - start_col]);
             native_null_trials(start_row:end_row,:) = NaN;
-            native_null_trials(:,sub) = temp;
+            %native_null_trials(:,sub) = temp;
+            native_null_trials(:,index) = temp;
         else
-            native_null_trials(:,sub) = temp;
+            %native_null_trials(:,sub) = temp;
+            native_null_trials(:,index) = temp;
         end
     else
-         native_null_trials(:,sub) = temp;
+         %native_null_trials(:,sub) = temp;
+        native_null_trials(:,index) = temp;
     end
 
     % eliminate excluded trials
@@ -305,8 +352,15 @@ end
 %% determine how long each of the files should be
 % load trialData for all of the subjects into one struct between the window
 % determined by pertEpoch
+num_subs_excluded = 0;
 for sub = 1:16 % load trialData for each subject into a struct variable
+    index = sub - num_subs_excluded;
+    %sub = index + num_subs_excluded;
+    % if sub > 16
+    %     break
+    % end
     if subs_table.analyze(sub) == 0
+        num_subs_excluded = num_subs_excluded+1;
         continue
     end
 
@@ -321,7 +375,7 @@ for sub = 1:16 % load trialData for each subject into a struct variable
     filepath = dirs.der_acoustic;
     filename = [filepath filesep 'sub-' subject filesep 'ses-' num2str(ses_run(1)) filesep 'sub-' subject '_ses-' num2str(ses_run(1)) '_run-' num2str(ses_run(2)) '_task-aud-reflexive_desc-formants.mat'];
     mat_file = load(filename);
-    trialData_struct{sub} = mat_file.trialData;
+    trialData_struct{index} = mat_file.trialData;
 end
 
 % import the vowel windows file
@@ -342,8 +396,19 @@ nUp_sz = size(native_up_trials);
 nDown_sz = size(native_down_trials);
 nNull_sz = size(native_null_trials);
 
-for sub = 1:16 % iterate between each subject so if the trials are different lengths then NaNs can be added
-    if subs_table.analyze(sub) == 0 
+%% create the final file for each condition
+% before each subject gets added to the final file, trim it down to only
+% the first 500ms (make the 500ms value adjustable with a single variable)
+ms_included = 450;
+num_subs_excluded = 0;
+for sub = 1:16 
+    index = sub - num_subs_excluded;
+    %sub = index + num_subs_excluded;
+    % if sub > 16
+    %     break
+    % end
+    if subs_table.analyze(sub) == 0
+        num_subs_excluded = num_subs_excluded+1;
         continue
     end
 
@@ -356,15 +421,15 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     vowel_windows_rows = find(string(vowel_windows_all.subject)==subject);
     vowel_windows_curSub = vowel_windows_all(vowel_windows_rows,:);
 
-    cur_trialData = trialData_struct{sub};
+    cur_trialData = trialData_struct{index};
 
     %% novel up
     for i = 1:nnnUp_sz(1) % iterate along the list of trials
-        if isnan(novel_up_trials(i,sub))
+        if isnan(novel_up_trials(i,index))
             break
         end
 
-        cur_trial = novel_up_trials(i,sub);
+        cur_trial = novel_up_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -387,7 +452,9 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to novel_up
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    %cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('novel_up','var')
         if length(cur_mean) > length(novel_up) % if the current subject mean is longer than novel_up
             % add NaNs to the end of each of the existing rows
@@ -400,17 +467,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    novel_up(:,sub) = cur_mean;
+    novel_up(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% novel down
     for i = 1:nnnDown_sz(1) % iterate along the list of trials
-        if isnan(novel_down_trials(i,sub))
+        if isnan(novel_down_trials(i,index))
             break
         end
 
-        cur_trial = novel_down_trials(i,sub);
+        cur_trial = novel_down_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -433,7 +500,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to novel_down
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('novel_down','var')
         if length(cur_mean) > length(novel_down) % if the current subject mean is longer than novel_down
             % add NaNs to the end of each of the existing rows
@@ -446,17 +514,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    novel_down(:,sub) = cur_mean;
+    novel_down(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% novel null
     for i = 1:nnnNull_sz(1) % iterate along the list of trials
-        if isnan(novel_null_trials(i,sub))
+        if isnan(novel_null_trials(i,index))
             break
         end
 
-        cur_trial = novel_null_trials(i,sub);
+        cur_trial = novel_null_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -479,7 +547,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to novel_null
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('novel_null','var')
         if length(cur_mean) > length(novel_null) % if the current subject mean is longer than novel_null
             % add NaNs to the end of each of the existing rows
@@ -492,17 +561,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    novel_null(:,sub) = cur_mean;
+    novel_null(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% learned up
     for i = 1:nnlUp_sz(1) % iterate along the list of trials
-        if isnan(learned_up_trials(i,sub))
+        if isnan(learned_up_trials(i,index))
             break
         end
 
-        cur_trial = learned_up_trials(i,sub);
+        cur_trial = learned_up_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -525,7 +594,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to learned_up
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('learned_up','var')
         if length(cur_mean) > length(learned_up) % if the current subject mean is longer than learned_up
             % add NaNs to the end of each of the existing rows
@@ -538,17 +608,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    learned_up(:,sub) = cur_mean;
+    learned_up(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% learned down
     for i = 1:nnlDown_sz(1) % iterate along the list of trials
-        if isnan(learned_down_trials(i,sub))
+        if isnan(learned_down_trials(i,index))
             break
         end
 
-        cur_trial = learned_down_trials(i,sub);
+        cur_trial = learned_down_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -571,7 +641,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to learned_down
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('learned_down','var')
         if length(cur_mean) > length(learned_down) % if the current subject mean is longer than learned_down
             % add NaNs to the end of each of the existing rows
@@ -584,17 +655,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    learned_down(:,sub) = cur_mean;
+    learned_down(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% learned null
     for i = 1:nnlNull_sz(1) % iterate along the list of trials
-        if isnan(learned_null_trials(i,sub))
+        if isnan(learned_null_trials(i,index))
             break
         end
 
-        cur_trial = learned_null_trials(i,sub);
+        cur_trial = learned_null_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -617,7 +688,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to learned_null
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('learned_null','var')
         if length(cur_mean) > length(learned_null) % if the current subject mean is longer than learned_null
             % add NaNs to the end of each of the existing rows
@@ -630,17 +702,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    learned_null(:,sub) = cur_mean;
+    learned_null(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% native up
     for i = 1:nUp_sz(1) % iterate along the list of trials
-        if isnan(native_up_trials(i,sub))
+        if isnan(native_up_trials(i,index))
             break
         end
 
-        cur_trial = native_up_trials(i,sub);
+        cur_trial = native_up_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -663,7 +735,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to native_up
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('native_up','var')
         if length(cur_mean) > length(native_up) % if the current subject mean is longer than native_up
             % add NaNs to the end of each of the existing rows
@@ -676,17 +749,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    native_up(:,sub) = cur_mean;
+    native_up(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% native down
     for i = 1:nDown_sz(1) % iterate along the list of trials
-        if isnan(native_down_trials(i,sub))
+        if isnan(native_down_trials(i,index))
             break
         end
 
-        cur_trial = native_down_trials(i,sub);
+        cur_trial = native_down_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -709,7 +782,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to native_down
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('native_down','var')
         if length(cur_mean) > length(native_down) % if the current subject mean is longer than native_down
             % add NaNs to the end of each of the existing rows
@@ -722,17 +796,17 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    native_down(:,sub) = cur_mean;
+    native_down(:,index) = cur_mean;
 
     clear cur_sub_data
 
     %% native null
     for i = 1:nNull_sz(1) % iterate along the list of trials
-        if isnan(native_null_trials(i,sub))
+        if isnan(native_null_trials(i,index))
             break
         end
 
-        cur_trial = native_null_trials(i,sub);
+        cur_trial = native_null_trials(i,index);
         cur_trials_data = cur_trialData(cur_trial).s{1,3}; 
         data_within_window = cur_trials_data(vowel_windows_curSub.windowStart(cur_trial):vowel_windows_curSub.windowEnd(cur_trial));
 
@@ -755,7 +829,8 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
     end
 
     % average cur_sub_data into one column and add to native_null
-    cur_mean = mean(cur_sub_data,2,"omitnan");
+    cur_mean_full = mean(cur_sub_data,2,"omitnan");
+    cur_mean = cur_mean_full(1:ms_included);
     if exist('native_null','var')
         if length(cur_mean) > length(native_null) % if the current subject mean is longer than native_null
             % add NaNs to the end of each of the existing rows
@@ -768,10 +843,38 @@ for sub = 1:16 % iterate between each subject so if the trials are different len
             cur_mean(start_row:end_row,1) = NaN;
         end
     end
-    native_null(:,sub) = cur_mean;
+    native_null(:,index) = cur_mean;
 
     clear cur_sub_data
 end
+
+%% save each of the files as spreadsheets
+novel_up_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'novel_up.csv'];
+writematrix(novel_up, novel_up_file);
+
+novel_down_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'novel_down.csv'];
+writematrix(novel_down, novel_down_file);
+
+novel_null_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'novel_null.csv'];
+writematrix(novel_null, novel_null_file);
+
+learned_up_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'learned_up.csv'];
+writematrix(learned_up, learned_up_file);
+
+learned_down_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'learned_down.csv'];
+writematrix(learned_down, learned_down_file);
+
+learned_null_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'learned_null.csv'];
+writematrix(learned_null, learned_null_file);
+
+native_up_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'native_up.csv'];
+writematrix(native_up, native_up_file);
+
+native_down_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'native_down.csv'];
+writematrix(native_down, native_down_file);
+
+native_null_file = [dirs.projRepo filesep 'simpleDIVA' filesep 'native_null.csv'];
+writematrix(native_null, native_null_file);
 
 %% create the powerpoint
 % each slide is one subject with 9 plots for each condition

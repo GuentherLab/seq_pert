@@ -1,4 +1,4 @@
-function [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, num_trials_for_analysis, generate_graph, smoothed, save_file, graph_with_analysis)
+function [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, num_trials_for_analysis, generate_graph, smoothed, save_file, dont_exclude,only_excluded, graph_with_analysis)
     % this script is the master script for the first step of
     % finding the window for analysis: finding the epoch for the subject's 
     % perturbation response
@@ -48,12 +48,12 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     smooth_window_size = 58; % ms
     if smoothed
         for trial = 1:length(trialData)
-            raw_mic_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
-            raw_headp_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
+            mic_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
+            headp_trace(trial).s{:,:} = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
         end
     else
-        raw_mic_trace = trialData(trial).s{1,raw_mic};
-        raw_headp_trace = trialData(trial).s{1,raw_headphones};
+        mic_trace = trialData(trial).s{1,raw_mic};
+        headp_trace = trialData(trial).s{1,raw_headphones};
     end
 
     num_trials_to_show = 50;
@@ -89,6 +89,9 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         % after running script on a subject, count the number of excluded
         % trials and if it is too many this or other paramteres may need to be
         % changed
+    cutoff = 1750; %ms
+        % the global cutoff for which after the data isn't considered when 
+        % computing the first window 
 
 
     %% Step 1
@@ -110,8 +113,11 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     
         % loop through the current raw_mic to access each timepoint
         % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
-        for timepoint = 1:length(trialData(trial).s{1,raw_mic})
-            temp = raw_mic_trace(trial).s{1,1};
+        %for timepoint = 1:length(trialData(trial).s{1,raw_mic})
+        for timepoint = 1:cutoff
+        %for timepoint = 1:length(trialData(trial).s{1,raw_mic})
+            temp = mic_trace(trial).s{1,1};
+            temp = temp(1:cutoff);
             if temp(timepoint) >= abs_min_max(1) && temp(timepoint) <= abs_min_max(2)
                 in_out_absminmax(trial,timepoint) = 1;
             else
@@ -139,31 +145,33 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     % start counting with each new '1' found
     % once a '0' is hit, compare the current window with the previous one
     for trial = 1:length(trialData)
-        for timepoint = 1:length(in_out_absminmax(trial,:))
+        cur_window_loc_sz = [0,0,0];
+        
+        largest_window_blue.start(trial) = 0;
+        largest_window_blue.end(trial) = 0;
+        largest_window_blue.length(trial) = 0;
+
+        %for timepoint = 1:length(in_out_absminmax(trial,:))
+        for timepoint = 1:cutoff
             % if the current timepoint is 0 and the index is 1 (first
             % timepoint), don't so anything
             if in_out_absminmax(trial,timepoint) == 0 && timepoint == 1
-    
-            % if the current timepoint equals 1 and the previous timepoint
-            % equals 0, OR the data equals 1 and the current
-            % timepoint is 1 then update the current window location and size
-            elseif (in_out_absminmax(trial,timepoint) == 1 && timepoint == 1) || (in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 0)
-                size_cur = cur_window_loc_sz(3) + 1;
-                cur_window_loc_sz(1) = timepoint;
-                cur_window_loc_sz(3) = size_cur;
-    
-            % if the current timepoint equals 1 and the previous timepoint
-            % equals 1, then update the current window size
-            elseif in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 1
-                cur_window_loc_sz(3) = cur_window_loc_sz(3) + 1;
-    
-            % if the current timepoint is 0 and the next timepoint is 1,
-            % this signals the end of a window. compare the current window to
-            % the largest window, and if the size of the current window is
-            % larger then update the largest window size and location.
-            % regardless, reset the current window size and location
-            elseif in_out_absminmax(trial,timepoint) == 0 && in_out_absminmax(trial,timepoint-1) == 1
-                cur_window_loc_sz(2) = timepoint-1;
+
+            % if the current timepoint is 0 and the previous timepoint is 
+            % 1, or the current timepoint is 1 and it's the end of the
+            % trial this signals the end of a window. compare the current 
+            % window to the largest window, and if the size of the current 
+            % window is larger then update the largest window size and 
+            % location. regardless, reset the current window size and 
+            % location
+            %elseif (in_out_absminmax(trial,timepoint) == 0 && in_out_absminmax(trial,timepoint-1) == 1) || (in_out_absminmax(trial,timepoint) == 1 && timepoint == length(in_out_absminmax(trial,:)))
+            elseif (in_out_absminmax(trial,timepoint) == 0 && in_out_absminmax(trial,timepoint-1) == 1) || (in_out_absminmax(trial,timepoint) == 1 && timepoint == cutoff)
+                if timepoint == cutoff
+                    cur_window_loc_sz(2) = timepoint;
+                else  
+                    cur_window_loc_sz(2) = timepoint-1;
+                end
+                
                 if cur_window_loc_sz(3) > largest_window_blue.length(trial)
                     largest_window_blue.start(trial) = cur_window_loc_sz(1);
                     largest_window_blue.end(trial) = cur_window_loc_sz(2);
@@ -171,6 +179,23 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
                 end
                 cur_window_loc_sz = [0,0,0];
     
+    
+            % if the current timepoint equals 1 and the previous timepoint
+            % equals 0, OR the data equals 1 and the current timepoint is 1 
+            % then update the current window location and size
+            % this is the start of a window
+            elseif (in_out_absminmax(trial,timepoint) == 1 && timepoint == 1) || (in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 0)
+                %size_cur = cur_window_loc_sz(3) + 1;
+                cur_window_loc_sz(1) = timepoint;
+                %cur_window_loc_sz(3) = size_cur;
+                cur_window_loc_sz(3) = 1;
+    
+            % if the current timepoint equals 1 and the previous timepoint
+            % equals 1, then update the current window size
+            %elseif in_out_absminmax(trial,timepoint) == 1 && in_out_absminmax(trial,timepoint-1) == 1
+            elseif in_out_absminmax(trial,timepoint) == 1
+                cur_window_loc_sz(3) = cur_window_loc_sz(3) + 1;
+            
             end % otherwise, the timepoint is 0 and don't update anything
         end
     end
@@ -185,11 +210,12 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
     % y is trial
     expected_headphone = zeros(sz(2),sz(1));
     
-    % shift expected headphone either up 30% or down 30% based on up or down 
-    % trial (or do nothing for null trial) 
+    % shift expected headphone either up 30% or down 30% based on up or  
+    % down trial (or do nothing for null trial) 
     for trial = 1:length(trialData)
         if contains(trialData(trial).condLabel,'U1') % up trial
-            temp = raw_mic_trace(trial).s{1,1};
+            temp = mic_trace(trial).s{1,1};
+            temp = temp(1:cutoff);
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
@@ -204,7 +230,8 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
             temp = [];
     
         elseif contains(trialData(trial).condLabel,'D1') % down trial
-            temp = raw_mic_trace(trial).s{1,1};
+            temp = mic_trace(trial).s{1,1};
+            temp = temp(1:cutoff);
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
@@ -219,7 +246,8 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
             temp = [];
         
         else % null trial
-            temp = raw_mic_trace(trial).s{1,1};
+            temp = mic_trace(trial).s{1,1};
+            temp = temp(1:cutoff);
     
             cncat_len = length(expected_headphone(:,trial)) - length(temp);
             cncat_array = zeros(cncat_len,1);
@@ -260,7 +288,9 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         % end
     
         smoothed_raw_mic = smoothdata(trialData(trial).s{1,raw_mic}, 'movmedian', smooth_window_size, 'omitmissing');
+        smoothed_raw_mic = smoothed_raw_mic(1:cutoff);
         smoothed_raw_headp = smoothdata(trialData(trial).s{1,raw_headphones}, 'movmedian', smooth_window_size, 'omitmissing');
+        smoothed_raw_headp = smoothed_raw_headp(1:cutoff);
     
         % pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch); % unsmoothed
         %[largest_window_loc_sz, expected_headphone] = pertEpoch(subject,ses_run,abs_min_max,window_size,deviation_threshold,min_pert_epoch,true,smooth_window_size); % smoothed
@@ -271,8 +301,8 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         temp2 = temp2(temp2~=0);
         headphone_subtraction = abs(temp1 - temp2);
     
-        % calculate the window where the actual - expected headphone is outside
-        % the set threshold
+        % calculate the window where the actual - expected headphone is 
+        % outside the set threshold
         threshold = 0.25;
         %sub_div_mic = headphone_subtraction./trialData(trials_to_graph(i)).s{1,raw_mic};
         sub_div_mic = headphone_subtraction./smoothed_raw_mic;
@@ -281,7 +311,13 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         % IS THERE A WAY TO DO THIS WITHOUT A FOR LOOP
         in_out_subdivmic = zeros([1,length(sub_div_mic)]);
         % looping through just the blue window (vowel)
-        for timepoint = largest_window_blue.start(trial):largest_window_blue.end(trial)
+        if largest_window_blue.start(trial) == 0
+            start_timepoint = 1;
+        else
+            start_timepoint = largest_window_blue.start(trial);
+        end
+
+        for timepoint = start_timepoint:largest_window_blue.end(trial)
             if sub_div_mic(timepoint) <= threshold
                 in_out_subdivmic(timepoint) = 1;
             end
@@ -294,26 +330,14 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
             % if the current timepoint is 0 and the index is 1 (first
             % timepoint), don't do anything
             if in_out_subdivmic(timepoint) == 0 && timepoint == 1
-    
-            % if the current timepoint equals 1 and the previous timepoint
-            % equals 0, OR the current timepoint equals 1 and the index is 1 
-            % then update the current window location and size
-            elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
-                size_cur = cur_window_green(3) + 1;
-                cur_window_green(1) = timepoint;
-                cur_window_green(3) = size_cur;
-    
-            % if the current timepoint equals 1 and the previous timepoint
-            % equals 1, then update the current window size
-            elseif in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 1
-                cur_window_green(3) = cur_window_green(3) + 1;
-    
+
             % if the current timepoint is 0 and the previous timepoint is 1,
             % this signals the end of a window. compare the current window to
             % the largest window, and if the size of the current window is
             % larger then update the largest window size and location.
             % regardless, reset the current window size and location
-            elseif in_out_subdivmic(timepoint) == 0 && in_out_subdivmic(timepoint-1) == 1
+            %elseif in_out_subdivmic(timepoint) == 0 && in_out_subdivmic(timepoint-1) == 1
+            elseif (in_out_subdivmic(timepoint) == 0 && in_out_subdivmic(timepoint-1) == 1) || (in_out_subdivmic(timepoint) == 1 && timepoint == cutoff)
                 cur_window_green(2) = timepoint-1;
                 if cur_window_green(3) > largest_window_green.length(trial)
                     largest_window_green.start(trial) = cur_window_green(1);
@@ -321,6 +345,22 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
                     largest_window_green.length(trial) = cur_window_green(3);
                 end
                 cur_window_green = [0,0,0];
+    
+            % if the current timepoint equals 1 and the previous timepoint
+            % equals 0, OR the current timepoint equals 1 and the index is 1 
+            % then update the current window location and size
+            % start of a window
+            elseif (in_out_subdivmic(timepoint) == 1 && timepoint == 1) || (in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 0)
+                % size_cur = cur_window_green(3) + 1;
+                % cur_window_green(1) = timepoint;
+                % cur_window_green(3) = size_cur;
+                cur_window_green(1) = timepoint;
+                cur_window_green(3) = 1;
+    
+            % if the current timepoint equals 1 and the previous timepoint
+            % equals 1, then update the current window size
+            elseif in_out_subdivmic(timepoint) == 1 && in_out_subdivmic(timepoint-1) == 1
+                cur_window_green(3) = cur_window_green(3) + 1;
     
             end % otherwise, the timepoint is 0 and don't update anything
         end
@@ -342,6 +382,7 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         %     continue
         % end
         
+        % no green window found
         if largest_window_green.start(trial)==0 && largest_window_green.end(trial)==0 && largest_window_green.length(trial)==0
             continue
             % error(['no ''green window'' timepoints found for trial ' num2str(trial) ' - this is an unusual trial, recommended to manually examine it'])
@@ -401,30 +442,6 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         end
     end
 
-    if generate_graph
-        info_to_graph.trialData = trialData;
-        info_to_graph.blue_window = largest_window_blue;
-        info_to_graph.green_window = largest_window_green;
-        info_to_graph.final_window = largest_window_final;
-        info_to_graph.expected_headphone = expected_headphone;
-        info_to_graph.abs_min_max = abs_min_max;
-        info_to_graph.excluded = excluded_trials_cursub;
-        info_to_graph.num_trials_for_analysis = num_trials_for_analysis;
-        info_to_graph.smooth_window_size = smooth_window_size;
-        info_to_graph.include_analysis = false;
-
-        if graph_with_analysis
-            info_to_graph.include_analysis = true;
-            % generate the windows for analysis
-            info_to_graph.analysis_windows = analysisWindow(sub, num_trials_for_analysis, false);
-        else
-            info_to_graph.include_analysis = false;
-        end
-
-        graph_pertEpoch(sub, info_to_graph, num_trials_for_analysis);
-        %graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, false);
-    end
-
     %% store the windows for analysis
     if save_file
         stored_windows_file = [dirs.projRepo, filesep, 'seqpert_pertEpoch_windows.csv'];
@@ -452,5 +469,46 @@ function [largest_window_blue, largest_window_green, largest_window_final, expec
         % first concatenate the new list to the old list
         stored_windows = cat(1,stored_windows,final_windows);
         writetable(stored_windows, stored_windows_file);
+    end
+
+    %% generate graph
+    if generate_graph
+        info_to_graph.trialData = trialData;
+        info_to_graph.blue_window = largest_window_blue;
+        info_to_graph.green_window = largest_window_green;
+        info_to_graph.final_window = largest_window_final;
+        info_to_graph.expected_headphone = expected_headphone;
+        info_to_graph.abs_min_max = abs_min_max;
+        info_to_graph.excluded = excluded_trials_cursub;
+        info_to_graph.num_trials_for_analysis = num_trials_for_analysis;
+        info_to_graph.smooth_window_size = smooth_window_size;
+        info_to_graph.include_analysis = false;
+
+        % determine if the analysis windows are included in the graph
+        if graph_with_analysis
+            info_to_graph.include_analysis = true;
+            % generate the windows for analysis
+            info_to_graph.analysis_windows = analysisWindow(sub, num_trials_for_analysis, false);
+        else
+            info_to_graph.include_analysis = false;
+        end
+
+        % determine if the excluded trials are excluded from the graph or
+        % not
+        if dont_exclude
+            info_to_graph.dont_exclude = true;
+        else
+            info_to_graph.dont_exclude = false;
+        end
+
+        % if only excluded trials should be shown in the graph
+        if only_excluded
+            info_to_graph.only_excluded = true;
+        else
+            info_to_graph.only_excluded = false;
+        end
+
+        graph_pertEpoch(sub, info_to_graph, num_trials_for_analysis);
+        %graph_pertEpoch(sub, trialData, largest_window_blue, largest_window_green, largest_window_final, expected_headphone, abs_min_max, excluded_trials_cursub, num_trials_for_analysis, smooth_window_size, false);
     end
 end

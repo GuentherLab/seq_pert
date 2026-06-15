@@ -1,11 +1,15 @@
 % add the number of trials for analysis as an input to all functions in
 % this script, and the functions they call
 
-num_trials_for_analysis = 120;
-% num_trials_for_analysis = 360;
+% num_trials_for_analysis = 120;
+num_trials_for_analysis = 360;
+% num_trials_for_analysis = 50;
+
+% trials_per_condition = 1:4;
+% subject_plot = f1comp_learncon_graph(1,num_trials_for_analysis,trials_per_condition);
 
 % run pertEpoch and generate the graph (without analysis windows)
-% pertEpoch(1,true,true,true, false);  
+% pertEpoch(1,num_trials_for_analysis, true,true,true, true,false, false);  
 % pertEpoch(2,true,true,true); 
 % pertEpoch(3,true,true,true);  
 % pertEpoch(4,true,true,true); 
@@ -22,8 +26,54 @@ num_trials_for_analysis = 120;
 % pertEpoch(16,true,true,true);
 
 % run pertEpoch and generate the graph without analysis windows, but don't
-% save the file
-pertEpoch(1,num_trials_for_analysis, true,true,false, false);
+% save the file and only include excluded trials
+% pertEpoch(1,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(2,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(3,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(4,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(5,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(6,num_trials_for_analysis, true,true,false, false);
+pertEpoch(7,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(8,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(9,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(10,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(11,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(12,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(13,num_trials_for_analysis, true,true,false, false);
+% pertEpoch(15,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(16,num_trials_for_analysis, true,true,false, false);
+
+% run pertEpoch, save the file, don't generate the graph
+% pertEpoch(1,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(2,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(3,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(4,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(5,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(6,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(7,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(8,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(9,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(10,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(12,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(13,num_trials_for_analysis, false,true,true, false,false, false);
+% pertEpoch(15,num_trials_for_analysis, false,true,true, true,false, false);
+% pertEpoch(16,num_trials_for_analysis, false,true,true, false,false, false);
+
+% run pertEpoch, save the file, generate the graph
+% pertEpoch(1,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(2,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(3,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(4,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(5,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(6,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(7,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(8,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(9,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(10,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(12,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(13,num_trials_for_analysis, true,true,true, false,false, false);
+% pertEpoch(15,num_trials_for_analysis, true,true,true, true,false, false);
+% pertEpoch(16,num_trials_for_analysis, true,true,true, false,false, false);
 
 % run pertEpoch and generate the graph (with analysis windows)
 % pertEpoch(5,true,true,true, true); 
@@ -45,8 +95,7 @@ pertEpoch(1,num_trials_for_analysis, true,true,false, false);
 % pertEpoch(15,num_trials_for_analysis, false,true,true); 
 % pertEpoch(16,num_trials_for_analysis, false,true,true);
 
-% exclude the final based on a set length of the yellow window, rather than 
-% the ratio of yellow in green
+% exclude the final based on a set length of the final window
 % findAutoExcluded(1,'set length', num_trials_for_analysis);
 % findAutoExcluded(2,'set length', num_trials_for_analysis); 
 % findAutoExcluded(3,'set length', num_trials_for_analysis); 
