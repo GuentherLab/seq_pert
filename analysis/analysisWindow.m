@@ -1,4 +1,4 @@
-function [analysis_windows] = analysisWindow(sub, num_trials_for_analysis, graph)
+function [analysis_windows] = analysisWindow(sub, num_trials_for_analysis, graph, save_file)
 % find the final window that will be used for all further analyses
 
 dirs = setDirs_seq_pert();
@@ -14,10 +14,10 @@ end
 
 % make sure that the window doesn't go before 150 ms after the beginning 
 % of the trial
-%lockTimeBegin = 'start';
+lockTimeBegin = 'start';
 %lockTimeBegin = 'mid';
-lockTimeBegin = 'end';
-distFrom_beginLock = -100; % ms
+%lockTimeBegin = 'end';
+distFrom_beginLock = 150; % ms
     % can be either positive or negative, depending on the direction wanted
     % takes into account that the window cannot go past begin+150ms
 
@@ -54,6 +54,12 @@ ses_run = [subs_table.test_ses(sub),subs_table.test_run(sub)];
     mat_file = load(filename);
     trialData = mat_file.trialData;
 
+if num_trials_for_analysis > length(trialData)
+    % if there are less trials then expected, make
+    % num_trials_for_analysis smaller
+    num_trials_for_analysis = length(trialData);
+end
+
 % delete vars already present named that are empty '[]'
     ind_to_delete = cellfun(@isempty, trialData(1).dataLabel) == 1;
     fields_to_edit = {'s','dataLabel','dataUnits','t'};
@@ -69,7 +75,7 @@ raw_mic = find(strcmp(temp,'raw-F1-mic'));
 raw_headphones = find(strcmp(temp,'raw-F1-headphones'));
 
 % load the vowel windows
-    [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub, false, true, false);
+    [largest_window_blue, largest_window_green, largest_window_final, expected_headphone] = pertEpoch(sub,num_trials_for_analysis, false,true,false, false,false,false);
     filepath = dirs.projRepo;
     filename = [filepath filesep 'seqpert_pertEpoch_windows'];
     vowel_windows_all = readtable(filename, "FileType","text", "Delimiter",'comma');
@@ -85,13 +91,13 @@ analysis_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varN
 
 %for i = 1:length(vowel_windows_all.start)
 for i = 1:num_trials_for_analysis
-    if vowel_windows.excluded(i) == 1
-        analysis_windows.start(i) = NaN;
-        analysis_windows.end(i) = NaN;
-        analysis_windows.length(i) = NaN;
-
-        continue
-    end
+    % if vowel_windows.excluded(i) == 1
+    %     analysis_windows.start(i) = NaN;
+    %     analysis_windows.end(i) = NaN;
+    %     analysis_windows.length(i) = NaN;
+    % 
+    %     continue
+    % end
 
     % find the beginning of the analysis window
     if strcmp(lockTimeBegin,'start') % if the lockTime for the start of the window is set to the beginning of the vowel window
@@ -137,4 +143,40 @@ for trial = 1:num_trials_for_analysis
 
     temp = trialData(trial).s{1,3};
     analysis_windows.data{trial} = temp(analysis_windows.start(trial):analysis_windows.end(trial));
+end
+
+if save_file
+    stored_windows_file = [dirs.projRepo, filesep, 'seqpert_analysis_windows.csv'];
+    if exist(stored_windows_file,'file')
+        stored_windows = readtable(stored_windows_file, "FileType","text", "Delimiter",'comma');
+
+        % remove previous mentions of the current subject
+        subject_mentions(:) = find(strcmp(stored_windows.subject, subject)); 
+        stored_windows(subject_mentions,:) = [];
+    else
+        disp('file doesnt exist yet')
+    end
+    
+    % format the list of windows to be added
+    sz = [length(largest_window_final.start), 5];
+    varTypes = ["string","double","logical","double","double"];
+    varNames = ["subject","trial","excluded","windowStart","windowEnd"];
+    final_windows = table('Size',sz,'VariableTypes',varTypes,'VariableNames',varNames);
+    
+    final_windows.subject(:) = subject;
+    final_windows.trial(:) = 1:length(largest_window_final.start);
+    final_windows.excluded(excluded_trials_cursub) = 1;
+    final_windows.windowStart = analysis_windows.start;
+    final_windows.windowEnd = analysis_windows.end;
+    
+    %save_pertEpoch_windows(subject, stored_windows_file, stored_windows);
+
+    % add the new list to the file
+    % first concatenate the new list to the old list
+    if exist(stored_windows_file,'file')
+        stored_windows = cat(1,stored_windows,final_windows);
+    else
+        stored_windows = final_windows;
+    end
+    writetable(stored_windows, stored_windows_file);
 end

@@ -1,3 +1,38 @@
+dirs = setDirs_seq_pert();
+
+tiled = tiledlayout(5,3);
+num_trials_for_analysis = 360;
+
+f1comp_coefs = table;
+
+for sub = 1:16
+    if sub == 14
+        continue
+    end
+
+    if sub < 10
+        subject = ['sp00' num2str(sub)];
+    else
+        subject = ['sp0' num2str(sub)];
+    end
+
+    ax = nexttile;
+    cur_sub_coefs = learncon_timecourse(ax, sub,num_trials_for_analysis);
+    ax.Title.String = subject;
+
+    f1comp_coefs.nn_novel{sub} = cur_sub_coefs(1,:);
+    f1comp_coefs.nn_learn{sub} = cur_sub_coefs(2,:);
+    f1comp_coefs.native{sub} = cur_sub_coefs(3,:);
+
+    pause(0.1);
+end
+
+filename = [dirs.projRepo filesep 'f1comp_coefs.mat'];
+save(filename, 'f1comp_coefs');
+
+
+
+%{
 function [novel_line, learned_line, native_line] = f1comp_learncon_graph(subject_plot, sub,trials_per_condition,calculate_f1comp,f1comp,num_trials_to_analyze)
 % trials_per_condition is an array of 2 values, the start and the end
 dirs = setDirs_seq_pert();
@@ -183,3 +218,4 @@ hold on
 native_line = plot(subject_plot,native_mean);
 %legend(subject_plot,[novel_line, learned_line, native_line], 'nn-novel', 'nn-learned', 'native');
 end
+%}

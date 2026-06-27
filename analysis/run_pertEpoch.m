@@ -8,6 +8,14 @@ num_trials_for_analysis = 360;
 % trials_per_condition = 1:4;
 % subject_plot = f1comp_learncon_graph(1,num_trials_for_analysis,trials_per_condition);
 
+for sub = 1:16
+    if sub == 14
+        continue
+    end
+
+    analysisWindow(sub,360,false,true);
+end
+
 % run pertEpoch and generate the graph (without analysis windows)
 % pertEpoch(1,num_trials_for_analysis, true,true,true, true,false, false);  
 % pertEpoch(2,true,true,true); 
@@ -33,7 +41,7 @@ num_trials_for_analysis = 360;
 % pertEpoch(4,num_trials_for_analysis, true,true,false, false);
 % pertEpoch(5,num_trials_for_analysis, true,true,false, false,true, false);
 % pertEpoch(6,num_trials_for_analysis, true,true,false, false);
-pertEpoch(7,num_trials_for_analysis, true,true,false, false,true, false);
+% pertEpoch(7,num_trials_for_analysis, true,true,false, false,true, false);
 % pertEpoch(8,num_trials_for_analysis, true,true,false, false);
 % pertEpoch(9,num_trials_for_analysis, true,true,false, false);
 % pertEpoch(10,num_trials_for_analysis, true,true,false, false);
