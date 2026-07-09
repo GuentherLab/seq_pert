@@ -48,8 +48,10 @@ function f1comp = generate_f1comp(sub,trial,analysis_or_vowel)
     temp_rows = find(strcmp(subject,temp_subject));
     analysis_windows_curSub = analysis_windows(temp_rows,:);
     
-    % create the mean null timecourse
+    %% create the mean null timecourse
     for i = 1:length(null_trials)
+        clear temp
+        
         temp = trialData(null_trials(i)).s{1,3};
         temp = temp.';
         switch analysis_or_vowel

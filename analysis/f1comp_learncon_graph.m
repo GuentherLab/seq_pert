@@ -5,6 +5,9 @@ num_trials_for_analysis = 360;
 
 f1comp_coefs = table;
 
+analysis_or_vowel = 'analysis';
+%analysis_or_vowel = 'vowel';
+
 for sub = 1:16
     if sub == 14
         continue
@@ -17,7 +20,7 @@ for sub = 1:16
     end
 
     ax = nexttile;
-    cur_sub_coefs = learncon_timecourse(ax, sub,num_trials_for_analysis);
+    cur_sub_coefs = learncon_timecourse(ax, sub,num_trials_for_analysis, analysis_or_vowel);
     ax.Title.String = subject;
 
     f1comp_coefs.nn_novel{sub} = cur_sub_coefs(1,:);

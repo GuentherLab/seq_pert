@@ -1,4 +1,4 @@
-function coefs = learncon_timecourse(f1_plot, sub,num_trials_for_analysis)
+function coefs = learncon_timecourse(f1_plot, sub,num_trials_for_analysis, analysis_or_vowel)
     dirs = setDirs_seq_pert();
     
     if sub < 10
@@ -75,7 +75,8 @@ function coefs = learncon_timecourse(f1_plot, sub,num_trials_for_analysis)
             end
         else
             % run f1comp
-            f1comp = generate_f1comp(sub,trial,'vowel');
+            %f1comp = generate_f1comp(sub,trial,'vowel');
+            f1comp = generate_f1comp(sub,trial,analysis_or_vowel);
             f1comp = nanmean(f1comp);
     
             if strcmp(StimListSet.learncon(trial),'nn_novel')
