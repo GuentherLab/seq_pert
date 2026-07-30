@@ -90,15 +90,15 @@ function f1comp = generate_f1comp(sub,trial,analysis_or_vowel)
     %null_trial_f1_data = cell2mat(null_trial_f1_data);
     null_f1_mean_timecourse = mean(null_trial_f1_data,1,"omitnan");
     
-    % create the current trials f1 trace
-    temp = trialData(trial).s{1,3}.';
+    %% create the current trials f1 trace
+    temp_curTrial = trialData(trial).s{1,3}.';
     switch analysis_or_vowel
         case 'analysis'
             window_curTrial = analysis_windows_curSub(trial,:);
         case 'vowel'
             window_curTrial = pertEpoch_curSub(trial,:);       
     end
-    trial_f1_data = temp(window_curTrial.windowStart:window_curTrial.windowEnd);
+    trial_f1_data = temp_curTrial(window_curTrial.windowStart:window_curTrial.windowEnd);
     %pertEpoch_curTrial = pertEpoch_curSub(null_trials(i),:);
 
     if length(trial_f1_data) < length(null_f1_mean_timecourse) % if the data is smaller than the null timecourse
@@ -127,5 +127,6 @@ function f1comp = generate_f1comp(sub,trial,analysis_or_vowel)
     end
 
     % calculate f1comp
-    f1comp = multp * (null_f1_mean_timecourse - trial_f1_data); 
+    %f1comp = multp * (null_f1_mean_timecourse - trial_f1_data);
+    f1comp = multp * ((null_f1_mean_timecourse - trial_f1_data)./null_f1_mean_timecourse); 
 end
