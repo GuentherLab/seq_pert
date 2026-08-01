@@ -332,12 +332,23 @@ function [novel_p, learn_p, native_p] = first_last_bar(ax, input_sub,num_trials_
     %% t-test
     % only for the averaged, across all 15 subjects, one ttest per learncon
     if strcmp(input_sub,'averaged')
-        novel_first_perSub = mean(novel_first_f1comp,[1 2],"omitnan");
-        novel_last_perSub = mean(novel_last_f1comp,[1 2],"omitnan");
-        learn_first_perSub = mean(learn_first_f1comp,[1 2],"omitnan");
-        learn_last_perSub = mean(learn_last_f1comp,[1 2],"omitnan");
-        native_first_perSub = mean(native_first_f1comp,[1 2],"omitnan");
-        native_last_perSub = mean(native_last_f1comp,[1 2],"omitnan");
+        temp1 = mean(novel_first_f1comp,[1 2],"omitnan");
+        novel_first_perSub = squeeze(temp1(1,1, :));
+
+        temp2 = mean(novel_last_f1comp,[1 2],"omitnan");
+        novel_last_perSub = squeeze(temp2(1,1, :));
+
+        temp3 = mean(learn_first_f1comp,[1 2],"omitnan");
+        learn_first_perSub = squeeze(temp3(1,1, :));
+
+        temp4 = mean(learn_last_f1comp,[1 2],"omitnan");
+        learn_last_perSub = squeeze(temp4(1,1, :));
+
+        temp5 = mean(native_first_f1comp,[1 2],"omitnan");
+        native_first_perSub = squeeze(temp5(1,1, :));
+
+        temp6 = mean(native_last_f1comp,[1 2],"omitnan");
+        native_last_perSub = squeeze(temp6(1,1, :));
 
         [novel_h, novel_p] = ttest(novel_first_perSub, novel_last_perSub);
         [learn_h, learn_p] = ttest(learn_first_perSub, learn_last_perSub);

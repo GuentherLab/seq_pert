@@ -5,25 +5,25 @@ tiled = tiledlayout(fig,4,4);
 num_trials_for_analysis = 360;
 trials_per_bar = 10;
 
-for sub = 1:16
-    if sub==14
-        continue
-    end
-
-    if sub < 10
-        subject = ['sp00' num2str(sub)];
-    else
-        subject = ['sp0' num2str(sub)];
-    end
-
-    disp(subject);
-
-    ax = nexttile(tiled);
-    %[novel_ttest, learn_ttest, native_ttest] = first_last_bar(ax,sub,num_trials_for_analysis,trials_per_bar,'analysis');
-    first_last_bar(ax,sub,num_trials_for_analysis,trials_per_bar,'analysis');
-    ax.Title.String = subject;
-    %ax.Subtitle.String = ['ttest: [' novel_ttest ' ' learn_ttest ' ' native_ttest ']'];
-end 
+% for sub = 1:16
+%     if sub==14
+%         continue
+%     end
+% 
+%     if sub < 10
+%         subject = ['sp00' num2str(sub)];
+%     else
+%         subject = ['sp0' num2str(sub)];
+%     end
+% 
+%     disp(subject);
+% 
+%     ax = nexttile(tiled);
+%     %[novel_ttest, learn_ttest, native_ttest] = first_last_bar(ax,sub,num_trials_for_analysis,trials_per_bar,'analysis');
+%     first_last_bar(ax,sub,num_trials_for_analysis,trials_per_bar,'analysis');
+%     ax.Title.String = subject;
+%     %ax.Subtitle.String = ['ttest: [' novel_ttest ' ' learn_ttest ' ' native_ttest ']'];
+% end 
 
 % individually get the single f1comp for each datapoint and then average 
 % the 15 single f1comp values
